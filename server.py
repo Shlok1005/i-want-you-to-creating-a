@@ -188,9 +188,14 @@ def init_db():
                 preferred_date TEXT,
                 budget TEXT,
                 location TEXT,
+                status TEXT NOT NULL DEFAULT 'new',
                 created_at INTEGER NOT NULL
             )"""
         )
+        # Backward-compatible migration for older DBs.
+        cols = {row["name"] for row in conn.execute("PRAGMA table_info(submissions)").fetchall()}
+        if "status" not in cols:
+            conn.execute("ALTER TABLE submissions ADD COLUMN status TEXT NOT NULL DEFAULT 'new'")
         conn.commit()
     DB_SCHEMA_READY = True
 
@@ -253,6 +258,7 @@ def require_admin(handler):
 def row_to_submission(row):
     item = dict(row)
     item["timestamp"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(item.get("created_at") or 0))
+    item["status"] = item.get("status") or "new"
     return item
 
 
@@ -292,11 +298,11 @@ def save_submission(payload):
         conn.execute(
             """INSERT INTO submissions (
                 id, form_type, name, phone, email, program, goal, message, coach,
-                company, event_type, attendees, preferred_date, budget, location, created_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                company, event_type, attendees, preferred_date, budget, location, status, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 submission_id, form_type, name, phone, email, program, goal, message, coach,
-                company, event_type, attendees, preferred_date, budget, location, created_at,
+                company, event_type, attendees, preferred_date, budget, location, "new", created_at,
             ),
         )
         # Keep legacy leads table in sync for the owner-data viewer.
@@ -653,9 +659,9 @@ class AppHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         ensure_database()
         path = urlparse(self.path).path
-        if path == "/admin":
-            self.path = "/admin.html"
-            path = "/admin.html"
+        if path in {"/admin", "/office"}:
+            self.path = "/office.html" if path == "/office" else "/admin.html"
+            path = self.path
 
         if path.startswith("/api/"):
             if path == "/api/health":
@@ -681,13 +687,13 @@ class AppHandler(SimpleHTTPRequestHandler):
                 if not require_admin(self):
                     return
                 with get_connection() as conn:
-                    leads = conn.execute("SELECT * FROM leads ORDER BY created_at DESC LIMIT 50").fetchall()
-                    checkins = conn.execute("SELECT * FROM checkins ORDER BY created_at DESC LIMIT 50").fetchall()
-                    newsletter = conn.execute("SELECT * FROM newsletter ORDER BY created_at DESC LIMIT 50").fetchall()
-                    ai_scans = conn.execute("SELECT * FROM ai_scans ORDER BY created_at DESC LIMIT 50").fetchall()
-                    calculations = conn.execute("SELECT * FROM calculator_results ORDER BY created_at DESC LIMIT 50").fetchall()
-                    chat_messages = conn.execute("SELECT * FROM chat_messages ORDER BY created_at DESC LIMIT 50").fetchall()
-                    submissions = conn.execute("SELECT * FROM submissions ORDER BY created_at DESC LIMIT 100").fetchall()
+                    leads = conn.execute("SELECT * FROM leads ORDER BY created_at DESC LIMIT 100").fetchall()
+                    checkins = conn.execute("SELECT * FROM checkins ORDER BY created_at DESC LIMIT 100").fetchall()
+                    newsletter = conn.execute("SELECT * FROM newsletter ORDER BY created_at DESC LIMIT 100").fetchall()
+                    ai_scans = conn.execute("SELECT * FROM ai_scans ORDER BY created_at DESC LIMIT 100").fetchall()
+                    calculations = conn.execute("SELECT * FROM calculator_results ORDER BY created_at DESC LIMIT 100").fetchall()
+                    chat_messages = conn.execute("SELECT * FROM chat_messages ORDER BY created_at DESC LIMIT 100").fetchall()
+                    submissions = conn.execute("SELECT * FROM submissions ORDER BY created_at DESC LIMIT 300").fetchall()
                 return self.send_json({
                     "ok": True,
                     "leads": [dict(r) for r in leads],
@@ -702,9 +708,33 @@ class AppHandler(SimpleHTTPRequestHandler):
                 if not require_admin(self):
                     return
                 with get_connection() as conn:
-                    rows = conn.execute("SELECT * FROM submissions ORDER BY created_at DESC LIMIT 200").fetchall()
+                    rows = conn.execute("SELECT * FROM submissions ORDER BY created_at DESC LIMIT 300").fetchall()
                 data = [row_to_submission(r) for r in rows]
                 return self.send_json({"ok": True, "count": len(data), "data": data})
+            if path == "/api/office-stats":
+                if not require_admin(self):
+                    return
+                with get_connection() as conn:
+                    total = conn.execute("SELECT COUNT(*) AS c FROM submissions").fetchone()["c"]
+                    today = conn.execute(
+                        "SELECT COUNT(*) AS c FROM submissions WHERE created_at >= ?",
+                        (int(time.time()) - 24 * 60 * 60,),
+                    ).fetchone()["c"]
+                    new_count = conn.execute(
+                        "SELECT COUNT(*) AS c FROM submissions WHERE COALESCE(status, 'new') = 'new'"
+                    ).fetchone()["c"]
+                    corp = conn.execute(
+                        "SELECT COUNT(*) AS c FROM submissions WHERE form_type = 'corporate_event'"
+                    ).fetchone()["c"]
+                    calcs = conn.execute("SELECT COUNT(*) AS c FROM calculator_results").fetchone()["c"]
+                return self.send_json({
+                    "ok": True,
+                    "total": total,
+                    "today": today,
+                    "new": new_count,
+                    "corporate": corp,
+                    "calculations": calcs,
+                })
             return self.send_json({"error": "Not found"}, 404)
 
         if is_blocked_static(path):
@@ -713,6 +743,31 @@ class AppHandler(SimpleHTTPRequestHandler):
             self.path = "/index.html"
         return super().do_GET()
 
+    def do_PATCH(self):
+        ensure_database()
+        path = urlparse(self.path).path
+        if path.startswith("/api/submissions/") and path.endswith("/status"):
+            if not require_admin(self):
+                return
+            try:
+                payload = self.read_json()
+            except (ValueError, json.JSONDecodeError):
+                return self.send_json({"error": "Invalid JSON"}, 400)
+            submission_id = clip(unquote(path[len("/api/submissions/"):-len("/status")]), 64)
+            status = clip(payload.get("status"), 32).lower()
+            if status not in {"new", "contacted", "qualified", "closed"}:
+                return self.send_json({"error": "Invalid status"}, 400)
+            with get_connection() as conn:
+                cur = conn.execute(
+                    "UPDATE submissions SET status = ? WHERE id = ?",
+                    (status, submission_id),
+                )
+                conn.commit()
+                if cur.rowcount < 1:
+                    return self.send_json({"error": "Not found"}, 404)
+            return self.send_json({"ok": True, "id": submission_id, "status": status})
+        return self.send_json({"error": "Not found"}, 404)
+
     def do_DELETE(self):
         ensure_database()
         path = urlparse(self.path).path
@@ -720,7 +775,7 @@ class AppHandler(SimpleHTTPRequestHandler):
             if not require_admin(self):
                 return
             submission_id = clip(unquote(path.split("/api/submissions/", 1)[1]), 64)
-            if not submission_id:
+            if not submission_id or "/" in submission_id:
                 return self.send_json({"error": "Not found"}, 404)
             with get_connection() as conn:
                 cur = conn.execute("DELETE FROM submissions WHERE id = ?", (submission_id,))
@@ -826,6 +881,7 @@ if __name__ == "__main__":
         print("Admin APIs require the X-Admin-Token header.")
     else:
         print("Bound to localhost only. Set HOST=0.0.0.0 to share on Wi-Fi.")
+    print(f"Office dashboard: http://127.0.0.1:{port}/office")
     print(f"Admin dashboard: http://127.0.0.1:{port}/admin")
     print(f"Owner data: http://127.0.0.1:{port}/owner-data.html")
     server.serve_forever()

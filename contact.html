@@ -151,6 +151,7 @@
           </div>
         </div>
         <form class="contact-page-form" id="leadForm">
+          <input type="hidden" name="form_type" value="consultation" />
           <h3>Book a Free Consultation</h3>
           <p class="contact-form-sub">Tell us about yourself and we'll craft a plan for you.</p>
           <div class="cpf-row">
@@ -365,11 +366,5 @@
     </div>
   </footer>
 
-  <script>
-  document.getElementById('leadForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    document.getElementById('leadStatus').textContent = 'Thanks! We\'ll get back to you shortly.';
-  });
-  </script>
 </body>
 </html>

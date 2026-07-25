@@ -31,15 +31,16 @@ Open:
 http://127.0.0.1:8000
 ```
 
-Admin dashboard:
+Office dashboard (DB-connected internal file):
+
+```text
+http://127.0.0.1:8000/office
+```
+
+Legacy admin / owner viewers:
 
 ```text
 http://127.0.0.1:8000/admin
-```
-
-Owner data viewer:
-
-```text
 http://127.0.0.1:8000/owner-data.html
 ```
 

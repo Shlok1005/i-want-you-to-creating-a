@@ -1318,37 +1318,71 @@ function openBookModal(coachName) {
   document.body.style.overflow = "hidden";
 }
 
-function wireBookModalForm() {
-  var frm = qs("#bookModalForm");
-  if (!frm) return;
-  frm.addEventListener("submit", function(e) {
+async function submitFormPayload(payload, formEl) {
+  var body = Object.assign({ form_type: payload.form_type || "consultation" }, payload || {});
+  try {
+    var res = await fetch("/api/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    var data = {};
+    try { data = await res.json(); } catch (err) { data = {}; }
+    if (res.ok && (data.ok || data.success)) return data;
+    if (res.status === 404 || res.status >= 500) throw new Error("backend-unreachable");
+    throw new Error(data.error || "Submit failed");
+  } catch (err) {
+    if (!formEl) throw err;
+    var fd = new FormData(formEl);
+    Object.keys(body).forEach(function(key) {
+      if (!fd.has(key) && body[key] != null) fd.append(key, body[key]);
+    });
+    var fallback = await fetch("https://formspree.io/f/mgejdqzj", {
+      method: "POST",
+      body: fd,
+      headers: { Accept: "application/json" },
+    });
+    var fallbackData = {};
+    try { fallbackData = await fallback.json(); } catch (e2) { fallbackData = {}; }
+    if (fallback.ok || fallbackData.ok || fallbackData.success) return { ok: true };
+    throw err;
+  }
+}
+
+function bindFormSubmit(form, statusEl, successMessage) {
+  if (!form || form.dataset.fgBound === "1") return;
+  form.dataset.fgBound = "1";
+  form.addEventListener("submit", function(e) {
     e.preventDefault();
-    var status = qs("#bookFormStatus");
-    var payload = Object.fromEntries(new FormData(frm).entries());
-    status.textContent = "Sending\u2026";
-    status.style.color = "rgba(255,255,255,0.6)";
-    var apiBase = window.location.port ? "" : "https://formspree.io/f/mgejdqzj";
-    var fetchOpts = window.location.port
-      ? { method: "POST", body: JSON.stringify(payload), headers: { "Content-Type": "application/json" } }
-      : { method: "POST", body: new FormData(frm), headers: { Accept: "application/json" } };
-    fetch(apiBase || "/api/submit", fetchOpts)
-      .then(function(r) { return r.json(); })
-      .then(function(d) {
-        if (d.ok || d.success) {
-          status.textContent = "\u2705 Thank you! We\u2019ll be in touch shortly.";
+    e.stopImmediatePropagation();
+    var status = statusEl || form.querySelector(".form-status, .book-frm-status, .cp-consult-status, .coach-frm-status, .mg-corp-form-status, #leadStatus, #bookFormStatus, #corpFormStatus, #consultPageStatus");
+    var payload = Object.fromEntries(new FormData(form).entries());
+    if (status) {
+      status.textContent = "Sending\u2026";
+      status.style.color = "rgba(255,255,255,0.6)";
+    }
+    submitFormPayload(payload, form)
+      .then(function() {
+        if (status) {
+          status.textContent = successMessage || "\u2705 Thank you! We\u2019ll be in touch shortly.";
           status.style.color = "#4ade80";
-          frm.reset();
-          var coachInput = qs("#bookModalCoachInput");
-          if (coachInput) coachInput.value = coachInput.value;
-        } else {
-          throw new Error(d.error || "Submit failed");
         }
+        var coachValue = form.querySelector('input[name="coach"]');
+        var keptCoach = coachValue ? coachValue.value : "";
+        form.reset();
+        if (coachValue && keptCoach) coachValue.value = keptCoach;
       })
       .catch(function() {
-        status.textContent = "\u26a0\ufe0f Something went wrong. Please try again.";
-        status.style.color = "#dc3545";
+        if (status) {
+          status.textContent = "\u26a0\ufe0f Something went wrong. Please try again.";
+          status.style.color = "#dc3545";
+        }
       });
   });
+}
+
+function wireBookModalForm() {
+  bindFormSubmit(qs("#bookModalForm"), qs("#bookFormStatus"));
 }
 
 function wireCoachPopups() {
@@ -1386,30 +1420,29 @@ function wireCoachPopups() {
     var frm = e.target.closest(".cp-consult-frm, .coach-inline-frm");
     if (!frm) return;
     e.preventDefault();
+    e.stopPropagation();
     var status = frm.querySelector(".cp-consult-status, .coach-frm-status");
     var payload = Object.fromEntries(new FormData(frm).entries());
-    status.textContent = "Sending\u2026";
-    status.style.color = "rgba(255,255,255,0.6)";
-    var apiBase = window.location.port ? "" : "https://formspree.io/f/mgejdqzj";
-    var fetchOpts = window.location.port
-      ? { method: "POST", body: JSON.stringify(payload), headers: { "Content-Type": "application/json" } }
-      : { method: "POST", body: new FormData(frm), headers: { Accept: "application/json" } };
-    fetch(apiBase || "/api/submit", fetchOpts)
-      .then(function(r) { return r.json(); })
-      .then(function(d) {
-        if (d.ok || d.success) {
+    if (status) {
+      status.textContent = "Sending\u2026";
+      status.style.color = "rgba(255,255,255,0.6)";
+    }
+    submitFormPayload(payload, frm)
+      .then(function() {
+        if (status) {
           status.textContent = "\u2705 Thank you! We\u2019ll be in touch shortly.";
           status.style.color = "#4ade80";
-          frm.reset();
-          var coachInput = frm.querySelector('input[name="coach"]');
-          if (coachInput) coachInput.value = coachInput.value;
-        } else {
-          throw new Error(d.error || "Submit failed");
         }
+        var coachInput = frm.querySelector('input[name="coach"]');
+        var kept = coachInput ? coachInput.value : "";
+        frm.reset();
+        if (coachInput && kept) coachInput.value = kept;
       })
       .catch(function() {
-        status.textContent = "\u26a0\ufe0f Something went wrong. Please try again.";
-        status.style.color = "#dc3545";
+        if (status) {
+          status.textContent = "\u26a0\ufe0f Something went wrong. Please try again.";
+          status.style.color = "#dc3545";
+        }
       });
   });
 }
@@ -1457,35 +1490,8 @@ function injectWhatsApp() {
 }
 
 function wireForms() {
-  var leadForm = qs("#leadForm");
-  if (leadForm) {
-    leadForm.addEventListener("submit", function(e) {
-      e.preventDefault();
-      var status = qs("#leadStatus");
-      var payload = Object.fromEntries(new FormData(leadForm).entries());
-      status.textContent = "Sending\u2026";
-      status.style.color = "rgba(255,255,255,0.6)";
-      var apiBase = window.location.port ? "" : "https://formspree.io/f/mgejdqzj";
-      var fetchOpts = window.location.port
-        ? { method: "POST", body: JSON.stringify(payload), headers: { "Content-Type": "application/json" } }
-        : { method: "POST", body: new FormData(leadForm), headers: { Accept: "application/json" } };
-      fetch(apiBase || "/api/submit", fetchOpts)
-        .then(function(r) { return r.json(); })
-        .then(function(d) {
-          if (d.ok || d.success) {
-            status.textContent = "\u2705 Thank you! We\u2019ll be in touch shortly.";
-            status.style.color = "#4ade80";
-            leadForm.reset();
-          } else {
-            throw new Error(d.error || "Submit failed");
-          }
-        })
-        .catch(function() {
-          status.textContent = "\u26a0\ufe0f Something went wrong. Please try again.";
-          status.style.color = "#dc3545";
-        });
-    });
-  }
+  bindFormSubmit(qs("#leadForm"), qs("#leadStatus"));
+  bindFormSubmit(qs("#consultPageForm"), qs("#consultPageStatus"));
   qsa("[data-contact-phone]").forEach((node) => { node.textContent = realData.contact.phone; });
   qsa("[data-contact-email]").forEach((node) => { node.textContent = realData.contact.email; });
 }
@@ -3218,26 +3224,23 @@ document.addEventListener("DOMContentLoaded", function() {
     var status = document.getElementById("corpFormStatus");
     var payload = Object.fromEntries(new FormData(frm).entries());
     payload.form_type = "corporate_event";
-    status.textContent = "Sending\u2026";
-    status.style.color = "rgba(255,255,255,0.6)";
-    var apiBase = window.location.port ? "" : "https://formspree.io/f/mgejdqzj";
-    var fetchOpts = window.location.port
-      ? { method: "POST", body: JSON.stringify(payload), headers: { "Content-Type": "application/json" } }
-      : { method: "POST", body: new FormData(frm), headers: { Accept: "application/json" } };
-    fetch(apiBase || "/api/submit", fetchOpts)
-      .then(function(r) { return r.json(); })
-      .then(function(d) {
-        if (d.ok || d.success) {
+    if (status) {
+      status.textContent = "Sending\u2026";
+      status.style.color = "rgba(255,255,255,0.6)";
+    }
+    submitFormPayload(payload, frm)
+      .then(function() {
+        if (status) {
           status.textContent = "\u2705 Thank you! Our events team will contact you within 24 hours.";
           status.style.color = "#4ade80";
-          frm.reset();
-        } else {
-          throw new Error(d.error || "Submit failed");
         }
+        frm.reset();
       })
       .catch(function() {
-        status.textContent = "\u26a0\ufe0f Something went wrong. Please try again.";
-        status.style.color = "#dc3545";
+        if (status) {
+          status.textContent = "\u26a0\ufe0f Something went wrong. Please try again.";
+          status.style.color = "#dc3545";
+        }
       });
   });
 })();
