@@ -1,41 +1,28 @@
-# Fitness Gurukul Full-Stack Website
+# Fitness Gurukul Website
 
-Multi-page Fitness Gurukul website with a responsive frontend, Python backend, and SQLite database.
+Multi-page Fitness Gurukul website with a responsive frontend, **Python** backend, and SQLite database.
 
-## What is included
+## Stack
 
-- Frontend: detailed pages in `public/`
-- Backend: dependency-free Python HTTP API in `server.py`
-- Database: SQLite file created automatically as `fitness_gurukul.sqlite3`
-- Dashboard: view user-entered leads, progress check-ins, and newsletter entries
-- Download: packaged project ZIP at `public/fitness-gurukul-fullstack.zip`
+- Frontend: HTML pages at the repo root (`index.html`, `services.html`, …) plus `styles.css` and `app.js`
+- Backend: dependency-free Python HTTP API in `server.py` (port **8000**)
+- Database: SQLite file created automatically as `fitness_gurukul.sqlite3` (gitignored)
+- Owner tools: `/admin` and `owner-data.html` (require `ADMIN_TOKEN`)
 
-## Pages
-
-- `index.html` - logo-led home, guide, featured services, story, events, testimonials
-- `programs.html` - detailed services, filters, comparison table, packages
-- `events.html` - corporate marathon, cycling, active day, and planning flow
-- `community.html` - community runs, cycling crews, wellness challenges, and transformation paths
-- `coaches.html` - coaches, specialties, standards, testimonials, updates
-- `tools.html` - BMI, goal recommendation, check-ins, storage mode status
-- `contact.html` - consultation form, contact cards, areas, FAQ, newsletter
-- `owner-data.html` - direct owner-only data viewer, not linked in the client navigation
-
-## Brand system
-
-The UI uses the uploaded Fitness Gurukul logo colors only:
-
-- Black/dark background
-- Logo cyan and blue
-- Fitness red
-- White/ice text surfaces
-
-The fonts are Montserrat for headings/buttons and Inter for body/UI text.
+The old Node/Express server is deprecated. Use Python only.
 
 ## Run locally
 
 ```bash
-python server.py
+cp .env.example .env
+# set ADMIN_TOKEN to a long random string
+python3 server.py
+```
+
+Or:
+
+```bash
+npm start
 ```
 
 Open:
@@ -44,50 +31,76 @@ Open:
 http://127.0.0.1:8000
 ```
 
-To collect form data from another laptop on the same Wi-Fi, share your main laptop's network link:
+Admin dashboard:
 
 ```text
-http://YOUR-LAPTOP-IP:8000/contact.html
+http://127.0.0.1:8000/admin
 ```
 
-Do not share `127.0.0.1` with another device. On another laptop, `127.0.0.1` points back to that other laptop.
-
-## Where user data appears
-
-Run the backend, submit a form, then open:
+Owner data viewer:
 
 ```text
 http://127.0.0.1:8000/owner-data.html
 ```
 
-The raw JSON is available at:
+By default the server binds to `127.0.0.1`. To share on the same Wi-Fi:
 
-```text
-http://127.0.0.1:8000/api/admin-data
+```bash
+HOST=0.0.0.0 python3 server.py
 ```
 
-Static hosting cannot run Python or SQLite, so static forms save demo records in the browser only.
+Then open `http://YOUR-LAPTOP-IP:8000` on another device. Admin APIs still require `ADMIN_TOKEN`.
 
-## AI chatbot
+## Environment
 
-The chatbot uses the server-side `/api/chat` endpoint. For real AI answers, create a `.env` file from `.env.example` and add your OpenAI API key:
+Copy `.env.example` to `.env`:
 
 ```text
-OPENAI_API_KEY=sk-your-key
+OPENAI_API_KEY=
 OPENAI_MODEL=gpt-5.6
+ADMIN_TOKEN=replace-with-a-long-random-string
+HOST=127.0.0.1
+PORT=8000
 ```
 
-Then restart the server with `python server.py`. Without `OPENAI_API_KEY`, the chat widget still answers from website plan facts, but it runs in local fallback mode.
+- Without `OPENAI_API_KEY`, the chat widget answers from local website facts.
+- Without `ADMIN_TOKEN` in `.env`, the server generates a temporary token for that process and prints it on startup.
+
+## Pages
+
+- `index.html` — home
+- `about.html` — brand story
+- `services.html` — plans and services
+- `coaches.html` — coach directory
+- `events.html` — corporate and community events
+- `testimonials.html` — client stories
+- `tools.html` — fitness calculators
+- `contact.html` / `book-consultation.html` — lead forms
+- `admin.html` — protected submissions dashboard
+- `owner-data.html` — protected SQLite viewer
 
 ## API endpoints
+
+Public:
 
 - `GET /api/health`
 - `GET /api/content`
 - `GET /api/chat/status`
 - `POST /api/chat`
-- `POST /api/leads`
-- `GET /api/leads`
-- `POST /api/newsletter`
-- `POST /api/checkins`
-- `GET /api/stats`
+- `POST /api/submit` — consultation and corporate event forms
+- `POST /api/leads` — alias that stores into the same submissions/leads tables
+- `POST /api/calculations`
+
+Protected (header `X-Admin-Token: <ADMIN_TOKEN>`):
+
 - `GET /api/admin-data`
+- `GET /api/submissions`
+- `DELETE /api/submissions/:id`
+
+Sensitive paths (`.env`, `*.sqlite3`, `data/`, `server.py`, etc.) are not served as static files.
+
+## Security notes
+
+- Do not commit `.env`, `*.sqlite3`, or `data/*.json`
+- Never share `/admin` or `owner-data.html` without the token
+- Prefer localhost bind unless you intentionally need LAN access

@@ -51,10 +51,10 @@
         <p class="eyebrow">Owner data viewer</p>
         <h1>Private working page for submitted website data.</h1>
         <p>
-          This file is intentionally not linked in the client navigation. Use it directly while
-          running the local Python backend to view consultation leads, check-ins, AI scans, and newsletter entries.
+          This file is intentionally not linked in the client navigation. Use it with the Python
+          backend and your <code>ADMIN_TOKEN</code> to view consultation leads, check-ins, AI scans, and newsletter entries.
         </p>
-        <div class="client-hidden-note">Direct owner URL: http://127.0.0.1:8000/owner-data.html</div>
+        <div class="client-hidden-note">Direct owner URL: http://127.0.0.1:8000/owner-data.html — token required</div>
       </section>
 
       <section class="guide-section">
@@ -85,7 +85,8 @@
         </div>
         <div class="admin-note" id="adminNote">Loading data source...</div>
         <div class="admin-tabs" id="adminTabs">
-          <button type="button" class="active" data-admin-tab="leads">Consultation leads</button>
+          <button type="button" class="active" data-admin-tab="submissions">Form submissions</button>
+          <button type="button" data-admin-tab="leads">Consultation leads</button>
           <button type="button" data-admin-tab="checkins">Progress check-ins</button>
           <button type="button" data-admin-tab="ai_scans">AI scans</button>
           <button type="button" data-admin-tab="newsletter">Newsletter</button>
@@ -114,7 +115,7 @@
           <article class="guide-card"><span>02</span><h3>Call or message</h3><p>Use the submitted phone number to confirm timing, location, goal urgency, and whether the client needs doorstep service.</p></article>
           <article class="guide-card"><span>03</span><h3>Assign the route</h3><p>Match the person to personal training, nutrition, yoga, swimming, online coaching, corporate event, or community challenge.</p></article>
           <article class="guide-card"><span>04</span><h3>Track check-ins and scans</h3><p>Use check-in entries and AI scan notes to see mood, stamina, weight, and posture route before changing intensity or nutrition targets.</p></article>
-          <article class="guide-card"><span>05</span><h3>Use raw JSON</h3><p>Open /api/admin-data when you need the same records in a raw format for copying into another system.</p></article>
+          <article class="guide-card"><span>05</span><h3>Use raw JSON</h3><p>Call /api/admin-data with the X-Admin-Token header when you need the same records in a raw format.</p></article>
           <article class="guide-card"><span>06</span><h3>Keep client nav clean</h3><p>This owner viewer is intentionally direct-only so visitors stay focused on programs, community, tools, and contact.</p></article>
         </div>
         </div>

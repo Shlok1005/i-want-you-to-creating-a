@@ -2,3 +2,10 @@
 node_modules/
 __pycache__/
 *.pyc
+*.sqlite3
+*.sqlite3-*
+data/submissions.json
+data/*.json
+!data/.gitkeep
+*.bak
+.DS_Store

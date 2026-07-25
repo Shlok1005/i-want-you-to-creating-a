@@ -975,15 +975,40 @@ function formatTime(value) {
   return Number.isNaN(date.getTime()) ? "-" : date.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" });
 }
 
+function getAdminToken() {
+  try { return sessionStorage.getItem("fg_admin_token") || ""; }
+  catch { return ""; }
+}
+
+function ensureAdminToken() {
+  var existing = getAdminToken();
+  if (existing) return existing;
+  var entered = window.prompt("Enter ADMIN_TOKEN from your server .env to view owner data:");
+  if (!entered) return "";
+  try { sessionStorage.setItem("fg_admin_token", entered.trim()); }
+  catch {}
+  return entered.trim();
+}
+
 async function refreshAdminData() {
   if (!has("#adminTableBody")) return;
   if (usesLocalBackend) {
     try {
-      adminData = await api("/api/admin-data");
-      qs("#adminNote").textContent = "Showing latest records from the backend.";
+      var token = ensureAdminToken();
+      if (!token) {
+        adminData = { leads: [], checkins: [], ai_scans: [], newsletter: [], calculations: [], submissions: [] };
+        qs("#adminNote").textContent = "Admin token required. Set ADMIN_TOKEN in .env, then reload this page.";
+        renderAdminTable();
+        return;
+      }
+      adminData = await api("/api/admin-data", {
+        headers: { "Content-Type": "application/json", "X-Admin-Token": token },
+      });
+      qs("#adminNote").textContent = "Showing latest records from the Python/SQLite backend.";
     } catch (e) {
-      adminData = { leads: [], checkins: [], ai_scans: [], newsletter: [], calculations: [] };
-      qs("#adminNote").textContent = "Backend not reachable. Start python server.py.";
+      try { sessionStorage.removeItem("fg_admin_token"); } catch {}
+      adminData = { leads: [], checkins: [], ai_scans: [], newsletter: [], calculations: [], submissions: [] };
+      qs("#adminNote").textContent = "Could not load owner data. Check that python3 server.py is running and ADMIN_TOKEN is correct.";
     }
   }
   renderAdminTable();
@@ -996,6 +1021,7 @@ function renderAdminTable() {
   var body = qs("#adminTableBody");
   var active = (tabs.find(function(tab) { return tab.classList.contains("active"); }) || tabs[0]);
   var fields = {
+    submissions: [["name", "Name"], ["phone", "Phone"], ["email", "Email"], ["program", "Program"], ["goal", "Goal"], ["message", "Message"], ["created_at", "Received"]],
     leads: [["name", "Name"], ["phone", "Phone"], ["goal", "Goal"], ["program", "Program"], ["message", "Message"], ["created_at", "Received"]],
     checkins: [["name", "Name"], ["weight", "Weight (kg)"], ["stamina", "Stamina"], ["mood", "Mood"], ["created_at", "Received"]],
     ai_scans: [["name", "Name"], ["focus", "Focus"], ["summary", "Summary"], ["coach_route", "Coach route"], ["camera_used", "Camera"], ["created_at", "Received"]],

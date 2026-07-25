@@ -1,18 +1,56 @@
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import urlparse, unquote
 from urllib import request as urlrequest
+import hmac
 import json
 import os
 import re
+import secrets
 import socket
 import sqlite3
+import threading
 import time
+import uuid
 
 ROOT = Path(__file__).parent.resolve()
 PUBLIC = ROOT
 DB_PATH = ROOT / "fitness_gurukul.sqlite3"
 DB_SCHEMA_READY = False
+MAX_JSON_BYTES = 64 * 1024
+RATE_LIMIT_WINDOW = 60
+RATE_LIMITS = {
+    "/api/chat": 20,
+    "/api/submit": 30,
+    "/api/leads": 30,
+    "/api/calculations": 40,
+}
+_rate_lock = threading.Lock()
+_rate_buckets = {}
+
+BLOCKED_STATIC_PREFIXES = (
+    "/.env",
+    "/.git",
+    "/data/",
+    "/node_modules/",
+    "/__pycache__/",
+)
+BLOCKED_STATIC_SUFFIXES = (
+    ".sqlite3",
+    ".pyc",
+    ".py",
+    ".bak",
+    ".env",
+)
+BLOCKED_STATIC_NAMES = {
+    "/server.py",
+    "/server.js",
+    "/package.json",
+    "/package-lock.json",
+    "/.gitignore",
+    "/.gitattributes",
+    "/.env.example",
+}
 
 def load_env_file():
     env_path = ROOT / ".env"
@@ -136,8 +174,147 @@ def init_db():
         conn.execute("CREATE TABLE IF NOT EXISTS ai_scans (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, focus TEXT NOT NULL, summary TEXT NOT NULL, coach_route TEXT NOT NULL, camera_used INTEGER NOT NULL DEFAULT 0, created_at INTEGER NOT NULL)")
         conn.execute("CREATE TABLE IF NOT EXISTS calculator_results (id INTEGER PRIMARY KEY AUTOINCREMENT, calculator TEXT NOT NULL, title TEXT NOT NULL, result TEXT NOT NULL, unit TEXT, rating TEXT, created_at INTEGER NOT NULL)")
         conn.execute("CREATE TABLE IF NOT EXISTS chat_messages (id INTEGER PRIMARY KEY AUTOINCREMENT, session_id TEXT NOT NULL, role TEXT NOT NULL, content TEXT NOT NULL, source TEXT NOT NULL DEFAULT 'local', created_at INTEGER NOT NULL)")
+        conn.execute(
+            """CREATE TABLE IF NOT EXISTS submissions (
+                id TEXT PRIMARY KEY,
+                form_type TEXT NOT NULL DEFAULT 'consultation',
+                name TEXT NOT NULL,
+                phone TEXT NOT NULL,
+                email TEXT,
+                program TEXT,
+                goal TEXT,
+                message TEXT,
+                coach TEXT,
+                company TEXT,
+                event_type TEXT,
+                attendees TEXT,
+                preferred_date TEXT,
+                budget TEXT,
+                location TEXT,
+                created_at INTEGER NOT NULL
+            )"""
+        )
         conn.commit()
     DB_SCHEMA_READY = True
+
+
+def admin_token():
+    return os.environ.get("ADMIN_TOKEN", "").strip()
+
+
+def clip(value, max_len=500):
+    text = str(value or "").strip()
+    return text[:max_len]
+
+
+def client_ip(handler):
+    return handler.client_address[0] if handler.client_address else "unknown"
+
+
+def check_rate_limit(handler, path):
+    limit = RATE_LIMITS.get(path)
+    if not limit:
+        return True
+    key = (client_ip(handler), path)
+    now = time.time()
+    with _rate_lock:
+        bucket = [ts for ts in _rate_buckets.get(key, []) if now - ts < RATE_LIMIT_WINDOW]
+        if len(bucket) >= limit:
+            _rate_buckets[key] = bucket
+            return False
+        bucket.append(now)
+        _rate_buckets[key] = bucket
+    return True
+
+
+def is_blocked_static(path):
+    decoded = unquote(path).lower()
+    if decoded in BLOCKED_STATIC_NAMES or decoded.rstrip("/") in BLOCKED_STATIC_NAMES:
+        return True
+    if any(decoded.startswith(prefix) for prefix in BLOCKED_STATIC_PREFIXES):
+        return True
+    if any(decoded.endswith(suffix) for suffix in BLOCKED_STATIC_SUFFIXES):
+        return True
+    return False
+
+
+def require_admin(handler):
+    token = admin_token()
+    if not token:
+        handler.send_json({"error": "Admin access is disabled. Set ADMIN_TOKEN in .env."}, 503)
+        return False
+    provided = (
+        handler.headers.get("X-Admin-Token")
+        or handler.headers.get("Authorization", "").removeprefix("Bearer ").strip()
+    )
+    if not provided or not hmac.compare_digest(provided, token):
+        handler.send_json({"error": "Unauthorized"}, 401)
+        return False
+    return True
+
+
+def row_to_submission(row):
+    item = dict(row)
+    item["timestamp"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(item.get("created_at") or 0))
+    return item
+
+
+def save_submission(payload):
+    form_type = clip(payload.get("form_type") or "consultation", 64)
+    name = clip(payload.get("name") or payload.get("contact_name"), 120)
+    phone = clip(payload.get("phone"), 40)
+    email = clip(payload.get("email"), 160)
+    program = clip(payload.get("program"), 120)
+    goal = clip(payload.get("goal"), 200)
+    message = clip(payload.get("message"), 2000)
+    coach = clip(payload.get("coach"), 120)
+    company = clip(payload.get("company"), 160)
+    event_type = clip(payload.get("event_type"), 120)
+    attendees = clip(payload.get("attendees"), 80)
+    preferred_date = clip(payload.get("preferred_date"), 80)
+    budget = clip(payload.get("budget"), 80)
+    location = clip(payload.get("location"), 160)
+
+    if form_type == "corporate_event":
+        missing = [field for field, value in [
+            ("company", company), ("contact_name", name), ("email", email),
+            ("phone", phone), ("event_type", event_type), ("attendees", attendees),
+        ] if not value]
+        if missing:
+            return None, missing
+    else:
+        missing = [field for field, value in [
+            ("name", name), ("phone", phone), ("program", program), ("goal", goal),
+        ] if not value]
+        if missing:
+            return None, missing
+
+    submission_id = uuid.uuid4().hex
+    created_at = int(time.time())
+    with get_connection() as conn:
+        conn.execute(
+            """INSERT INTO submissions (
+                id, form_type, name, phone, email, program, goal, message, coach,
+                company, event_type, attendees, preferred_date, budget, location, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (
+                submission_id, form_type, name, phone, email, program, goal, message, coach,
+                company, event_type, attendees, preferred_date, budget, location, created_at,
+            ),
+        )
+        # Keep legacy leads table in sync for the owner-data viewer.
+        if form_type != "corporate_event":
+            conn.execute(
+                "INSERT INTO leads (name, phone, goal, program, message, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+                (name, phone, goal or event_type or "consultation", program or event_type or "general", message, created_at),
+            )
+        else:
+            conn.execute(
+                "INSERT INTO leads (name, phone, goal, program, message, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+                (name, phone, event_type or "corporate_event", company or "corporate", message or f"{attendees} attendees", created_at),
+            )
+        conn.commit()
+    return submission_id, None
 
 def build_chat_system_prompt():
     plan_lines = []
@@ -463,71 +640,150 @@ class AppHandler(SimpleHTTPRequestHandler):
         self.wfile.write(body)
 
     def read_json(self):
-        length = int(self.headers.get("Content-Length", "0"))
+        try:
+            length = int(self.headers.get("Content-Length", "0"))
+        except ValueError:
+            raise ValueError("Invalid Content-Length")
+        if length < 0:
+            raise ValueError("Invalid Content-Length")
+        if length > MAX_JSON_BYTES:
+            raise ValueError("Payload too large")
         if length == 0:
             return {}
-        return json.loads(self.rfile.read(length).decode("utf-8"))
+        raw = self.rfile.read(length)
+        return json.loads(raw.decode("utf-8"))
 
     def do_GET(self):
         ensure_database()
         path = urlparse(self.path).path
-        if path.endswith(".sqlite3"):
+        if path == "/admin":
+            self.path = "/admin.html"
+            path = "/admin.html"
+
+        if path.startswith("/api/"):
+            if path == "/api/health":
+                return self.send_json({
+                    "ok": True,
+                    "engine": "python",
+                    "databaseExists": DB_PATH.exists(),
+                    "adminConfigured": bool(admin_token()),
+                    "aiEnabled": bool(os.environ.get("OPENAI_API_KEY", "").strip()),
+                })
+            if path == "/api/content":
+                return self.send_json(content_payload())
+            if path == "/api/chat/status":
+                has_openai = bool(os.environ.get("OPENAI_API_KEY", "").strip())
+                return self.send_json({
+                    "ok": True,
+                    "aiEnabled": has_openai,
+                    "engine": "openai" if has_openai else "local",
+                    "model": os.environ.get("OPENAI_MODEL", "gpt-5.6").strip() or "gpt-5.6",
+                    "suggestions": CHAT_SUGGESTIONS,
+                })
+            if path == "/api/admin-data":
+                if not require_admin(self):
+                    return
+                with get_connection() as conn:
+                    leads = conn.execute("SELECT * FROM leads ORDER BY created_at DESC LIMIT 50").fetchall()
+                    checkins = conn.execute("SELECT * FROM checkins ORDER BY created_at DESC LIMIT 50").fetchall()
+                    newsletter = conn.execute("SELECT * FROM newsletter ORDER BY created_at DESC LIMIT 50").fetchall()
+                    ai_scans = conn.execute("SELECT * FROM ai_scans ORDER BY created_at DESC LIMIT 50").fetchall()
+                    calculations = conn.execute("SELECT * FROM calculator_results ORDER BY created_at DESC LIMIT 50").fetchall()
+                    chat_messages = conn.execute("SELECT * FROM chat_messages ORDER BY created_at DESC LIMIT 50").fetchall()
+                    submissions = conn.execute("SELECT * FROM submissions ORDER BY created_at DESC LIMIT 100").fetchall()
+                return self.send_json({
+                    "ok": True,
+                    "leads": [dict(r) for r in leads],
+                    "checkins": [dict(r) for r in checkins],
+                    "newsletter": [dict(r) for r in newsletter],
+                    "ai_scans": [dict(r) for r in ai_scans],
+                    "calculations": [dict(r) for r in calculations],
+                    "chat_messages": [dict(r) for r in chat_messages],
+                    "submissions": [row_to_submission(r) for r in submissions],
+                })
+            if path == "/api/submissions":
+                if not require_admin(self):
+                    return
+                with get_connection() as conn:
+                    rows = conn.execute("SELECT * FROM submissions ORDER BY created_at DESC LIMIT 200").fetchall()
+                data = [row_to_submission(r) for r in rows]
+                return self.send_json({"ok": True, "count": len(data), "data": data})
             return self.send_json({"error": "Not found"}, 404)
-        if path == "/api/health":
-            with get_connection() as conn:
-                tables = conn.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name").fetchall()
-            return self.send_json({"ok": True, "database": str(DB_PATH), "databaseExists": DB_PATH.exists(), "tables": [row["name"] for row in tables]})
-        if path == "/api/content":
-            return self.send_json(content_payload())
-        if path == "/api/chat/status":
-            has_openai = bool(os.environ.get("OPENAI_API_KEY", "").strip())
-            return self.send_json({
-                "ok": True,
-                "aiEnabled": has_openai,
-                "engine": "openai" if has_openai else "local",
-                "model": os.environ.get("OPENAI_MODEL", "gpt-5.6").strip() or "gpt-5.6",
-                "suggestions": CHAT_SUGGESTIONS,
-            })
-        if path == "/api/admin-data":
-            with get_connection() as conn:
-                leads = conn.execute("SELECT * FROM leads ORDER BY created_at DESC LIMIT 50").fetchall()
-                checkins = conn.execute("SELECT * FROM checkins ORDER BY created_at DESC LIMIT 50").fetchall()
-                newsletter = conn.execute("SELECT * FROM newsletter ORDER BY created_at DESC LIMIT 50").fetchall()
-                ai_scans = conn.execute("SELECT * FROM ai_scans ORDER BY created_at DESC LIMIT 50").fetchall()
-                calculations = conn.execute("SELECT * FROM calculator_results ORDER BY created_at DESC LIMIT 50").fetchall()
-                chat_messages = conn.execute("SELECT * FROM chat_messages ORDER BY created_at DESC LIMIT 50").fetchall()
-            return self.send_json({"leads": [dict(r) for r in leads], "checkins": [dict(r) for r in checkins], "newsletter": [dict(r) for r in newsletter], "ai_scans": [dict(r) for r in ai_scans], "calculations": [dict(r) for r in calculations], "chat_messages": [dict(r) for r in chat_messages]})
+
+        if is_blocked_static(path):
+            return self.send_json({"error": "Not found"}, 404)
         if not (PUBLIC / path.lstrip("/")).exists() and path != "/":
             self.path = "/index.html"
         return super().do_GET()
+
+    def do_DELETE(self):
+        ensure_database()
+        path = urlparse(self.path).path
+        if path.startswith("/api/submissions/"):
+            if not require_admin(self):
+                return
+            submission_id = clip(unquote(path.split("/api/submissions/", 1)[1]), 64)
+            if not submission_id:
+                return self.send_json({"error": "Not found"}, 404)
+            with get_connection() as conn:
+                cur = conn.execute("DELETE FROM submissions WHERE id = ?", (submission_id,))
+                conn.commit()
+                if cur.rowcount < 1:
+                    return self.send_json({"error": "Not found"}, 404)
+            return self.send_json({"ok": True})
+        return self.send_json({"error": "Not found"}, 404)
 
     def do_POST(self):
         ensure_database()
         path = urlparse(self.path).path
         try:
             payload = self.read_json()
+        except ValueError as exc:
+            status = 413 if "too large" in str(exc).lower() else 400
+            return self.send_json({"error": str(exc)}, status)
         except json.JSONDecodeError:
             return self.send_json({"error": "Invalid JSON"}, 400)
-        if path == "/api/leads":
-            required = ["name", "phone", "goal", "program"]
-            missing = [f for f in required if not str(payload.get(f, "")).strip()]
+
+        if path in RATE_LIMITS and not check_rate_limit(self, path):
+            return self.send_json({"error": "Too many requests. Please wait a minute."}, 429)
+
+        if path in {"/api/submit", "/api/leads"}:
+            if path == "/api/leads" and not payload.get("form_type"):
+                payload = {
+                    "form_type": "consultation",
+                    "name": payload.get("name"),
+                    "phone": payload.get("phone"),
+                    "goal": payload.get("goal"),
+                    "program": payload.get("program"),
+                    "message": payload.get("message"),
+                    "email": payload.get("email"),
+                    "coach": payload.get("coach"),
+                }
+            submission_id, missing = save_submission(payload)
             if missing:
-                return self.send_json({"error": "Missing required fields", "fields": missing}, 400)
-            with get_connection() as conn:
-                conn.execute("INSERT INTO leads (name, phone, goal, program, message, created_at) VALUES (?, ?, ?, ?, ?, ?)",
-                    (str(payload["name"]).strip(), str(payload["phone"]).strip(), str(payload["goal"]).strip(), str(payload["program"]).strip(), str(payload.get("message", "")).strip(), int(time.time())))
-                conn.commit()
-            return self.send_json({"ok": True, "message": "Saved."}, 201)
+                return self.send_json({"ok": False, "error": "Missing required fields", "fields": missing}, 400)
+            return self.send_json({"ok": True, "id": submission_id, "message": "Saved."}, 201)
+
         if path == "/api/calculations":
             required = ["calculator", "title", "result"]
             missing = [f for f in required if not str(payload.get(f, "")).strip()]
             if missing:
                 return self.send_json({"error": "Missing required fields", "fields": missing}, 400)
             with get_connection() as conn:
-                conn.execute("INSERT INTO calculator_results (calculator, title, result, unit, rating, created_at) VALUES (?, ?, ?, ?, ?, ?)",
-                    (str(payload["calculator"]).strip(), str(payload["title"]).strip(), str(payload["result"]).strip(), str(payload.get("unit", "")).strip(), str(payload.get("rating", "")).strip(), int(time.time())))
+                conn.execute(
+                    "INSERT INTO calculator_results (calculator, title, result, unit, rating, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+                    (
+                        clip(payload["calculator"], 80),
+                        clip(payload["title"], 160),
+                        clip(payload["result"], 160),
+                        clip(payload.get("unit", ""), 40),
+                        clip(payload.get("rating", ""), 80),
+                        int(time.time()),
+                    ),
+                )
                 conn.commit()
             return self.send_json({"ok": True, "message": "Saved."}, 201)
+
         if path == "/api/chat":
             message = normalize_chat_text(payload.get("message", ""))
             if not message:
@@ -535,7 +791,9 @@ class AppHandler(SimpleHTTPRequestHandler):
             if len(message) > 2000:
                 return self.send_json({"error": "Message is too long"}, 400)
             history = payload.get("history") if isinstance(payload.get("history"), list) else []
-            session_id = normalize_chat_text(payload.get("sessionId", "")) or "anonymous"
+            # Cap client-controlled history to limit cost/prompt injection surface.
+            history = history[-6:]
+            session_id = clip(payload.get("sessionId", ""), 80) or "anonymous"
             reply, source = generate_chat_reply(message, history)
             try:
                 save_chat_exchange(session_id, message, reply, source)
@@ -552,13 +810,25 @@ class AppHandler(SimpleHTTPRequestHandler):
 
 if __name__ == "__main__":
     init_db()
-    host = "0.0.0.0"
+    host = os.environ.get("HOST", "127.0.0.1").strip() or "127.0.0.1"
     port = int(os.environ.get("PORT", "8000"))
-    try:
-        local_ip = socket.gethostbyname(socket.gethostname())
-    except OSError:
-        local_ip = "YOUR-LAPTOP-IP"
+    if not admin_token():
+        generated = secrets.token_urlsafe(24)
+        os.environ["ADMIN_TOKEN"] = generated
+        print("ADMIN_TOKEN was not set. Generated a temporary token for this process:")
+        print(f"  {generated}")
+        print("Add ADMIN_TOKEN to your .env file to keep a stable owner password.")
     server = ThreadingHTTPServer((host, port), AppHandler)
     print(f"Fitness Gurukul running at http://127.0.0.1:{port}")
-    print(f"Share on Wi-Fi: http://{local_ip}:{port}")
+    if host in {"0.0.0.0", "::"}:
+        try:
+            local_ip = socket.gethostbyname(socket.gethostname())
+        except OSError:
+            local_ip = "YOUR-LAPTOP-IP"
+        print(f"LAN bind enabled. Share: http://{local_ip}:{port}")
+        print("Admin APIs require the X-Admin-Token header.")
+    else:
+        print("Bound to localhost only. Set HOST=0.0.0.0 to share on Wi-Fi.")
+    print(f"Admin dashboard: http://127.0.0.1:{port}/admin")
+    print(f"Owner data: http://127.0.0.1:{port}/owner-data.html")
     server.serve_forever()
