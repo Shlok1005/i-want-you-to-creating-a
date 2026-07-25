@@ -43,8 +43,11 @@ jobs:
         code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/me)
         test "$code" = "200"
         curl -sf http://127.0.0.1:8000/me | grep -q 'Owner interface'
-        # User website should not advertise owner dashboard in main nav
-        ! curl -sf http://127.0.0.1:8000/ | grep -q 'desktop-nav.*>Dashboard<'
+        # User website main nav should not include owner dashboard
+        if curl -sf http://127.0.0.1:8000/ | grep -q 'href="dashboard.html">Dashboard'; then
+          echo "Public homepage still exposes Dashboard in nav" >&2
+          exit 1
+        fi
         # Admin data must require a token
         code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/api/admin-data)
         test "$code" = "401"
