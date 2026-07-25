@@ -25,6 +25,8 @@ RATE_LIMITS = {
     "/api/leads": 30,
     "/api/calculations": 40,
     "/api/match": 40,
+    "/api/quiz": 40,
+    "/api/challenge-join": 20,
 }
 _rate_lock = threading.Lock()
 _rate_buckets = {}
@@ -179,6 +181,7 @@ GOAL_MATCHES = {
         "planCategory": "prime",
         "coachCategories": ["fitness", "yoga"],
         "cta": "book-consultation.html",
+        "challengeId": "fat-burn-30",
     },
     "strength": {
         "goal": "strength",
@@ -188,6 +191,7 @@ GOAL_MATCHES = {
         "planCategory": "signature",
         "coachCategories": ["fitness"],
         "cta": "book-consultation.html",
+        "challengeId": "strength-30",
     },
     "yoga": {
         "goal": "yoga",
@@ -197,6 +201,7 @@ GOAL_MATCHES = {
         "planCategory": "recovery",
         "coachCategories": ["yoga"],
         "cta": "coaches.html",
+        "challengeId": "mobility-21",
     },
     "running": {
         "goal": "running",
@@ -206,6 +211,7 @@ GOAL_MATCHES = {
         "planCategory": "endurance",
         "coachCategories": ["fitness", "sports"],
         "cta": "services.html",
+        "challengeId": "run-start-28",
     },
     "kids": {
         "goal": "kids",
@@ -215,6 +221,7 @@ GOAL_MATCHES = {
         "planCategory": "training",
         "coachCategories": ["kids", "special"],
         "cta": "coaches.html",
+        "challengeId": "strength-30",
     },
     "rehab": {
         "goal": "rehab",
@@ -224,8 +231,82 @@ GOAL_MATCHES = {
         "planCategory": "training",
         "coachCategories": ["rehab", "fitness"],
         "cta": "book-consultation.html",
+        "challengeId": "mobility-21",
     },
 }
+
+CHALLENGES = [
+    {
+        "id": "fat-burn-30",
+        "name": "30-Day Fat Burn Challenge",
+        "tag": "Fat loss",
+        "days": 30,
+        "level": "All levels",
+        "sessionsPerWeek": 4,
+        "focus": ["HIIT finishers", "Strength circuits", "Indian nutrition check-ins"],
+        "outcome": "Drop stubborn fat while keeping energy for work and family.",
+        "image": "https://images.unsplash.com/photo-1549476464-37392f717541?w=1400&q=80&auto=format&fit=crop",
+        "milestones": ["Week 1: habit lock-in", "Week 2: pace up", "Week 3: body recomposition", "Week 4: finish strong"],
+        "planCategory": "prime",
+        "goal": "weight-loss",
+    },
+    {
+        "id": "strength-30",
+        "name": "30-Day Strength Challenge",
+        "tag": "Strength",
+        "days": 30,
+        "level": "Beginner to intermediate",
+        "sessionsPerWeek": 3,
+        "focus": ["Compound lifts", "Progressive overload", "Form coaching"],
+        "outcome": "Build measurable strength with safe weekly progressions.",
+        "image": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1400&q=80&auto=format&fit=crop",
+        "milestones": ["Week 1: movement quality", "Week 2: load up", "Week 3: volume push", "Week 4: PR week"],
+        "planCategory": "signature",
+        "goal": "strength",
+    },
+    {
+        "id": "mobility-21",
+        "name": "21-Day Mobility Reset",
+        "tag": "Yoga & recovery",
+        "days": 21,
+        "level": "All levels",
+        "sessionsPerWeek": 5,
+        "focus": ["Breathwork", "Hip & spine mobility", "Stress reset"],
+        "outcome": "Move freer, sleep better, and reduce desk-day stiffness.",
+        "image": "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=1400&q=80&auto=format&fit=crop",
+        "milestones": ["Week 1: breath baseline", "Week 2: joint freedom", "Week 3: calm strength"],
+        "planCategory": "recovery",
+        "goal": "yoga",
+    },
+    {
+        "id": "run-start-28",
+        "name": "28-Day Run Starter",
+        "tag": "Endurance",
+        "days": 28,
+        "level": "Beginner",
+        "sessionsPerWeek": 3,
+        "focus": ["Walk-run intervals", "Easy aerobic base", "Runner strength"],
+        "outcome": "Go from couch to consistent 5K-ready pacing.",
+        "image": "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=1400&q=80&auto=format&fit=crop",
+        "milestones": ["Week 1: start easy", "Week 2: longer intervals", "Week 3: steady runs", "Week 4: 5K prep"],
+        "planCategory": "endurance",
+        "goal": "running",
+    },
+    {
+        "id": "hyrox-21",
+        "name": "21-Day Hyrox Spark",
+        "tag": "Functional racing",
+        "days": 21,
+        "level": "Intermediate",
+        "sessionsPerWeek": 4,
+        "focus": ["Compromised running", "Grip & engine", "Station skills"],
+        "outcome": "Build race-day stamina for Hyrox-style efforts.",
+        "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1400&q=80&auto=format&fit=crop",
+        "milestones": ["Week 1: engine base", "Week 2: station power", "Week 3: race simulation"],
+        "planCategory": "forge",
+        "goal": "strength",
+    },
+]
 
 def enriched_coaches():
     out = []
@@ -237,6 +318,43 @@ def enriched_coaches():
         row["image"] = media.get("image") or row.get("image") or ""
         out.append(row)
     return out
+
+def challenge_join_count():
+    try:
+        with get_connection() as conn:
+            row = conn.execute(
+                "SELECT COUNT(*) AS c FROM submissions WHERE form_type = 'challenge-join'"
+            ).fetchone()
+            return int(row["c"] if row else 0)
+    except Exception:
+        return 0
+
+
+def challenges_payload():
+    joins = challenge_join_count()
+    # Seeded baseline so the page feels alive even before real joins land.
+    seeded = 48 + (int(time.time()) // 3600) % 7
+    challenges = []
+    for idx, item in enumerate(CHALLENGES):
+        row = dict(item)
+        row["joined"] = seeded + joins + (idx * 3)
+        challenges.append(row)
+    return {
+        "ok": True,
+        "challenges": challenges,
+        "totalJoined": seeded + joins,
+        "activeChallenges": len(CHALLENGES),
+        "updatedAt": int(time.time()),
+    }
+
+
+def find_challenge(challenge_id):
+    challenge_id = clip(str(challenge_id or ""), 64)
+    for item in CHALLENGES:
+        if item.get("id") == challenge_id:
+            return item
+    return None
+
 
 def live_payload():
     base_clients = 1000
@@ -251,14 +369,19 @@ def live_payload():
                 "SELECT COUNT(*) AS c FROM submissions WHERE created_at >= ?",
                 (int(time.time()) - 24 * 60 * 60,),
             ).fetchone()["c"]
+            challenge_joins = conn.execute(
+                "SELECT COUNT(*) AS c FROM submissions WHERE form_type = 'challenge-join'"
+            ).fetchone()["c"]
     except Exception:
-        leads = calcs = chats = today = 0
+        leads = calcs = chats = today = challenge_joins = 0
     pulse = [
         "A Hyderabad member just booked a free consultation",
         "Coach match completed for yoga & mobility",
         "Macro calculator used for Indian meal planning",
         "Doorstep training inquiry from Gachibowli",
         "Running plan comparison opened on Services",
+        "Someone just joined the 30-Day Fat Burn Challenge",
+        "Plan quiz completed — Signature coaching recommended",
     ]
     # Rotate pulse by minute so the site feels alive without fake realtime sockets.
     idx = int(time.time() // 45) % len(pulse)
@@ -272,6 +395,7 @@ def live_payload():
         "inquiriesToday": today,
         "toolUses": calcs,
         "chatSessions": chats,
+        "challengeJoins": 48 + max(challenge_joins, 0),
         "activeNow": 3 + ((int(time.time()) // 30) % 9),
         "pulse": pulse[idx],
         "updatedAt": int(time.time()),
@@ -289,6 +413,7 @@ def match_goal(payload):
     plan = next((p for p in PLANS if p.get("category") == match.get("planCategory")), None)
     if not plan:
         plan = next((s for s in SERVICES if s.get("name") == match.get("plan")), SERVICES[0])
+    challenge = find_challenge(match.get("challengeId")) or CHALLENGES[0]
     tip = {
         "beginner": "Start with a free consultation and a gentle 2-week ramp-up.",
         "intermediate": "Expect progressive overload with weekly check-ins.",
@@ -299,14 +424,82 @@ def match_goal(payload):
         "ok": True,
         "match": match,
         "plan": plan,
+        "challenge": challenge,
         "coaches": coaches,
         "tip": tip,
         "mode": mode,
         "score": 92 if goal in GOAL_MATCHES else 78,
     }
 
+
+def quiz_recommend(payload):
+    """Quick quiz → plan + challenge recommendation for the Transformation Challenge page."""
+    goal = clip(str(payload.get("goal", "")).lower().replace(" ", "-"), 40)
+    experience = clip(str(payload.get("experience", payload.get("level", "beginner"))).lower(), 40)
+    preference = clip(str(payload.get("preference", payload.get("location", "in-person"))).lower(), 40)
+    time_budget = clip(str(payload.get("time", payload.get("days", "30"))).lower(), 40)
+
+    # Map quiz shortcuts to goal keys.
+    aliases = {
+        "fat-loss": "weight-loss",
+        "lose-weight": "weight-loss",
+        "recomp": "weight-loss",
+        "muscle": "strength",
+        "build-muscle": "strength",
+        "flexibility": "yoga",
+        "stress": "yoga",
+        "mobility": "yoga",
+        "endurance": "running",
+        "run": "running",
+        "5k": "running",
+        "hyrox": "strength",
+        "injury": "rehab",
+        "recovery": "rehab",
+    }
+    goal = aliases.get(goal, goal)
+    base = match_goal({
+        "goal": goal,
+        "experience": experience,
+        "preference": preference,
+    })
+    challenge = base.get("challenge") or CHALLENGES[0]
+
+    # Prefer shorter challenges when the quiz says time is tight.
+    if time_budget in {"busy", "15", "21", "short"}:
+        short = next((c for c in CHALLENGES if c.get("days", 30) <= 21 and c.get("goal") == challenge.get("goal")), None)
+        if short:
+            challenge = short
+            plan = next((p for p in PLANS if p.get("category") == short.get("planCategory")), base.get("plan"))
+            base["plan"] = plan
+    elif time_budget in {"race", "hyrox", "functional"}:
+        hyrox = find_challenge("hyrox-21")
+        if hyrox:
+            challenge = hyrox
+            plan = next((p for p in PLANS if p.get("category") == "forge"), base.get("plan"))
+            base["plan"] = plan
+
+    reasons = [
+        f"Goal focus: {base['match'].get('title', goal)}",
+        f"Training mode: {'in-person / doorstep' if preference in {'in-person', 'doorstep', 'home', 'studio'} else 'virtual'}",
+        f"Challenge length: {challenge.get('days')} days · {challenge.get('sessionsPerWeek')} sessions/week",
+    ]
+    return {
+        "ok": True,
+        "score": base.get("score", 90),
+        "match": base.get("match"),
+        "plan": base.get("plan"),
+        "challenge": challenge,
+        "coaches": base.get("coaches", []),
+        "tip": base.get("tip"),
+        "mode": base.get("mode"),
+        "reasons": reasons,
+        "nextStep": "book-consultation.html",
+    }
+
+
 def content_payload():
     coaches = enriched_coaches()
+    challenge_data = challenges_payload()
     return {
         "heroHeadline": "Train Smarter. Live Stronger.",
         "heroSubhead": "1:1 personal training in Hyderabad — Indian nutrition and doorstep coaching built around your body and schedule.",
@@ -314,6 +507,7 @@ def content_payload():
         "plans": PLANS,
         "coaches": coaches,
         "testimonials": TESTIMONIALS,
+        "challenges": challenge_data.get("challenges", []),
         "updates": UPDATES,
         "serviceAreas": SERVICE_AREAS,
         "contact": CONTACT,
@@ -324,6 +518,7 @@ def content_payload():
             "events": 50,
             "coaches": len(coaches),
             "specialties": len({c.get("category") for c in coaches}),
+            "challengeJoins": challenge_data.get("totalJoined", 0),
         },
         "live": live_payload(),
     }
@@ -873,6 +1068,9 @@ class AppHandler(SimpleHTTPRequestHandler):
         elif path == "/admin":
             self.path = "/admin.html"
             path = self.path
+        elif path in {"/challenge", "/challenges", "/transformation-challenge", "/workouts"}:
+            self.path = "/transformation-challenge.html"
+            path = self.path
 
         if path.startswith("/api/"):
             if path == "/api/health":
@@ -910,6 +1108,8 @@ class AppHandler(SimpleHTTPRequestHandler):
                 return self.send_json(content_payload())
             if path == "/api/live":
                 return self.send_json(live_payload())
+            if path == "/api/challenges":
+                return self.send_json(challenges_payload())
             if path == "/api/goals":
                 return self.send_json({"ok": True, "goals": list(GOAL_MATCHES.values())})
             if path == "/api/chat/status":
@@ -1076,6 +1276,35 @@ class AppHandler(SimpleHTTPRequestHandler):
 
         if path == "/api/match":
             return self.send_json(match_goal(payload))
+
+        if path == "/api/quiz":
+            return self.send_json(quiz_recommend(payload))
+
+        if path == "/api/challenge-join":
+            challenge = find_challenge(payload.get("challengeId") or payload.get("challenge"))
+            name = clip(payload.get("name", ""), 80)
+            phone = clip(payload.get("phone", ""), 40)
+            email = clip(payload.get("email", ""), 120)
+            join_payload = {
+                "form_type": "challenge-join",
+                "name": name,
+                "phone": phone,
+                "email": email,
+                "program": (challenge or {}).get("name", "Transformation Challenge"),
+                "goal": (challenge or {}).get("goal") or clip(payload.get("goal", "transformation"), 80) or "transformation",
+                "message": clip(payload.get("message", "Joined from transformation-challenge page"), 500),
+                "coach": "",
+            }
+            submission_id, missing = save_submission(join_payload)
+            if missing:
+                return self.send_json({"ok": False, "error": "Missing fields", "missing": missing}, 400)
+            return self.send_json({
+                "ok": True,
+                "message": "You are in. A coach will reach out soon.",
+                "challenge": challenge,
+                "id": submission_id,
+                "stats": challenges_payload(),
+            }, 201)
 
         if path == "/api/chat":
             message = normalize_chat_text(payload.get("message", ""))

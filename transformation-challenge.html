@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Transformation Challenge | Fitness Gurukul</title>
+  <meta name="description" content="Join Fitness Gurukul transformation challenges in Hyderabad. Take a quick quiz for a plan recommendation, pick a challenge, and start with coach support." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    :root {
+      --tc-ink: #f3f6f4;
+      --tc-muted: rgba(243,246,244,0.68);
+      --tc-line: rgba(255,255,255,0.12);
+      --tc-accent: #b8f23d;
+      --tc-ember: #ff6a3d;
+      --tc-deep: #07110c;
+      --tc-panel: rgba(10, 22, 16, 0.72);
+      --tc-display: "Barlow Condensed", "Public Sans", sans-serif;
+      --tc-body: "Manrope", "Public Sans", sans-serif;
+    }
+
+    body.tc-page {
+      font-family: var(--tc-body);
+      background: var(--tc-deep);
+      color: var(--tc-ink);
+      overflow-x: hidden;
+    }
+    body.tc-page h1, body.tc-page h2, body.tc-page h3, .tc-brand {
+      font-family: var(--tc-display);
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+    }
+
+    .tc-hero {
+      position: relative;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: grid;
+      align-items: end;
+    }
+    .tc-hero-media {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(180deg, rgba(7,17,12,0.2) 0%, rgba(7,17,12,0.55) 45%, rgba(7,17,12,0.94) 100%),
+        url("https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1800&q=85&auto=format&fit=crop") center/cover no-repeat;
+      transform: scale(1.05);
+      animation: tcKen 16s ease-in-out infinite alternate;
+    }
+    @keyframes tcKen {
+      from { transform: scale(1.05) translate3d(0,0,0); }
+      to { transform: scale(1.12) translate3d(-1.2%, -1%, 0); }
+    }
+    .tc-hero-inner {
+      position: relative;
+      z-index: 2;
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 120px 0 52px;
+    }
+    .tc-brand {
+      margin: 0 0 14px;
+      font-size: clamp(2.6rem, 8vw, 5.6rem);
+      line-height: 0.9;
+      font-weight: 800;
+    }
+    .tc-brand span { color: var(--tc-accent); display: block; }
+    .tc-hero h1 {
+      margin: 0 0 12px;
+      max-width: 16ch;
+      font-size: clamp(1.55rem, 3.5vw, 2.45rem);
+      font-weight: 700;
+      line-height: 1.05;
+      text-transform: none;
+      font-family: var(--tc-body);
+      letter-spacing: -0.02em;
+    }
+    .tc-hero p {
+      max-width: 40ch;
+      color: var(--tc-muted);
+      margin: 0 0 22px;
+      font-size: 1.05rem;
+    }
+    .tc-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .tc-scroll-hint {
+      margin-top: 26px;
+      color: rgba(255,255,255,0.45);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      animation: tcPulse 2.2s ease-in-out infinite;
+    }
+    @keyframes tcPulse {
+      0%, 100% { opacity: 0.35; transform: translateY(0); }
+      50% { opacity: 0.95; transform: translateY(4px); }
+    }
+
+    .tc-live {
+      border-block: 1px solid var(--tc-line);
+      background: linear-gradient(90deg, rgba(184,242,61,0.08), transparent 40%, rgba(255,106,61,0.08));
+    }
+    .tc-live-inner {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 18px 0;
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .tc-live-pulse {
+      display: flex; align-items: center; gap: 10px;
+      color: var(--tc-muted); font-size: 0.92rem;
+    }
+    .tc-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--tc-accent);
+      box-shadow: 0 0 0 0 rgba(184,242,61,0.55);
+      animation: tcDot 1.8s ease-out infinite;
+    }
+    @keyframes tcDot {
+      0% { box-shadow: 0 0 0 0 rgba(184,242,61,0.55); }
+      70% { box-shadow: 0 0 0 10px rgba(184,242,61,0); }
+      100% { box-shadow: 0 0 0 0 rgba(184,242,61,0); }
+    }
+    .tc-live-stats { display: flex; gap: 18px; flex-wrap: wrap; }
+    .tc-live-stats strong {
+      display: block;
+      font-family: var(--tc-display);
+      font-size: 1.45rem;
+      line-height: 1;
+    }
+    .tc-live-stats span { color: var(--tc-muted); font-size: 0.78rem; }
+
+    .tc-section {
+      padding: 72px 0;
+      background:
+        radial-gradient(ellipse at 0% 0%, rgba(184,242,61,0.1), transparent 42%),
+        radial-gradient(ellipse at 100% 20%, rgba(255,106,61,0.08), transparent 38%);
+    }
+    .tc-shell { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
+    .tc-section-head { margin-bottom: 28px; max-width: 640px; }
+    .tc-section-head h2 {
+      margin: 8px 0 0;
+      font-size: clamp(1.9rem, 3.4vw, 2.8rem);
+      line-height: 0.95;
+    }
+    .tc-section-head p { color: var(--tc-muted); margin: 10px 0 0; }
+
+    .tc-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+    .tc-filters button {
+      border: 1px solid var(--tc-line);
+      background: rgba(255,255,255,0.03);
+      color: var(--tc-muted);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font: inherit;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: border-color .2s, color .2s, background .2s, transform .2s;
+    }
+    .tc-filters button:hover { color: #fff; border-color: rgba(255,255,255,0.28); transform: translateY(-1px); }
+    .tc-filters button.active {
+      color: #0a1408;
+      background: var(--tc-accent);
+      border-color: var(--tc-accent);
+    }
+
+    .tc-stage {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+    .tc-spotlight {
+      position: relative;
+      min-height: 480px;
+      overflow: hidden;
+      border: 1px solid var(--tc-line);
+      background: #000;
+    }
+    .tc-spotlight-img {
+      position: absolute; inset: 0;
+      background-size: cover;
+      background-position: center;
+      transform: scale(1.04);
+      transition: transform .8s ease, opacity .35s ease;
+    }
+    .tc-spotlight:hover .tc-spotlight-img { transform: scale(1.08); }
+    .tc-spotlight-shade {
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 35%, rgba(0,0,0,0.85) 100%);
+    }
+    .tc-spotlight-copy {
+      position: absolute; left: 22px; right: 22px; bottom: 22px;
+      z-index: 2;
+    }
+    .tc-spotlight-copy .tag {
+      display: inline-block;
+      color: #0a1408;
+      background: var(--tc-accent);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 5px 9px;
+      margin-bottom: 10px;
+    }
+    .tc-spotlight-copy h3 {
+      margin: 0 0 8px;
+      font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+      line-height: 0.95;
+    }
+    .tc-spotlight-copy p { margin: 0; color: rgba(255,255,255,0.78); max-width: 42ch; }
+
+    .tc-detail {
+      border: 1px solid var(--tc-line);
+      background: var(--tc-panel);
+      backdrop-filter: blur(10px);
+      padding: 22px;
+      display: grid;
+      gap: 16px;
+      align-content: start;
+    }
+    .tc-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .tc-metric {
+      border: 1px solid var(--tc-line);
+      padding: 12px 10px;
+      background: rgba(255,255,255,0.03);
+    }
+    .tc-metric strong {
+      display: block;
+      font-family: var(--tc-display);
+      font-size: 1.7rem;
+      line-height: 1;
+      color: var(--tc-accent);
+    }
+    .tc-metric span { color: var(--tc-muted); font-size: 0.75rem; }
+
+    .tc-day-scrub {
+      display: grid;
+      gap: 8px;
+    }
+    .tc-day-scrub label {
+      display: flex;
+      justify-content: space-between;
+      color: var(--tc-muted);
+      font-size: 0.82rem;
+    }
+    .tc-day-scrub input[type="range"] {
+      width: 100%;
+      accent-color: var(--tc-accent);
+      cursor: pointer;
+    }
+    .tc-day-note {
+      min-height: 44px;
+      color: var(--tc-ink);
+      font-size: 0.95rem;
+    }
+
+    .tc-milestones {
+      display: grid;
+      gap: 8px;
+    }
+    .tc-milestone {
+      display: grid;
+      grid-template-columns: 18px 1fr;
+      gap: 10px;
+      align-items: start;
+      color: var(--tc-muted);
+      font-size: 0.9rem;
+      transition: color .2s, transform .2s;
+    }
+    .tc-milestone i {
+      width: 10px; height: 10px; margin-top: 5px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      display: block;
+    }
+    .tc-milestone.active { color: #fff; transform: translateX(2px); }
+    .tc-milestone.active i { background: var(--tc-accent); }
+
+    .tc-focus { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tc-focus span {
+      border: 1px solid var(--tc-line);
+      padding: 6px 10px;
+      font-size: 0.78rem;
+      color: var(--tc-muted);
+    }
+
+    .tc-challenge-list {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .tc-challenge-list button {
+      border: 1px solid var(--tc-line);
+      background: rgba(255,255,255,0.03);
+      color: var(--tc-muted);
+      text-align: left;
+      padding: 10px;
+      cursor: pointer;
+      font: inherit;
+      transition: border-color .2s, background .2s, color .2s, transform .2s;
+    }
+    .tc-challenge-list button strong {
+      display: block;
+      color: #fff;
+      font-size: 0.82rem;
+      margin-bottom: 4px;
+      font-family: var(--tc-body);
+      text-transform: none;
+      letter-spacing: 0;
+    }
+    .tc-challenge-list button small { font-size: 0.72rem; }
+    .tc-challenge-list button:hover { transform: translateY(-2px); color: #fff; }
+    .tc-challenge-list button.active {
+      border-color: var(--tc-accent);
+      background: rgba(184,242,61,0.1);
+      color: #fff;
+    }
+
+    .tc-quiz-section {
+      padding: 72px 0;
+      background:
+        linear-gradient(180deg, rgba(255,106,61,0.08), transparent 30%),
+        radial-gradient(ellipse at 80% 0%, rgba(184,242,61,0.1), transparent 40%);
+    }
+    .tc-quiz-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    .tc-quiz-panel, .tc-result-panel {
+      border: 1px solid var(--tc-line);
+      background: var(--tc-panel);
+      backdrop-filter: blur(10px);
+      padding: 24px;
+      min-height: 420px;
+    }
+    .tc-progress {
+      height: 4px;
+      background: rgba(255,255,255,0.08);
+      margin-bottom: 18px;
+      overflow: hidden;
+    }
+    .tc-progress > span {
+      display: block;
+      height: 100%;
+      width: 25%;
+      background: linear-gradient(90deg, var(--tc-accent), var(--tc-ember));
+      transition: width .35s ease;
+    }
+    .tc-q {
+      margin: 0 0 16px;
+      font-size: 1.35rem;
+      text-transform: none;
+      font-family: var(--tc-body);
+      letter-spacing: -0.02em;
+      font-weight: 700;
+    }
+    .tc-options { display: grid; gap: 10px; }
+    .tc-option {
+      border: 1px solid var(--tc-line);
+      background: rgba(255,255,255,0.03);
+      color: var(--tc-ink);
+      text-align: left;
+      padding: 14px 16px;
+      cursor: pointer;
+      font: inherit;
+      transition: border-color .2s, background .2s, transform .2s;
+    }
+    .tc-option:hover { border-color: rgba(255,255,255,0.35); transform: translateX(3px); }
+    .tc-option.selected {
+      border-color: var(--tc-accent);
+      background: rgba(184,242,61,0.12);
+    }
+    .tc-quiz-nav {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .tc-quiz-nav button:disabled { opacity: 0.35; pointer-events: none; }
+
+    .tc-result-empty {
+      color: var(--tc-muted);
+      min-height: 280px;
+      display: grid;
+      place-content: center;
+      text-align: center;
+      gap: 8px;
+    }
+    .tc-score {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 72px; height: 72px;
+      border: 2px solid var(--tc-accent);
+      color: var(--tc-accent);
+      font-family: var(--tc-display);
+      font-size: 1.6rem;
+      margin-bottom: 10px;
+    }
+    .tc-result-panel h3 {
+      margin: 0 0 8px;
+      font-size: 1.8rem;
+      line-height: 0.95;
+    }
+    .tc-result-panel .lead { color: var(--tc-muted); margin: 0 0 14px; }
+    .tc-plan-box {
+      border: 1px solid rgba(184,242,61,0.35);
+      background: rgba(184,242,61,0.08);
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+    .tc-plan-box span {
+      display: block;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 4px;
+    }
+    .tc-plan-box strong { display: block; font-size: 1.1rem; }
+    .tc-plan-box em { font-style: normal; color: var(--tc-accent); }
+    .tc-reasons { margin: 0 0 14px; padding-left: 18px; color: var(--tc-muted); }
+    .tc-reasons li { margin: 6px 0; }
+    .tc-coaches {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .tc-coach {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 10px;
+      align-items: center;
+      border: 1px solid var(--tc-line);
+      padding: 8px;
+    }
+    .tc-coach img, .tc-coach .fallback {
+      width: 42px; height: 42px; object-fit: cover;
+      background: rgba(255,255,255,0.08);
+      display: grid; place-items: center;
+      font-size: 0.75rem; font-weight: 700;
+    }
+    .tc-coach strong { display: block; font-size: 0.9rem; }
+    .tc-coach small { color: var(--tc-muted); }
+
+    .tc-join {
+      padding: 72px 0 90px;
+    }
+    .tc-join-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+    .tc-join-copy h2 {
+      margin: 8px 0 12px;
+      font-size: clamp(1.9rem, 3.4vw, 2.8rem);
+      line-height: 0.95;
+    }
+    .tc-join-copy p { color: var(--tc-muted); max-width: 42ch; }
+    .tc-join-form {
+      border: 1px solid var(--tc-line);
+      background: var(--tc-panel);
+      padding: 22px;
+      display: grid;
+      gap: 12px;
+    }
+    .tc-join-form label {
+      display: grid;
+      gap: 6px;
+      font-size: 0.82rem;
+      color: var(--tc-muted);
+    }
+    .tc-join-form input, .tc-join-form select {
+      border: 1px solid var(--tc-line);
+      background: rgba(0,0,0,0.25);
+      color: #fff;
+      padding: 12px 12px;
+      font: inherit;
+    }
+    .tc-join-form input:focus, .tc-join-form select:focus {
+      outline: 1px solid var(--tc-accent);
+      border-color: var(--tc-accent);
+    }
+    .tc-join-status { min-height: 1.2em; color: var(--tc-accent); font-size: 0.9rem; }
+
+    .tc-reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .tc-reveal.in { opacity: 1; transform: none; }
+
+    @media (max-width: 960px) {
+      .tc-stage, .tc-quiz-layout, .tc-join-grid { grid-template-columns: 1fr; }
+      .tc-challenge-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .tc-spotlight { min-height: 360px; }
+    }
+    @media (max-width: 640px) {
+      .tc-metrics { grid-template-columns: 1fr; }
+      .tc-challenge-list { grid-template-columns: 1fr; }
+      .tc-hero-inner { padding-top: 110px; }
+    }
+  </style>
+  <script src="app.js" defer></script>
+</head>
+<body class="tc-page">
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a class="brand" href="index.html">
+          <span class="brand-mark"><img src="assets/fitness-gurukul-logo.png" alt="" /></span>
+          <span class="brand-text"><strong>Fitness</strong><span>Gurukul</span></span>
+        </a>
+      </div>
+      <nav class="desktop-nav">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="coaches.html">Coaches</a>
+        <a href="events.html">Events</a>
+        <a href="testimonials.html">Transformations</a>
+        <a href="transformation-challenge.html" class="active">Challenge</a>
+        <a href="tools.html">Tools</a>
+      </nav>
+      <div class="header-app-dropdown">
+        <button class="header-play-btn" type="button" aria-expanded="false" aria-haspopup="true" data-app-menu-btn>
+          <span>Get the App</span>
+        </button>
+        <div class="header-app-menu" data-app-menu hidden>
+          <a href="https://play.google.com/store/apps/details?id=com.fitnessgurukul.app" target="_blank" rel="noopener">Android — Google Play</a>
+          <a href="https://apps.apple.com/us/app/fitness-gurukul/id6771451272" target="_blank" rel="noopener">iOS — App Store</a>
+        </div>
+      </div>
+      <button class="menu-button" id="menuButton" aria-label="Open navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+  <nav class="mobile-nav" id="mobileNav">
+    <div class="mobile-nav-header">
+      <a class="brand" href="index.html">
+        <span class="brand-mark"><img src="assets/fitness-gurukul-logo.png" alt="" /></span>
+        <span class="brand-text"><strong>Fitness</strong><span>Gurukul</span></span>
+      </a>
+      <button class="mobile-nav-close" id="mobileNavClose">&times;</button>
+    </div>
+    <a href="index.html">Home</a>
+    <a href="services.html">Services</a>
+    <a href="coaches.html">Coaches</a>
+    <a href="events.html">Events</a>
+    <a href="testimonials.html">Transformations</a>
+    <a href="transformation-challenge.html" class="active">Challenge</a>
+    <a href="tools.html">Tools</a>
+  </nav>
+
+  <main>
+    <section class="tc-hero">
+      <div class="tc-hero-media" aria-hidden="true"></div>
+      <div class="tc-hero-inner">
+        <p class="tc-brand">Fitness <span>Gurukul</span></p>
+        <h1>Pick a challenge. Get a plan in 60 seconds.</h1>
+        <p>Interactive transformation challenges with live coach matching — take the quick quiz and lock your next 21–30 days.</p>
+        <div class="tc-actions">
+          <a class="primary-button" href="#tcQuiz">Take the quiz</a>
+          <a class="ghost-button" href="#tcChallenges">Browse challenges</a>
+        </div>
+        <div class="tc-scroll-hint">Live from API · scrub days · join in one tap</div>
+      </div>
+    </section>
+
+    <section class="tc-live" id="liveStats" aria-live="polite">
+      <div class="tc-live-inner">
+        <div class="tc-live-pulse">
+          <span class="tc-dot" aria-hidden="true"></span>
+          <span id="tcPulse">Loading live activity…</span>
+        </div>
+        <div class="tc-live-stats">
+          <div><strong id="tcJoined" data-live="challengeJoins">—</strong><span>Challenge joins</span></div>
+          <div><strong id="tcActive" data-live="activeNow">—</strong><span>Active now</span></div>
+          <div><strong id="tcClients" data-live="clientsTransformed">—</strong><span>Clients transformed</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tc-section" id="tcChallenges">
+      <div class="tc-shell">
+        <div class="tc-section-head tc-reveal">
+          <span class="section-kicker">Interactive challenges</span>
+          <h2>Choose your next push</h2>
+          <p>Tap a challenge, scrub the timeline, and see how the weeks unfold before you commit.</p>
+        </div>
+
+        <div class="tc-filters tc-reveal" id="tcFilters">
+          <button type="button" data-filter="all" class="active">All</button>
+          <button type="button" data-filter="weight-loss">Fat loss</button>
+          <button type="button" data-filter="strength">Strength</button>
+          <button type="button" data-filter="yoga">Mobility</button>
+          <button type="button" data-filter="running">Running</button>
+        </div>
+
+        <div class="tc-challenge-list tc-reveal" id="tcList"></div>
+
+        <div class="tc-stage tc-reveal" style="margin-top:22px">
+          <div class="tc-spotlight">
+            <div class="tc-spotlight-img" id="tcImage"></div>
+            <div class="tc-spotlight-shade"></div>
+            <div class="tc-spotlight-copy">
+              <span class="tag" id="tcTag">Challenge</span>
+              <h3 id="tcName">Loading…</h3>
+              <p id="tcOutcome">Fetching challenges from the Fitness Gurukul API.</p>
+            </div>
+          </div>
+
+          <div class="tc-detail">
+            <div class="tc-metrics">
+              <div class="tc-metric"><strong id="tcDays">—</strong><span>Days</span></div>
+              <div class="tc-metric"><strong id="tcSessions">—</strong><span>Sessions / week</span></div>
+              <div class="tc-metric"><strong id="tcPeople">—</strong><span>Joined</span></div>
+            </div>
+
+            <div class="tc-day-scrub">
+              <label>
+                <span>Day scrubber</span>
+                <span id="tcDayLabel">Day 1</span>
+              </label>
+              <input type="range" id="tcDayRange" min="1" max="30" value="1" />
+              <div class="tc-day-note" id="tcDayNote">Move the slider to preview the challenge timeline.</div>
+            </div>
+
+            <div class="tc-milestones" id="tcMilestones"></div>
+            <div class="tc-focus" id="tcFocus"></div>
+
+            <div class="tc-actions">
+              <a class="primary-button" id="tcJoinSelected" href="#tcJoin">Join this challenge</a>
+              <a class="ghost-button" href="#tcQuiz">Not sure? Take quiz</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tc-quiz-section" id="tcQuiz">
+      <div class="tc-shell">
+        <div class="tc-section-head tc-reveal">
+          <span class="section-kicker">Quick plan quiz</span>
+          <h2>Easy plan recommendation</h2>
+          <p>Four taps. We call the live quiz API and match you to a challenge plus coaching plan.</p>
+        </div>
+
+        <div class="tc-quiz-layout tc-reveal">
+          <div class="tc-quiz-panel">
+            <div class="tc-progress"><span id="tcQuizBar"></span></div>
+            <p class="tc-q" id="tcQuestion">Loading quiz…</p>
+            <div class="tc-options" id="tcOptions"></div>
+            <div class="tc-quiz-nav">
+              <button class="ghost-button" type="button" id="tcQuizBack" disabled>Back</button>
+              <button class="primary-button" type="button" id="tcQuizNext" disabled>Next</button>
+            </div>
+          </div>
+
+          <div class="tc-result-panel" id="tcQuizResult" aria-live="polite">
+            <div class="tc-result-empty">
+              <div class="tc-score">?</div>
+              <strong>Your match appears here</strong>
+              <span>Answer the quiz to unlock a plan + challenge from `/api/quiz`.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tc-join" id="tcJoin">
+      <div class="tc-shell tc-join-grid">
+        <div class="tc-join-copy tc-reveal">
+          <span class="section-kicker">Commit</span>
+          <h2>Lock your challenge seat</h2>
+          <p>Saves to the Fitness Gurukul database via `/api/challenge-join` so a coach can follow up. No payment on this step.</p>
+        </div>
+        <form class="tc-join-form tc-reveal" id="tcJoinForm">
+          <label>Your name
+            <input name="name" autocomplete="name" required placeholder="e.g. Rahul Sharma" />
+          </label>
+          <label>Phone
+            <input name="phone" type="tel" autocomplete="tel" required placeholder="+91 98765 43210" />
+          </label>
+          <label>Email <span style="opacity:.6">(optional)</span>
+            <input name="email" type="email" autocomplete="email" placeholder="you@example.com" />
+          </label>
+          <label>Challenge
+            <select name="challengeId" id="tcJoinSelect" required></select>
+          </label>
+          <button class="primary-button" type="submit">Join challenge</button>
+          <p class="tc-join-status" id="tcJoinStatus" role="status"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var challenges = [];
+      var selectedId = "";
+      var filter = "all";
+      var answers = {};
+      var step = 0;
+
+      var quizSteps = [
+        {
+          key: "goal",
+          q: "What do you want most from the next 30 days?",
+          options: [
+            { value: "weight-loss", label: "Lose fat / reshape" },
+            { value: "strength", label: "Build strength & muscle" },
+            { value: "yoga", label: "Mobility, yoga & stress relief" },
+            { value: "running", label: "Running & endurance" },
+            { value: "hyrox", label: "Functional / Hyrox spark" }
+          ]
+        },
+        {
+          key: "experience",
+          q: "Where is your training level today?",
+          options: [
+            { value: "beginner", label: "Beginner — restarting or new" },
+            { value: "intermediate", label: "Intermediate — consistent lately" },
+            { value: "advanced", label: "Advanced — chasing a peak" }
+          ]
+        },
+        {
+          key: "preference",
+          q: "How do you want to train?",
+          options: [
+            { value: "in-person", label: "In-person / doorstep in Hyderabad" },
+            { value: "virtual", label: "Virtual coaching + app check-ins" }
+          ]
+        },
+        {
+          key: "time",
+          q: "How much runway do you have?",
+          options: [
+            { value: "short", label: "Keep it short (about 21 days)" },
+            { value: "30", label: "Full 28–30 day push" },
+            { value: "hyrox", label: "Race-style functional block" }
+          ]
+        }
+      ];
+
+      function $(id) { return document.getElementById(id); }
+      function safe(v) {
+        return String(v == null ? "" : v)
+          .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function animateCount(el, value) {
+        if (!el) return;
+        var end = Number(value) || 0;
+        var start = Number(String(el.textContent).replace(/[^\d]/g, "")) || 0;
+        var t0 = null;
+        function frame(ts) {
+          if (!t0) t0 = ts;
+          var p = Math.min(1, (ts - t0) / 700);
+          el.textContent = String(Math.round(start + (end - start) * p));
+          if (p < 1) requestAnimationFrame(frame);
+        }
+        requestAnimationFrame(frame);
+      }
+
+      async function loadLive() {
+        try {
+          var res = await fetch("/api/live");
+          var live = await res.json();
+          if (!live || !live.ok) return;
+          animateCount($("tcJoined"), live.challengeJoins || live.inquiriesToday || 0);
+          animateCount($("tcActive"), live.activeNow || 0);
+          animateCount($("tcClients"), live.clientsTransformed || 0);
+          if (live.pulse) $("tcPulse").textContent = live.pulse;
+        } catch (e) {}
+      }
+
+      async function loadChallenges() {
+        try {
+          var res = await fetch("/api/challenges");
+          var data = await res.json();
+          challenges = (data && data.challenges) || [];
+        } catch (e) {
+          challenges = [];
+        }
+        if (!challenges.length) {
+          challenges = [{
+            id: "fat-burn-30",
+            name: "30-Day Fat Burn Challenge",
+            tag: "Fat loss",
+            days: 30,
+            sessionsPerWeek: 4,
+            level: "All levels",
+            focus: ["HIIT", "Nutrition"],
+            outcome: "Drop fat with coach accountability.",
+            image: "https://images.unsplash.com/photo-1549476464-37392f717541?w=1400&q=80&auto=format&fit=crop",
+            milestones: ["Week 1", "Week 2", "Week 3", "Week 4"],
+            joined: 48,
+            goal: "weight-loss"
+          }];
+        }
+        selectedId = challenges[0].id;
+        renderFiltersList();
+        renderSelected();
+        fillJoinSelect();
+      }
+
+      function currentList() {
+        if (filter === "all") return challenges;
+        return challenges.filter(function (c) { return c.goal === filter; });
+      }
+
+      function selectedChallenge() {
+        return challenges.find(function (c) { return c.id === selectedId; }) || challenges[0];
+      }
+
+      function renderFiltersList() {
+        var list = $("tcList");
+        var items = currentList();
+        list.innerHTML = items.map(function (c) {
+          return '<button type="button" data-id="' + safe(c.id) + '" class="' + (c.id === selectedId ? "active" : "") + '">' +
+            "<strong>" + safe(c.name) + "</strong>" +
+            "<small>" + safe(c.days) + " days · " + safe(c.level) + "</small></button>";
+        }).join("") || "<p style='color:var(--tc-muted)'>No challenges in this filter.</p>";
+      }
+
+      function fillJoinSelect(preferredId) {
+        var sel = $("tcJoinSelect");
+        sel.innerHTML = challenges.map(function (c) {
+          return '<option value="' + safe(c.id) + '">' + safe(c.name) + "</option>";
+        }).join("");
+        if (preferredId) sel.value = preferredId;
+        else if (selectedId) sel.value = selectedId;
+      }
+
+      function renderSelected() {
+        var c = selectedChallenge();
+        if (!c) return;
+        $("tcImage").style.backgroundImage = 'url("' + String(c.image || "").replace(/"/g, "") + '")';
+        $("tcTag").textContent = c.tag || "Challenge";
+        $("tcName").textContent = c.name || "";
+        $("tcOutcome").textContent = c.outcome || "";
+        $("tcDays").textContent = c.days || "—";
+        $("tcSessions").textContent = c.sessionsPerWeek || "—";
+        $("tcPeople").textContent = c.joined || "—";
+        $("tcFocus").innerHTML = (c.focus || []).map(function (f) {
+          return "<span>" + safe(f) + "</span>";
+        }).join("");
+        $("tcMilestones").innerHTML = (c.milestones || []).map(function (m, i) {
+          return '<div class="tc-milestone" data-i="' + i + '"><i></i><span>' + safe(m) + "</span></div>";
+        }).join("");
+        var range = $("tcDayRange");
+        range.max = String(c.days || 30);
+        range.value = "1";
+        updateDayNote();
+        $("tcJoinSelected").href = "#tcJoin";
+        fillJoinSelect(c.id);
+        renderFiltersList();
+      }
+
+      function updateDayNote() {
+        var c = selectedChallenge();
+        if (!c) return;
+        var day = Number($("tcDayRange").value) || 1;
+        var total = Number(c.days) || 30;
+        $("tcDayLabel").textContent = "Day " + day;
+        var week = Math.min((c.milestones || []).length, Math.ceil(day / Math.max(1, Math.floor(total / Math.max(1, (c.milestones || []).length)))));
+        var milestone = (c.milestones || [])[Math.max(0, week - 1)] || "Stay consistent today.";
+        var intensity = day < total * 0.35 ? "Foundation focus" : day < total * 0.7 ? "Progressive push" : "Peak & finish";
+        $("tcDayNote").textContent = intensity + " · " + milestone;
+        Array.prototype.forEach.call(document.querySelectorAll(".tc-milestone"), function (node, i) {
+          node.classList.toggle("active", i === Math.max(0, week - 1));
+        });
+      }
+
+      function renderQuiz() {
+        var s = quizSteps[step];
+        $("tcQuestion").textContent = s.q;
+        $("tcQuizBar").style.width = ((step + 1) / quizSteps.length * 100) + "%";
+        $("tcOptions").innerHTML = s.options.map(function (o) {
+          var selected = answers[s.key] === o.value ? " selected" : "";
+          return '<button type="button" class="tc-option' + selected + '" data-value="' + safe(o.value) + '">' + safe(o.label) + "</button>";
+        }).join("");
+        $("tcQuizBack").disabled = step === 0;
+        $("tcQuizNext").disabled = !answers[s.key];
+        $("tcQuizNext").textContent = step === quizSteps.length - 1 ? "Get my plan" : "Next";
+      }
+
+      async function runQuiz() {
+        var panel = $("tcQuizResult");
+        panel.innerHTML = '<div class="tc-result-empty"><strong>Matching via /api/quiz…</strong><span>Pulling live plans and coaches.</span></div>';
+        try {
+          var res = await fetch("/api/quiz", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(answers)
+          });
+          var data = await res.json();
+          if (!data || !data.ok) throw new Error("quiz failed");
+          var plan = data.plan || {};
+          var challenge = data.challenge || {};
+          var coaches = data.coaches || [];
+          if (challenge.id) {
+            selectedId = challenge.id;
+            filter = "all";
+            document.querySelectorAll("#tcFilters button").forEach(function (b) {
+              b.classList.toggle("active", b.getAttribute("data-filter") === "all");
+            });
+            renderSelected();
+          }
+          var coachHtml = coaches.slice(0, 3).map(function (c) {
+            var img = c.image
+              ? '<img src="' + safe(c.image) + '" alt="" />'
+              : '<div class="fallback">' + safe((c.name || "?").slice(0, 2).toUpperCase()) + "</div>";
+            return '<article class="tc-coach">' + img + "<div><strong>" + safe(c.name) + "</strong><small>" + safe(c.role || "Coach") + "</small></div></article>";
+          }).join("");
+          panel.innerHTML =
+            '<div class="tc-score">' + safe(data.score || 90) + "%</div>" +
+            "<h3>" + safe((challenge.name) || (data.match && data.match.title) || "Your match") + "</h3>" +
+            '<p class="lead">' + safe((data.match && data.match.summary) || data.tip || "") + "</p>" +
+            '<div class="tc-plan-box"><span>Recommended plan</span><strong>' + safe(plan.name || "") + "</strong><em>" + safe(plan.price || "") + "</em></div>" +
+            "<ul class='tc-reasons'>" + (data.reasons || []).map(function (r) { return "<li>" + safe(r) + "</li>"; }).join("") + "</ul>" +
+            '<div class="tc-coaches">' + (coachHtml || "<p class='lead'>Browse coaches to pick your fit.</p>") + "</div>" +
+            '<div class="tc-actions">' +
+              '<a class="primary-button" href="#tcJoin">Join ' + safe((challenge.name || "challenge").split(" ").slice(0, 2).join(" ")) + "</a>" +
+              '<a class="ghost-button" href="book-consultation.html">Buy Now</a>' +
+            "</div>";
+        } catch (e) {
+          panel.innerHTML = '<div class="tc-result-empty"><strong>Could not reach the quiz API</strong><span>Try again or <a href="book-consultation.html">book a consultation</a>.</span></div>';
+        }
+      }
+
+      function wire() {
+        $("tcFilters").addEventListener("click", function (e) {
+          var btn = e.target.closest("button[data-filter]");
+          if (!btn) return;
+          filter = btn.getAttribute("data-filter");
+          Array.prototype.forEach.call($("tcFilters").querySelectorAll("button"), function (b) {
+            b.classList.toggle("active", b === btn);
+          });
+          var list = currentList();
+          if (list.length && !list.some(function (c) { return c.id === selectedId; })) {
+            selectedId = list[0].id;
+          }
+          renderFiltersList();
+          renderSelected();
+        });
+
+        $("tcList").addEventListener("click", function (e) {
+          var btn = e.target.closest("button[data-id]");
+          if (!btn) return;
+          selectedId = btn.getAttribute("data-id");
+          renderSelected();
+        });
+
+        $("tcDayRange").addEventListener("input", updateDayNote);
+
+        $("tcOptions").addEventListener("click", function (e) {
+          var btn = e.target.closest(".tc-option");
+          if (!btn) return;
+          answers[quizSteps[step].key] = btn.getAttribute("data-value");
+          renderQuiz();
+        });
+
+        $("tcQuizBack").addEventListener("click", function () {
+          if (step > 0) { step -= 1; renderQuiz(); }
+        });
+
+        $("tcQuizNext").addEventListener("click", function () {
+          if (!answers[quizSteps[step].key]) return;
+          if (step < quizSteps.length - 1) {
+            step += 1;
+            renderQuiz();
+          } else {
+            runQuiz();
+          }
+        });
+
+        $("tcJoinSelected").addEventListener("click", function () {
+          fillJoinSelect(selectedId);
+        });
+
+        $("tcJoinForm").addEventListener("submit", async function (e) {
+          e.preventDefault();
+          var status = $("tcJoinStatus");
+          status.textContent = "Saving to database…";
+          var payload = Object.fromEntries(new FormData($("tcJoinForm")).entries());
+          try {
+            var res = await fetch("/api/challenge-join", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload)
+            });
+            var data = await res.json();
+            if (!res.ok || !data.ok) throw new Error("join failed");
+            status.textContent = data.message || "You are in.";
+            if (data.stats && data.stats.totalJoined != null) {
+              animateCount($("tcJoined"), data.stats.totalJoined);
+            }
+            loadChallenges();
+            loadLive();
+          } catch (err) {
+            status.textContent = "Could not join right now. Check your details and try again.";
+          }
+        });
+
+        if ("IntersectionObserver" in window) {
+          var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("in");
+                io.unobserve(entry.target);
+              }
+            });
+          }, { threshold: 0.12 });
+          document.querySelectorAll(".tc-reveal").forEach(function (el) { io.observe(el); });
+        } else {
+          document.querySelectorAll(".tc-reveal").forEach(function (el) { el.classList.add("in"); });
+        }
+      }
+
+      wire();
+      renderQuiz();
+      loadChallenges();
+      loadLive();
+      setInterval(loadLive, 45000);
+    })();
+  </script>
+</body>
+</html>
