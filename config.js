@@ -13,7 +13,7 @@
  *   3. Paste the https://….onrender.com URL below
  *   4. Redeploy Hostinger / push to main
  */
-window.FG_API_BASE = window.FG_API_BASE || "https://functional-sections-implement-handles.trycloudflare.com";
+window.FG_API_BASE = window.FG_API_BASE || "https://fitness-gurukul-api.onrender.com";
 
 (function (w) {
   var PHP_MAP = {

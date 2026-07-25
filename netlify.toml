@@ -1,0 +1,41 @@
+# Fitness Gurukul — static site on Netlify (no Git LFS required)
+
+[build]
+  publish = "."
+  command = "echo 'Static site — no build step'"
+
+[build.environment]
+  NODE_VERSION = "20"
+  # Do not pull Git LFS — budget exceeded and site uses assets/cdn instead.
+  GIT_LFS_ENABLED = "false"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/backend.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/office.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/owner-data.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/admin.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/dashboard.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
