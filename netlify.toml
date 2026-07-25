@@ -1,14 +1,13 @@
-# Fitness Gurukul — static site on Netlify
-# Media paths must stay URL-safe (no spaces) so Git LFS downloads succeed.
+# Fitness Gurukul — static site on Netlify (no Git LFS required)
 
 [build]
   publish = "."
   command = "echo 'Static site — no build step'"
 
 [build.environment]
-  # Pull Git LFS media during prepare (paths are now space-free).
-  GIT_LFS_ENABLED = "true"
   NODE_VERSION = "20"
+  # Do not pull Git LFS — budget exceeded and site uses assets/cdn instead.
+  GIT_LFS_ENABLED = "false"
 
 [[headers]]
   for = "/*.html"
