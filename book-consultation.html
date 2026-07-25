@@ -151,7 +151,18 @@
         <a href="testimonials.html">Testimonials</a>
         <a href="tools.html">Tools</a>
       </nav>
-      <button class="menu-button" id="menuButton" aria-label="Open navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+      <div class="header-app-dropdown">
+      <button class="header-play-btn" type="button" aria-expanded="false" aria-haspopup="true" data-app-menu-btn>
+        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" aria-hidden="true"><path d="M4.5 3.5v17l14-8.5z"/></svg>
+        <span>Get the App</span>
+        <svg class="header-app-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="header-app-menu" data-app-menu hidden>
+        <a href="https://play.google.com/store/apps/details?id=com.fitnessgurukul.app" target="_blank" rel="noopener"><span>Android — Google Play</span></a>
+        <a href="https://apps.apple.com/us/app/fitness-gurukul/id6771451272" target="_blank" rel="noopener"><span>iOS — App Store</span></a>
+      </div>
+    </div>
+    <button class="menu-button" id="menuButton" aria-label="Open navigation" aria-expanded="false"><span></span><span></span><span></span></button>
     </div>
   </header>
   <nav class="mobile-nav" id="mobileNav">
@@ -168,7 +179,11 @@
     <a href="events.html">Events</a>
     <a href="testimonials.html">Testimonials</a>
     <a href="tools.html">Tools</a>
-  </nav>
+  <div class="mobile-nav-ctas">
+    <a class="header-play-btn" href="https://play.google.com/store/apps/details?id=com.fitnessgurukul.app" target="_blank" rel="noopener">Android — Google Play</a>
+    <a class="header-play-btn" href="https://apps.apple.com/us/app/fitness-gurukul/id6771451272" target="_blank" rel="noopener">iOS — App Store</a>
+  </div>
+</nav>
 
   <main class="consult-page">
     <div class="consult-page-card">

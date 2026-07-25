@@ -111,16 +111,13 @@ const realData = {
     { name: "Anand Yadav", role: "Children's Athletics Coach", slug: "anand-yadav", category: "kids", bio: "Children's Athletics Coach", focus: ["Children's athletics", "Kids fitness", "Sports"], highlight: "Kids Fitness Expert", color: "blue", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0297-69538d52664ae75da3c69fc1.jpg" },
     { name: "Aditya", role: "Yoga Instructor & Fitness Coach", slug: "aditya", category: "yoga", bio: "Yoga Instructor & Fitness Coach", focus: ["Yoga", "Fitness", "Body toning"], highlight: "Mind-Body Coach", color: "cyan", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0298-69538dd1474cc000b54586be.jpg" },
     { name: "Nitu Arya", role: "Yoga Instructor", slug: "nitu-arya", category: "yoga", bio: "Yoga Instructor", focus: ["Yoga", "Flexibility", "General fitness"], highlight: "Holistic Yoga", color: "cyan", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0295-69538d35474cc000b54586b7.jpg" },
-    { name: "Rahul Bisht", role: "Yoga Instructor", slug: "rahul-bisht", category: "yoga", bio: "Yoga Instructor", focus: ["Yoga", "Mobility", "General fitness"], highlight: "Mobility Master", color: "cyan", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0294-69538d19474cc000b54586b4.jpg" },
     { name: "Deepesh Kumar", role: "Fitness Trainer", slug: "deepesh-kumar", category: "fitness", bio: "Fitness Trainer", focus: ["Fitness training", "Strength", "Weight loss"], highlight: "Weight Loss Specialist", color: "red", image: "assets/coaches/deepesh-kumar.jpg" },
     { name: "S Jeetender", role: "Fitness Trainer", slug: "s-jeetender", category: "fitness", bio: "Fitness Trainer", focus: ["Fitness training", "Daily exercise", "Strength"], highlight: "Daily Fitness Pro", color: "red", image: "assets/coaches/s-jeetender.jpg" },
     { name: "Rahul Dawar", role: "Fitness Trainer", slug: "rahul-dawar", category: "fitness", bio: "Fitness Trainer", focus: ["Fitness training", "Strength", "Health routine"], highlight: "Health & Strength", color: "red", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0291-69538ccf8c7b7b2c6178b6e1.jpg" },
-    { name: "Rahul Singh Pawar", role: "Yoga Instructor", slug: "rahul-singh-pawar", category: "yoga", bio: "Yoga Instructor", focus: ["Yoga", "Flexibility", "Stress relief"], highlight: "Stress Relief Expert", color: "cyan", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0290-69538cb65c5bdcd270817b1f.jpg" },
     { name: "Ravi Pal", role: "Fitness Trainer & Injury Rehabilitation Coach", slug: "ravi-pal", category: "rehab", bio: "Fitness Trainer & Injury Rehabilitation Coach", focus: ["Fitness training", "Injury rehabilitation", "Recovery"], highlight: "Injury Recovery", color: "blue", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0289-69538c800222ba9c3d831802.jpg" },
     
     { name: "Sanjeev", role: "Fitness Trainer", slug: "sanjeev", category: "fitness", bio: "Fitness Trainer", focus: ["Fitness training", "Strength", "Daily exercise"], highlight: "Strength Trainer", color: "red", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/274dba00-8541-4bfc-8666-e0b5433b3781-69538a190222ba9c3d8317f4.jpg" },
     { name: "Nandlal", role: "Fitness Trainer", slug: "nandlal", category: "fitness", bio: "Fitness Trainer", focus: ["Fitness training", "Strength", "Weight loss"], highlight: "Transformation Coach", color: "red", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/04ea7dfe-a988-4a17-97cb-8dc44240cb59-695389c4474cc000b54586a8.jpg" },
-    { name: "Prasenjit Ghosh", role: "Mudgar & Hybrid Training Specialist", slug: "prasenjit-ghosh", category: "hybrid", bio: "Mudgar & Hybrid Training Specialist", focus: ["Mudgar", "Hybrid training", "Strength"], highlight: "Hybrid Training", color: "cyan", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/db612d80-360a-4c76-9a18-0e97da5d1dc9-69538988474cc000b54586a5.jpg" },
     { name: "Vinay Ojha", role: "Fitness Trainer", slug: "vinay-ojha", category: "fitness", bio: "Fitness Trainer", focus: ["Fitness training", "Strength", "General fitness"], highlight: "All-Round Fitness", color: "red", image: "assets/coaches/vinay-ojha.jpg" },
     { name: "Ankit Singh Chauhan", role: "Fitness & Calisthenics Trainer", slug: "ankit-singh-chauhan", category: "fitness", bio: "Fitness & Calisthenics Trainer", focus: ["Fitness", "Calisthenics", "Strength"], highlight: "Calisthenics Expert", color: "red", image: "assets/coaches/ankit-singh-chauhan.jpg" },
     { name: "Suresh Yadav", role: "Fitness Trainer (Special Children)", slug: "suresh-yadav", category: "special", bio: "Fitness Trainer (Special Children)", focus: ["Special children", "Fitness", "Mobility"], highlight: "Special Needs Expert", color: "blue", image: "assets/coaches/suresh-yadav.jpg" },
@@ -427,11 +424,9 @@ var FALLBACK_COACHES = [
   { name: "Aditya Gururani", role: "Yoga Instructor & Breathing Specialist", slug: "aditya-gururani", category: "yoga", bio: "A certified yoga instructor specializing in breathwork, stress management, and functional mobility.", focus: ["Breathwork", "Stress management", "Functional mobility"], highlight: "Breathwork Expert", color: "cyan", image: "assets/coaches/aditya-gururani.jpg" },
   { name: "Kritika Chauhan", role: "Fitness Trainer", slug: "kritika-chauhan", category: "fitness", bio: "Fitness Trainer specializing in flexibility, mobility, and general fitness.", focus: ["Flexibility", "Mobility", "General fitness"], highlight: "Flexibility Coach", color: "red", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0302-69538f34664ae75da3c69fce.jpg" },
   { name: "Nitu Arya", role: "Yoga Instructor", slug: "nitu-arya", category: "yoga", bio: "Yoga Instructor focused on holistic wellness and flexibility.", focus: ["Yoga", "Flexibility", "General fitness"], highlight: "Holistic Yoga", color: "cyan", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0305-6953918f0222ba9c3d831822.jpeg" },
-  { name: "Rahul Bisht", role: "Yoga Instructor", slug: "rahul-bisht", category: "yoga", bio: "Yoga Instructor specializing in mobility and general fitness.", focus: ["Yoga", "Mobility", "General fitness"], highlight: "Mobility Master", color: "cyan", image: "https://web.s-cdn.boostkit.dev/website-files/603de2c09a1837000163b27d/69466d7b1b66370278b1e977-69466d7b0c30ac5c9f820a8f.jpeg" },
   { name: "Anand Yadav", role: "Children's Athletics Coach", slug: "anand-yadav", category: "kids", bio: "Children's Athletics Coach focused on kids fitness and sports development.", focus: ["Children's athletics", "Kids fitness", "Sports"], highlight: "Kids Fitness Expert", color: "blue", image: "https://web.s-cdn.boostkit.dev/website-files/603de2c09a1837000163b27d/694669eb876eab0610642251-694669eb1c636e8e2f4fb5c0.jpeg" },
   { name: "Ravi Pal", role: "Fitness Trainer & Injury Rehabilitation Coach", slug: "ravi-pal", category: "rehab", bio: "Fitness Trainer & Injury Rehabilitation Coach.", focus: ["Fitness training", "Injury rehabilitation", "Recovery"], highlight: "Injury Recovery", color: "blue", image: "https://web.s-cdn.boostkit.dev/website-files/603de2c09a1837000163b27d/69466d1b1c79393307d9ab91-69466d1bd73385b925812cfd.webp" },
   { name: "Subedhar Yadav", role: "Fitness Trainer (Special Children)", slug: "subedhar-yadav", category: "special", bio: "Fitness Trainer for special children focusing on mobility and strength.", focus: ["Special children", "Fitness", "Mobility"], highlight: "Special Needs Coach", color: "blue", image: "https://fpimages.withfloats.com/actual/69844b5073641513f8f1e239.jpeg" },
-  { name: "Prasenjit Ghosh", role: "Mudgar & Hybrid Training Specialist", slug: "prasenjit-ghosh", category: "hybrid", bio: "Mudgar & Hybrid Training Specialist for functional strength.", focus: ["Mudgar", "Hybrid training", "Strength"], highlight: "Hybrid Training", color: "cyan", image: "https://productimages.withfloats.com/tile/69836aa4fb1f2c7bc65e495e.jpeg" },
 ];
 
 function renderCoaches(coaches) {
@@ -1428,11 +1423,7 @@ function injectHeroContent(content) {
   if (subhead) subhead.textContent = d.heroSubhead || "At Fitness Gurukul, we believe in a holistic approach to health that incorporates fitness, nutrition, and lifestyle changes. We make health and fitness a part of everyday life.";
 }
 
-function injectAuthModal() {
-}
 
-function wireAuth() {
-}
 
 function injectWhatsApp() {
   if (qs("#waWidget")) return;
@@ -1497,6 +1488,38 @@ function wireForms() {
   }
   qsa("[data-contact-phone]").forEach((node) => { node.textContent = realData.contact.phone; });
   qsa("[data-contact-email]").forEach((node) => { node.textContent = realData.contact.email; });
+}
+
+
+function wireAppDropdown() {
+  var dropdowns = qsa(".header-app-dropdown");
+  if (!dropdowns.length) return;
+  dropdowns.forEach(function(drop) {
+    var btn = drop.querySelector("[data-app-menu-btn]");
+    var menu = drop.querySelector("[data-app-menu]");
+    if (!btn || !menu) return;
+    btn.addEventListener("click", function(e) {
+      e.stopPropagation();
+      var open = !menu.hasAttribute("hidden");
+      qsa(".header-app-menu").forEach(function(m) { m.setAttribute("hidden", ""); });
+      qsa("[data-app-menu-btn]").forEach(function(b) { b.setAttribute("aria-expanded", "false"); b.classList.remove("open"); });
+      if (!open) {
+        menu.removeAttribute("hidden");
+        btn.setAttribute("aria-expanded", "true");
+        btn.classList.add("open");
+      }
+    });
+  });
+  document.addEventListener("click", function() {
+    qsa(".header-app-menu").forEach(function(m) { m.setAttribute("hidden", ""); });
+    qsa("[data-app-menu-btn]").forEach(function(b) { b.setAttribute("aria-expanded", "false"); b.classList.remove("open"); });
+  });
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape") {
+      qsa(".header-app-menu").forEach(function(m) { m.setAttribute("hidden", ""); });
+      qsa("[data-app-menu-btn]").forEach(function(b) { b.setAttribute("aria-expanded", "false"); b.classList.remove("open"); });
+    }
+  });
 }
 
 function wireNavigationAids() {
@@ -2521,17 +2544,6 @@ function showCompareView() {
   container.innerHTML = html;
 }
 
-/* -- Missing stubs ------------------- */
-function updateCompareCount() {}
-function initStickyHeader() {}
-function renderAboutCoaches() {}
-function initServiceToggles() {}
-function initRipple() {}
-function initMagneticHover() {}
-function injectCursor() {}
-function initEventTilt() {}
-function initEventsParallax() {}
-function initDistTrack() {}
 
 async function boot() {
   /* wire modals immediately so buttons work even before async ops finish */
@@ -2549,7 +2561,6 @@ async function boot() {
   try { renderWorkoutGrid(d.workouts || realData.workouts); } catch (e) { console.warn("boot:renderWorkoutGrid", e); }
   try { renderContact(d.contact || realData.contact); } catch (e) { console.warn("boot:renderContact", e); }
   try { injectAmbientBg(); } catch (e) { console.warn("boot:injectAmbientBg", e); }
-  try { renderAboutCoaches(d.coaches || realData.coaches); } catch (e) { console.warn("boot:renderAboutCoaches", e); }
   try { renderMindsCarousel(d.coaches || realData.coaches); } catch (e) { console.warn("boot:renderMindsCarousel", e); }
   try { injectHeroContent(d); } catch (e) { console.warn("boot:injectHeroContent", e); }
   try { initHeroCarousel(); } catch (e) { console.warn("boot:initHeroCarousel", e); }
@@ -2559,8 +2570,6 @@ async function boot() {
   try { animateCounters(); } catch (e) { console.warn("boot:animateCounters", e); }
   try { initRevealAnimations(); } catch (e) { console.warn("boot:initRevealAnimations", e); }
   try { initHomePage(); } catch (e) { console.warn("boot:initHomePage", e); }
-  try { initStickyHeader(); } catch (e) { console.warn("boot:initStickyHeader", e); }
-  try { initServiceToggles(); } catch (e) { console.warn("boot:initServiceToggles", e); }
   try { injectCoachModal(); } catch (e) { console.warn("boot:injectCoachModal", e); }
   try { wireCoachPopups(); } catch (e) { console.warn("boot:wireCoachPopups", e); }
   try { injectBookModal(); wireBookModalForm(); } catch (e) { console.warn("boot:wireBookModalForm", e); }
@@ -2570,12 +2579,6 @@ async function boot() {
   try { injectFooter(); } catch (e) { console.warn("boot:injectFooter", e); }
   try { injectWhatsAppFloat(); } catch (e) { console.warn("boot:injectWhatsAppFloat", e); }
   try { injectSiteChatbot(); } catch (e) { console.warn("boot:injectSiteChatbot", e); }
-  try { injectCursor(); } catch (e) { console.warn("boot:injectCursor", e); }
-  try { initRipple(); } catch (e) { console.warn("boot:initRipple", e); }
-  try { initEventTilt(); } catch (e) { console.warn("boot:initEventTilt", e); }
-  try { initEventsParallax(); } catch (e) { console.warn("boot:initEventsParallax", e); }
-  try { initDistTrack(); } catch (e) { console.warn("boot:initDistTrack", e); }
-  try { initMagneticHover(); } catch (e) { console.warn("boot:initMagneticHover", e); }
   try { initCycleCarousel(); } catch (e) { console.warn("boot:initCycleCarousel", e); }
 }
 
@@ -2741,16 +2744,13 @@ function initCycleCarousel() {
     "anand-yadav": { name:"Anand Yadav", role:"Children's Athletics Coach", badge:"Kids Fitness Expert", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0297-69538d52664ae75da3c69fc1.jpg", tags:["Children's athletics","Kids fitness","Sports"] },
     "aditya": { name:"Aditya", role:"Yoga Instructor & Fitness Coach", badge:"Mind-Body Coach", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0298-69538dd1474cc000b54586be.jpg", tags:["Yoga","Fitness","Body toning"] },
     "nitu-arya": { name:"Nitu Arya", role:"Yoga Instructor", badge:"Holistic Yoga", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0295-69538d35474cc000b54586b7.jpg", tags:["Yoga","Flexibility","General fitness"] },
-    "rahul-bisht": { name:"Rahul Bisht", role:"Yoga Instructor", badge:"Mobility Master", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0294-69538d19474cc000b54586b4.jpg", tags:["Yoga","Mobility","General fitness"] },
     "deepesh-kumar": { name:"Deepesh Kumar", role:"Fitness Trainer", badge:"Weight Loss Specialist", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0293-69538d00664ae75da3c69fbc.jpg", tags:["Fitness training","Strength","Weight loss"] },
     "s-jeetender": { name:"S Jeetender", role:"Fitness Trainer", badge:"Daily Fitness Pro", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0292-69538ce6474cc000b54586b3.jpg", tags:["Fitness training","Daily exercise","Strength"] },
     "rahul-dawar": { name:"Rahul Dawar", role:"Fitness Trainer", badge:"Health & Strength", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0291-69538ccf8c7b7b2c6178b6e1.jpg", tags:["Fitness training","Strength","Health routine"] },
-    "rahul-singh-pawar": { name:"Rahul Singh Pawar", role:"Yoga Instructor", badge:"Stress Relief Expert", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0290-69538cb65c5bdcd270817b1f.jpg", tags:["Yoga","Flexibility","Stress relief"] },
     "ravi-pal": { name:"Ravi Pal", role:"Fitness Trainer & Injury Rehab Coach", badge:"Injury Recovery", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0289-69538c800222ba9c3d831802.jpg", tags:["Fitness training","Injury rehabilitation","Recovery"] },
     "subedhar-yadav": { name:"Subedhar Yadav", role:"Fitness Trainer (Special Children)", badge:"Special Needs Coach", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0287-69538c4c0222ba9c3d8317fd.jpg", tags:["Special children","Fitness","Mobility"] },
     "sanjeev": { name:"Sanjeev", role:"Fitness Trainer", badge:"Strength Trainer", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/274dba00-8541-4bfc-8666-e0b5433b3781-69538a190222ba9c3d8317f4.jpg", tags:["Fitness training","Strength","Daily exercise"] },
     "nandlal": { name:"Nandlal", role:"Fitness Trainer", badge:"Transformation Coach", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/04ea7dfe-a988-4a17-97cb-8dc44240cb59-695389c4474cc000b54586a8.jpg", tags:["Fitness training","Strength","Weight loss"] },
-    "prasenjit-ghosh": { name:"Prasenjit Ghosh", role:"Mudgar & Hybrid Training Specialist", badge:"Hybrid Training", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/db612d80-360a-4c76-9a18-0e97da5d1dc9-69538988474cc000b54586a5.jpg", tags:["Mudgar","Hybrid training","Strength"] },
     "vinay-ojha": { name:"Vinay Ojha", role:"Fitness Trainer", badge:"All-Round Fitness", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/32f29c04-6a08-46c7-b752-810892edad88-695388d0664ae75da3c69fa9.jpg", tags:["Fitness training","Strength","General fitness"] },
     "ankit-singh-chauhan": { name:"Ankit Singh Chauhan", role:"Fitness & Calisthenics Trainer", badge:"Calisthenics Expert", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/debb9e52-bcf2-4630-8cc5-2ffc9af3e114-69538879664ae75da3c69fa8.jpg", tags:["Fitness","Calisthenics","Strength"] },
     "suresh-yadav": { name:"Suresh Yadav", role:"Fitness Trainer (Special Children)", badge:"Special Needs Expert", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/suresh-695209865c5bdcd270817774.jpeg", tags:["Special children","Fitness","Mobility"] },
@@ -2778,7 +2778,6 @@ function initCycleCarousel() {
     "vinay-ojha": [["8-9","4:30-5:30","5-6"],["6-7","7:30-8:30"],["6-7","8-9","4:30-5:30","5-6"],["6-7","7:30-8:30"],["6-7","8-9","4:30-5:30","5-6"],["6-7","7:30-8:30"],[]],
     "parul-danu": [["5:15-6:15","6:30-7:30"],["11-12"],["5:15-6:15","6:30-7:30"],["11-12"],["5:15-6:15","6:30-7:30"],["11-12"],[]],
     "nandlal": [["7:00-8:00","5:00-6:00"],["6:00-7:00"],["6:00 - 7:00 HR","7:00-8:00","5:00-6:00"],["6:00-7:00"],["6:00 - 7:00 HR","7:00-8:00","5:00-6:00"],["6:00-7:00"],[]],
-    "prasenjit-ghosh": [["9:00-10:00"],["8:00-9:00 GC","7:30-8:30"],["9:00-10:00"],["8:00-9:00 GC","7:30-8:30"],["9:00-10:00"],["8:00-9:00 GC","7:30-8:30"],[]],
     "raju": [["5:45 - 6:45 HR","7:00-8:00","9:30-10:30 GC","4:30 to 5:30","6:30 to 7:30"],["7:00-8:00","8:00-9:00","10:30-11:30 GC","5:30 to 6:30","6:30 to 7:30"],["5:45 - 6:45 HR","7:00-8:00","8:00-9:00","10:30-11:30 GC","4:30 to 5:30","6:30 to 7:30"],["7:00-8:00","10:30-11:30 GC","5:30 to 6:30","6:30 to 7:30"],["5:45 - 6:45 HR","7:00-8:00","9:30-10:30 GC","4:30 to 5:30","6:30 to 7:30"],["7:00-8:00","8:00-9:00","5:30 to 6:30","6:30 to 7:30"],["7:00-8:00","8:00-9:00"]]
   };
 

@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&display=swap");
+﻿@import url("https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&display=swap");
 
 :root {
   --bg: #000000;
@@ -404,6 +404,11 @@ main,
 
 .header-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 
+.header-app-dropdown {
+  position: relative;
+  flex-shrink: 0;
+}
+
 .header-play-btn {
   display: inline-flex;
   align-items: center;
@@ -418,12 +423,72 @@ main,
   text-decoration: none;
   transition: all 0.3s;
   flex-shrink: 0;
+  cursor: pointer;
+  font-family: inherit;
 }
 
-.header-play-btn:hover {
+.header-play-btn:hover,
+.header-play-btn.open {
   background: rgba(74,222,128,0.25);
   border-color: rgba(74,222,128,0.5);
   transform: translateY(-1px);
+}
+
+.header-app-caret {
+  transition: transform 0.2s ease;
+}
+
+.header-play-btn.open .header-app-caret {
+  transform: rotate(180deg);
+}
+
+.header-app-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 220px;
+  padding: 8px;
+  border-radius: 12px;
+  background: #111;
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.45);
+  z-index: 80;
+  display: grid;
+  gap: 4px;
+}
+
+.header-app-menu[hidden] {
+  display: none !important;
+}
+
+.header-app-menu a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.header-app-menu a:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+.cta-actions,
+.hero-plan-card-cta-row,
+.plan-overlay-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.plan-overlay-cta-ghost {
+  background: transparent !important;
+  border: 1px solid rgba(255,255,255,0.35) !important;
 }
 
 .header-play-btn svg,
@@ -553,6 +618,7 @@ main,
 .mobile-nav-ctas .header-expert { justify-content: center; padding: 12px; color: rgba(255,255,255,0.7); }
 
 .mobile-nav-ctas .header-cta { justify-content: center; padding: 12px; }
+.mobile-nav-ctas .header-play-btn { justify-content: center; width: 100%; }
 
 .primary-button {
   min-height: 44px;
@@ -1673,7 +1739,7 @@ from { opacity: 0; transform: translateY(20px); }
 
   .desktop-nav,
 .header-right,
-.header-play-btn {
+.header-app-dropdown {
     display: none;
   }
 
