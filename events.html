@@ -73,6 +73,21 @@
 </nav>
 
 <main>
+
+  <section class="site-live-bar" id="liveStats" aria-live="polite">
+    <div class="site-live-inner">
+      <div class="site-live-pulse">
+        <span class="site-live-dot" aria-hidden="true"></span>
+        <span data-live-pulse>Loading live activity…</span>
+      </div>
+      <div class="site-live-stats">
+        <div><strong data-live="activeNow" data-live-raw>0</strong><span>Active now</span></div>
+        <div><strong data-live="inquiriesToday" data-live-raw>0</strong><span>Inquiries today</span></div>
+        <div><strong data-live="clientsTransformed">0</strong><span>Transformed</span></div>
+      </div>
+    </div>
+  </section>
+
   <section class="mg-hero">
     <div class="mg-hero-bg"><img src="https://images.unsplash.com/photo-1530137073520-98bd6b37f09e?w=1800&q=85" alt="" /></div>
     <div class="mg-hero-overlay"></div>
@@ -85,9 +100,9 @@
         <a class="ghost-button" href="contact.html">Plan Yours</a>
       </div>
       <div class="mg-hero-stats">
-        <div class="mg-stat"><strong>50+</strong><span>Events</span></div>
-        <div class="mg-stat"><strong>10K+</strong><span>Participants</span></div>
-        <div class="mg-stat"><strong>13</strong><span>Years</span></div>
+        <div class="mg-stat"><strong data-live="events">50+</strong><span>Events</span></div>
+        <div class="mg-stat"><strong data-live="clientsTransformed">10K+</strong><span>Participants</span></div>
+        <div class="mg-stat"><strong data-live="years">13</strong><span>Years</span></div>
       </div>
     </div>
   </section>
@@ -153,8 +168,16 @@
       <h2>More Events</h2>
       <p>Summer camps, runs, retreats — find your next challenge.</p>
     </div>
-    <div class="mg-grid">
-      <article class="mg-card">
+    <div class="event-filter-bar" id="eventFilters">
+      <button type="button" data-event-filter="all" class="active">All</button>
+      <button type="button" data-event-filter="cycling">Cycling</button>
+      <button type="button" data-event-filter="run">Running</button>
+      <button type="button" data-event-filter="kids">Kids</button>
+      <button type="button" data-event-filter="corporate">Corporate</button>
+      <button type="button" data-event-filter="wellness">Wellness</button>
+    </div>
+    <div class="mg-grid" id="eventsGrid">
+      <article class="mg-card" data-category="cycling community">
         <div class="mg-card-img"><img src="new%20%20ind/NW%20RIDE.jpeg" alt="FG New Ride" loading="lazy" /></div>
         <div class="mg-card-body">
           <span class="mg-card-tag">Cycling · Community</span>
@@ -164,7 +187,52 @@
           <a class="mg-card-cta" href="https://ifinish.in/cycling/FGCC-July" target="_blank" rel="noopener">Register on iFinish</a>
         </div>
       </article>
+      <article class="mg-card" data-category="run community">
+        <div class="mg-card-img"><img src="https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?w=900&q=80" alt="Community run" loading="lazy" /></div>
+        <div class="mg-card-body">
+          <span class="mg-card-tag">Running · Community</span>
+          <h3>Born Star Running Event</h3>
+          <p>Community-focused run for beginners and regulars — medal, support, and race-day energy.</p>
+          <div class="mg-card-meta">Beginner friendly · Finisher medal</div>
+          <a class="mg-card-cta" href="#corp">Ask about registration</a>
+        </div>
+      </article>
+      <article class="mg-card" data-category="kids wellness">
+        <div class="mg-card-img"><img src="https://images.unsplash.com/photo-1472162072942-cd5147eb3902?w=900&q=80" alt="Kids active day" loading="lazy" /></div>
+        <div class="mg-card-body">
+          <span class="mg-card-tag">Kids · Active Day</span>
+          <h3>Kids Obstacle &amp; Play Day</h3>
+          <p>Obstacle courses, team challenges, and confidence-building movement for young athletes.</p>
+          <div class="mg-card-meta">Ages 5–12 · Coached</div>
+          <a class="mg-card-cta" href="book-consultation.html?program=Kids%20Programs&goal=kids">Book kids slot</a>
+        </div>
+      </article>
+      <article class="mg-card" data-category="corporate wellness">
+        <div class="mg-card-img"><img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=900&q=80" alt="Corporate wellness" loading="lazy" /></div>
+        <div class="mg-card-body">
+          <span class="mg-card-tag">Corporate · Wellness</span>
+          <h3>Office Wellness Day</h3>
+          <p>Onsite yoga, step challenges, and team activation built for Hyderabad workplaces.</p>
+          <div class="mg-card-meta">Custom · Onsite</div>
+          <a class="mg-card-cta" href="#corp">Plan a corporate event</a>
+        </div>
+      </article>
     </div>
+
+    <form class="mg-corp-form-card reveal" id="eventRsvpForm" style="margin-top:28px;max-width:640px">
+      <input type="hidden" name="form_type" value="event_rsvp" />
+      <input type="hidden" name="program" value="Community Event RSVP" />
+      <h3>Quick event interest</h3>
+      <p>Save your interest to the database — our team follows up with dates and registration links.</p>
+      <div class="mg-corp-row">
+        <label>Your name<input name="name" required placeholder="e.g. Rahul Sharma" /></label>
+        <label>Phone<input name="phone" type="tel" required placeholder="+91 98765 43210" /></label>
+      </div>
+      <label>Which event interests you?<input name="goal" required placeholder="e.g. FG New Ride, Born Star Run" /></label>
+      <label>Notes<textarea name="message" rows="2" placeholder="Distance preference, group size, etc."></textarea></label>
+      <button class="primary-button" type="submit">Send interest</button>
+      <p class="form-status mg-corp-form-status" id="eventRsvpStatus" role="status"></p>
+    </form>
     </div>
   </section>
 
@@ -468,7 +536,57 @@
   </section>
 </main>
 
-  <section class="fg-app-section reveal" style="padding-bottom:0">
+  
+  <section class="ix-section reveal" id="planQuiz">
+    <div class="page-shell">
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker">Interactive</span>
+          <h2>Quick plan quiz</h2>
+          <p>Three taps. Live API match for a coaching plan and challenge path.</p>
+        </div>
+      </div>
+      <div class="ix-split">
+        <div id="planQuizRoot"></div>
+        <div>
+          <form class="goal-match-form" id="goalMatchForm">
+            <div class="goal-match-steps">
+              <label class="goal-field">
+                <span>Your primary goal</span>
+                <select name="goal" required>
+                  <option value="weight-loss">Lose fat / recomp</option>
+                  <option value="strength">Build strength</option>
+                  <option value="yoga">Yoga &amp; stress relief</option>
+                  <option value="running">Running &amp; endurance</option>
+                  <option value="kids">Kids fitness</option>
+                  <option value="rehab">Injury rehab</option>
+                </select>
+              </label>
+              <label class="goal-field">
+                <span>Experience</span>
+                <select name="experience" required>
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="advanced">Advanced</option>
+                </select>
+              </label>
+              <label class="goal-field">
+                <span>How you want to train</span>
+                <select name="preference" required>
+                  <option value="in-person">In-person / doorstep</option>
+                  <option value="virtual">Virtual coaching</option>
+                </select>
+              </label>
+            </div>
+            <button class="primary-button" type="submit">Match me</button>
+          </form>
+          <div class="goal-match-result" id="goalMatchResult" hidden></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<section class="fg-app-section reveal" style="padding-bottom:0">
     <div class="page-shell" style="text-align:center">
       <h2 style="font-size:1.6rem;margin-bottom:6px">Download the <em>App</em></h2>
       <p style="color:var(--muted);margin-bottom:24px">Track workouts, book sessions, and stay connected — right from your phone.</p>

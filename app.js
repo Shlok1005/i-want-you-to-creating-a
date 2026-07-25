@@ -487,17 +487,28 @@ function applyLiveStats(live) {
     coaches: String(live.coaches || ""),
     specialties: String(live.specialties || 7),
     inquiriesToday: String(live.inquiriesToday || 0),
+    challengeJoins: String(live.challengeJoins || 0),
+    activeNow: String(live.activeNow || 0),
+    toolUses: String(live.toolUses || 0),
+    chatSessions: String(live.chatSessions || 0),
   };
   Object.keys(map).forEach(function(key) {
     qsa('[data-live="' + key + '"]').forEach(function(el) {
-      el.textContent = map[key];
-      if (el.classList.contains("counter-num")) {
-        el.dataset.target = String(live[key] || el.dataset.target || 0);
+      var raw = live[key];
+      // Keep numeric counters numeric so animateCounters / scrubbers stay clean.
+      if (el.classList.contains("counter-num") || el.hasAttribute("data-live-raw")) {
+        el.textContent = String(raw != null ? raw : map[key]);
+        el.dataset.target = String(raw != null ? raw : el.dataset.target || 0);
+      } else {
+        el.textContent = map[key];
       }
     });
   });
   if (has("#livePulseText") && live.pulse) qs("#livePulseText").textContent = live.pulse;
   if (has("#liveActiveNow")) qs("#liveActiveNow").textContent = String(live.activeNow || "—");
+  qsa("[data-live-pulse]").forEach(function(el) {
+    if (live.pulse) el.textContent = live.pulse;
+  });
 }
 
 function initLivePulse() {
@@ -509,6 +520,45 @@ function initLivePulse() {
   };
   tick();
   setInterval(tick, 45000);
+}
+
+function bookLinkFromMatch(data) {
+  var plan = (data && data.plan) || {};
+  var match = (data && data.match) || {};
+  var coach = ((data && data.coaches) || [])[0] || {};
+  var params = new URLSearchParams();
+  if (match.goal) params.set("goal", match.goal);
+  if (plan.name) params.set("program", plan.name);
+  if (coach.name) params.set("coach", coach.name);
+  if (data && data.challenge && data.challenge.name) params.set("challenge", data.challenge.name);
+  var qs = params.toString();
+  return "book-consultation.html" + (qs ? "?" + qs : "");
+}
+
+function renderMatchResultHtml(data) {
+  var plan = data.plan || {};
+  var coaches = data.coaches || [];
+  var match = data.match || {};
+  var challenge = data.challenge || {};
+  var coachHtml = coaches.slice(0, 3).map(function(c) {
+    var img = c.image ? '<img src="' + safe(c.image) + '" alt="" />' : '<span>' + safe(coachInitials(c.name)) + '</span>';
+    return '<article class="goal-coach-chip">' + img + '<div><strong>' + safe(c.name) + '</strong><small>' + safe(c.role) + '</small></div></article>';
+  }).join("");
+  var bookHref = bookLinkFromMatch(data);
+  return '<div class="goal-match-card">' +
+    '<div class="goal-match-score">' + safe(data.score || 90) + '% match</div>' +
+    '<h3>' + safe(match.title || plan.name || "Your plan") + '</h3>' +
+    '<p>' + safe(match.summary || plan.summary || "") + '</p>' +
+    (challenge.name ? '<p class="goal-match-tip"><strong>Challenge:</strong> ' + safe(challenge.name) + ' · ' + safe(challenge.days || "") + ' days</p>' : '') +
+    '<p class="goal-match-tip">' + safe(data.tip || "") + ' ' + safe(data.mode || "") + '</p>' +
+    '<div class="goal-match-plan"><span>Recommended</span><strong>' + safe(plan.name || match.plan || "") + '</strong><em>' + safe(plan.price || "") + '</em></div>' +
+    '<div class="goal-match-coaches">' + (coachHtml || "<p>Browse all coaches to pick your fit.</p>") + '</div>' +
+    '<div class="goal-match-actions">' +
+      '<a class="primary-button" href="' + safe(bookHref) + '">Buy Now</a>' +
+      '<a class="ghost-button" href="transformation-challenge.html#tcQuiz">Try challenge quiz</a>' +
+      '<a class="ghost-button" href="https://wa.me/917207113310" target="_blank" rel="noopener">Have questions? Chat now</a>' +
+    '</div>' +
+  '</div>';
 }
 
 function initGoalMatcher() {
@@ -523,32 +573,293 @@ function initGoalMatcher() {
     result.innerHTML = '<div class="goal-match-loading">Matching you with a plan and coach…</div>';
     try {
       var data = await api("/api/match", { method: "POST", body: JSON.stringify(payload) });
-      var plan = data.plan || {};
-      var coaches = data.coaches || [];
-      var match = data.match || {};
-      var coachHtml = coaches.slice(0, 3).map(function(c) {
-        var img = c.image ? '<img src="' + safe(c.image) + '" alt="" />' : '<span>' + safe(coachInitials(c.name)) + '</span>';
-        return '<article class="goal-coach-chip">' + img + '<div><strong>' + safe(c.name) + '</strong><small>' + safe(c.role) + '</small></div></article>';
-      }).join("");
-      result.innerHTML =
-        '<div class="goal-match-card">' +
-          '<div class="goal-match-score">' + safe(data.score || 90) + '% match</div>' +
-          '<h3>' + safe(match.title || plan.name || "Your plan") + '</h3>' +
-          '<p>' + safe(match.summary || plan.summary || "") + '</p>' +
-          '<p class="goal-match-tip">' + safe(data.tip || "") + ' ' + safe(data.mode || "") + '</p>' +
-          '<div class="goal-match-plan"><span>Recommended</span><strong>' + safe(plan.name || match.plan || "") + '</strong><em>' + safe(plan.price || "") + '</em></div>' +
-          '<div class="goal-match-coaches">' + (coachHtml || "<p>Browse all coaches to pick your fit.</p>") + '</div>' +
-          '<div class="goal-match-actions">' +
-            '<a class="primary-button" href="' + safe(match.cta || "book-consultation.html") + '">Buy Now</a>' +
-            '<a class="ghost-button" href="https://wa.me/917207113310" target="_blank" rel="noopener">Have questions? Chat now</a>' +
-          '</div>' +
-        '</div>';
+      result.innerHTML = renderMatchResultHtml(data);
       result.classList.add("is-ready");
       result.scrollIntoView({ behavior: "smooth", block: "nearest" });
     } catch (err) {
       result.innerHTML = '<div class="goal-match-error">Could not match right now. <a href="book-consultation.html">Book a consultation</a> instead.</div>';
     }
   });
+}
+
+function initPlanQuiz() {
+  var root = qs("#planQuizRoot");
+  if (!root || root.dataset.wired === "1") return;
+  root.dataset.wired = "1";
+  var steps = [
+    {
+      key: "goal",
+      q: "What’s your main goal?",
+      options: [
+        { value: "weight-loss", label: "Lose fat / reshape" },
+        { value: "strength", label: "Build strength" },
+        { value: "yoga", label: "Yoga & mobility" },
+        { value: "running", label: "Running & endurance" },
+        { value: "rehab", label: "Rehab / return to train" }
+      ]
+    },
+    {
+      key: "experience",
+      q: "Your experience level?",
+      options: [
+        { value: "beginner", label: "Beginner" },
+        { value: "intermediate", label: "Intermediate" },
+        { value: "advanced", label: "Advanced" }
+      ]
+    },
+    {
+      key: "preference",
+      q: "How do you want to train?",
+      options: [
+        { value: "in-person", label: "In-person / doorstep" },
+        { value: "virtual", label: "Virtual coaching" }
+      ]
+    }
+  ];
+  var answers = {};
+  var step = 0;
+  root.innerHTML =
+    '<div class="plan-quiz">' +
+      '<div class="plan-quiz-progress"><span id="planQuizBar"></span></div>' +
+      '<p class="plan-quiz-q" id="planQuizQ"></p>' +
+      '<div class="plan-quiz-options" id="planQuizOptions"></div>' +
+      '<div class="plan-quiz-nav">' +
+        '<button type="button" class="ghost-button" id="planQuizBack" disabled>Back</button>' +
+        '<button type="button" class="primary-button" id="planQuizNext" disabled>Next</button>' +
+      '</div>' +
+      '<div class="goal-match-result" id="planQuizResult" hidden></div>' +
+    '</div>';
+
+  function render() {
+    var s = steps[step];
+    qs("#planQuizQ").textContent = s.q;
+    qs("#planQuizBar").style.width = (((step + 1) / steps.length) * 100) + "%";
+    qs("#planQuizOptions").innerHTML = s.options.map(function(o) {
+      return '<button type="button" class="plan-quiz-option' + (answers[s.key] === o.value ? " selected" : "") + '" data-value="' + safe(o.value) + '">' + safe(o.label) + '</button>';
+    }).join("");
+    qs("#planQuizBack").disabled = step === 0;
+    qs("#planQuizNext").disabled = !answers[s.key];
+    qs("#planQuizNext").textContent = step === steps.length - 1 ? "Get my plan" : "Next";
+  }
+
+  async function finish() {
+    var result = qs("#planQuizResult");
+    result.hidden = false;
+    result.innerHTML = '<div class="goal-match-loading">Matching via /api/quiz…</div>';
+    try {
+      var data = await api("/api/quiz", { method: "POST", body: JSON.stringify(answers) });
+      result.innerHTML = renderMatchResultHtml(data);
+      result.classList.add("is-ready");
+      result.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    } catch (e) {
+      result.innerHTML = '<div class="goal-match-error">Quiz API unavailable. <a href="transformation-challenge.html#tcQuiz">Open full challenge quiz</a>.</div>';
+    }
+  }
+
+  qs("#planQuizOptions").addEventListener("click", function(e) {
+    var btn = e.target.closest(".plan-quiz-option");
+    if (!btn) return;
+    answers[steps[step].key] = btn.getAttribute("data-value");
+    render();
+  });
+  qs("#planQuizBack").addEventListener("click", function() {
+    if (step > 0) { step -= 1; render(); }
+  });
+  qs("#planQuizNext").addEventListener("click", function() {
+    if (!answers[steps[step].key]) return;
+    if (step < steps.length - 1) { step += 1; render(); }
+    else finish();
+  });
+  render();
+}
+
+function initConsultPrefill() {
+  var form = qs("#consultPageForm") || qs("#leadForm");
+  if (!form) return;
+  var params = new URLSearchParams(window.location.search);
+  ["goal", "program", "coach", "name", "phone", "email", "message", "challenge"].forEach(function(key) {
+    var val = params.get(key);
+    if (!val) return;
+    var field = form.querySelector('[name="' + key + '"]');
+    if (!field && key === "challenge") {
+      var msg = form.querySelector('[name="message"]');
+      if (msg && !msg.value) msg.value = "Interested in: " + val;
+      return;
+    }
+    if (!field) return;
+    if (field.tagName === "SELECT") {
+      var opts = Array.prototype.slice.call(field.options);
+      var hit = opts.find(function(o) { return o.value === val || o.textContent.trim() === val; });
+      if (hit) field.value = hit.value;
+      else {
+        var opt = document.createElement("option");
+        opt.value = val;
+        opt.textContent = val;
+        opt.selected = true;
+        field.appendChild(opt);
+      }
+    } else {
+      field.value = val;
+    }
+  });
+
+  var preview = qs("#consultMatchPreview");
+  if (!preview) return;
+  var goal = params.get("goal");
+  if (!goal) {
+    preview.hidden = true;
+    return;
+  }
+  preview.hidden = false;
+  preview.innerHTML = '<div class="goal-match-loading">Loading plan preview…</div>';
+  api("/api/match", {
+    method: "POST",
+    body: JSON.stringify({
+      goal: goal,
+      experience: params.get("experience") || "beginner",
+      preference: params.get("preference") || "in-person"
+    })
+  }).then(function(data) {
+    preview.innerHTML = renderMatchResultHtml(data);
+    preview.classList.add("is-ready");
+  }).catch(function() {
+    preview.hidden = true;
+  });
+}
+
+function hydrateProgramSelects(plans) {
+  var list = Array.isArray(plans) && plans.length ? plans : (realData.plans || []);
+  qsa("select[name='program'][data-hydrate='plans']").forEach(function(sel) {
+    var current = sel.value;
+    var html = '<option value="">Select program</option>';
+    list.forEach(function(p) {
+      html += '<option value="' + safe(p.name) + '">' + safe(p.name) + " · " + safe(p.price || "") + "</option>";
+    });
+    html += '<option value="Corporate Events">Corporate Events</option><option value="Kids Programs">Kids Programs</option>';
+    sel.innerHTML = html;
+    if (current) sel.value = current;
+  });
+}
+
+function initCoachCategoryJump() {
+  qsa(".cc-card[data-coach-jump], [data-coach-jump]").forEach(function(card) {
+    card.style.cursor = "pointer";
+    card.addEventListener("click", function() {
+      var cat = card.getAttribute("data-coach-jump");
+      if (!cat) return;
+      activeCoachFilter = cat;
+      qsa("button[data-coach-filter]").forEach(function(btn) {
+        btn.classList.toggle("active", btn.getAttribute("data-coach-filter") === cat);
+      });
+      renderFilteredCoaches();
+      var grid = qs("#allCoaches") || qs("#coachGrid");
+      if (grid) grid.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+  // Also map specialty cards without explicit attrs by heading text.
+  qsa(".coach-scroll-track .cc-card").forEach(function(card) {
+    if (card.hasAttribute("data-coach-jump")) return;
+    var title = (card.querySelector("h3") || {}).textContent || "";
+    var map = {
+      "Yoga": "yoga", "Fitness": "fitness", "Sports": "sports", "Kids": "kids",
+      "Injury": "rehab", "Special": "special", "Hybrid": "hybrid"
+    };
+    Object.keys(map).some(function(key) {
+      if (title.indexOf(key) !== -1) {
+        card.setAttribute("data-coach-jump", map[key]);
+        return true;
+      }
+      return false;
+    });
+  });
+  qsa(".coach-scroll-track .cc-card[data-coach-jump]").forEach(function(card) {
+    if (card.dataset.jumpWired === "1") return;
+    card.dataset.jumpWired = "1";
+    card.style.cursor = "pointer";
+    card.addEventListener("click", function() {
+      var cat = card.getAttribute("data-coach-jump");
+      activeCoachFilter = cat;
+      qsa("button[data-coach-filter]").forEach(function(btn) {
+        btn.classList.toggle("active", btn.getAttribute("data-coach-filter") === cat);
+      });
+      renderFilteredCoaches();
+      var target = qs("#allCoaches") || qs("#coachGrid");
+      if (target) target.scrollIntoView({ behavior: "smooth" });
+    });
+  });
+
+  var params = new URLSearchParams(window.location.search);
+  var goal = params.get("goal") || params.get("filter");
+  if (goal && has("#coachGrid")) {
+    var goalMap = {
+      "weight-loss": "fitness", strength: "fitness", yoga: "yoga", running: "sports",
+      kids: "kids", rehab: "rehab", flexibility: "yoga"
+    };
+    activeCoachFilter = goalMap[goal] || (["yoga","fitness","sports","kids","rehab","special","hybrid"].indexOf(goal) >= 0 ? goal : "all");
+    qsa("button[data-coach-filter]").forEach(function(btn) {
+      btn.classList.toggle("active", btn.getAttribute("data-coach-filter") === activeCoachFilter);
+    });
+    renderFilteredCoaches();
+  }
+}
+
+function initEventFilters() {
+  var bar = qs("#eventFilters");
+  var grid = qs("#eventsGrid") || qs("#events .mg-grid");
+  if (!bar || !grid) return;
+  bar.addEventListener("click", function(e) {
+    var btn = e.target.closest("button[data-event-filter]");
+    if (!btn) return;
+    qsa("button[data-event-filter]", bar).forEach(function(b) { b.classList.toggle("active", b === btn); });
+    var filter = btn.getAttribute("data-event-filter");
+    qsa(".mg-card, .event-card", grid).forEach(function(card) {
+      if (filter === "all") { card.style.display = ""; return; }
+      var hay = ((card.textContent || "") + " " + (card.getAttribute("data-category") || "")).toLowerCase();
+      card.style.display = hay.indexOf(filter) !== -1 ? "" : "none";
+    });
+  });
+}
+
+function initToolsMatchHook() {
+  if (!has("#calcApp")) return;
+  document.addEventListener("click", function(e) {
+    if (!e.target.closest("#calcSubmit")) return;
+    setTimeout(function() {
+      var host = qs("#calResult");
+      if (!host || host.style.display === "none") return;
+      if (host.querySelector(".tools-match-box")) return;
+      var box = document.createElement("div");
+      box.className = "tools-match-box";
+      box.innerHTML = '<p class="tools-match-loading">Finding a plan that fits this result…</p>';
+      host.appendChild(box);
+      var goal = "weight-loss";
+      var title = ((qs(".cal-view-header h2") || {}).textContent || "").toLowerCase();
+      if (title.indexOf("bmi") !== -1 || title.indexOf("body fat") !== -1 || title.indexOf("macro") !== -1) goal = "weight-loss";
+      if (title.indexOf("1rm") !== -1 || title.indexOf("strength") !== -1) goal = "strength";
+      api("/api/match", {
+        method: "POST",
+        body: JSON.stringify({ goal: goal, experience: "beginner", preference: "in-person" })
+      }).then(function(data) {
+        box.innerHTML = renderMatchResultHtml(data);
+      }).catch(function() {
+        box.innerHTML = '<p><a href="transformation-challenge.html#tcQuiz">Take the plan quiz</a> for a coaching recommendation.</p>';
+      });
+    }, 50);
+  });
+}
+
+function initInteractivePageExtras() {
+  initPlanQuiz();
+  initConsultPrefill();
+  initCoachCategoryJump();
+  initEventFilters();
+  initToolsMatchHook();
+  // Rating filter on coaches page
+  var rating = qs("#coachRatingFilter");
+  if (rating && rating.dataset.wired !== "1") {
+    rating.dataset.wired = "1";
+    rating.addEventListener("change", renderFilteredCoaches);
+  }
 }
 
 function initMagneticCtas() {
@@ -622,12 +933,15 @@ function renderFilteredCoaches() {
   if (!has("#coachGrid")) return;
   const container = qs("#coachGrid");
   const search = qs("#coachSearch")?.value.trim().toLowerCase() || "";
+  const minRating = Number((qs("#coachRatingFilter") || {}).value || 0);
   const limit = Number(container.dataset.limit || 0);
-  const filtered = allCoaches.filter((coach) => {
+  const filtered = allCoaches.filter((coach, idx) => {
     const haystack = `${coach.name} ${coach.role} ${(coach.focus || []).join(" ")} ${coach.highlight || ""}`.toLowerCase();
     const matchesSearch = !search || haystack.includes(search);
     const matchesFilter = activeCoachFilter === "all" || coach.category === activeCoachFilter;
-    return matchesSearch && matchesFilter;
+    const meta = fakeCoachMeta(coach, idx);
+    const matchesRating = !minRating || Number(meta.rating) >= minRating;
+    return matchesSearch && matchesFilter && matchesRating;
   });
   const items = limit ? filtered.slice(0, limit) : filtered;
   var isHome = !has("#coachSearch") && !has("#coachFilters");
@@ -1660,6 +1974,8 @@ function injectWhatsApp() {
 function wireForms() {
   bindFormSubmit(qs("#leadForm"), qs("#leadStatus"));
   bindFormSubmit(qs("#consultPageForm"), qs("#consultPageStatus"));
+  bindFormSubmit(qs("#corpEventForm"), qs("#corpFormStatus"));
+  bindFormSubmit(qs("#eventRsvpForm"), qs("#eventRsvpStatus"));
   qsa("[data-contact-phone]").forEach((node) => { node.textContent = realData.contact.phone; });
   qsa("[data-contact-email]").forEach((node) => { node.textContent = realData.contact.email; });
 }
@@ -2760,6 +3076,8 @@ async function boot() {
   try { if (d.live) applyLiveStats(d.live); } catch (e) { console.warn("boot:applyLiveStats", e); }
   try { initLivePulse(); } catch (e) { console.warn("boot:initLivePulse", e); }
   try { initGoalMatcher(); } catch (e) { console.warn("boot:initGoalMatcher", e); }
+  try { hydrateProgramSelects(d.plans || realData.plans); } catch (e) { console.warn("boot:hydrateProgramSelects", e); }
+  try { initInteractivePageExtras(); } catch (e) { console.warn("boot:initInteractivePageExtras", e); }
   try { initHeroCarousel(); } catch (e) { console.warn("boot:initHeroCarousel", e); }
   try { initCoachCarousel(); } catch (e) { console.warn("boot:initCoachCarousel", e); }
   try { initEcoCarousel(); } catch (e) { console.warn("boot:initEcoCarousel", e); }

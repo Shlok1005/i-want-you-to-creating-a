@@ -73,6 +73,21 @@
 </nav>
 
   <main>
+
+  <section class="site-live-bar" id="liveStats" aria-live="polite">
+    <div class="site-live-inner">
+      <div class="site-live-pulse">
+        <span class="site-live-dot" aria-hidden="true"></span>
+        <span data-live-pulse>Loading live activity…</span>
+      </div>
+      <div class="site-live-stats">
+        <div><strong data-live="activeNow" data-live-raw>0</strong><span>Active now</span></div>
+        <div><strong data-live="inquiriesToday" data-live-raw>0</strong><span>Inquiries today</span></div>
+        <div><strong data-live="clientsTransformed">0</strong><span>Transformed</span></div>
+      </div>
+    </div>
+  </section>
+
     <section class="hero-fittr hero-split">
       <div class="hero-fittr-content hero-split-inner">
         <div class="hero-split-left">
@@ -697,7 +712,25 @@
       </div>
     </section>
 
-    <section class="plans-bw-section" id="plans">
+    
+  <section class="section-shell reveal" id="apiPlans">
+    <div class="page-shell">
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker">Live plans</span>
+          <h2>Compare coaching plans</h2>
+          <p>Pulled from the Fitness Gurukul API — compare and open pricing details.</p>
+        </div>
+      </div>
+      <div class="services-api-grid" id="servicesGrid"></div>
+      <div class="cta-actions" style="margin-top:18px">
+        <a class="primary-button" href="#planQuiz">Not sure? Take the quiz</a>
+        <a class="ghost-button" href="transformation-challenge.html">Browse challenges</a>
+      </div>
+    </div>
+  </section>
+
+<section class="plans-bw-section" id="plans">
       <div class="page-shell">
       <div class="plans-bw-header">
         <h2>Choose Your Plan</h2>
@@ -798,7 +831,57 @@
       </div>
     </section>
 
-    <section class="cta-strip">
+    
+  <section class="ix-section reveal" id="planQuiz">
+    <div class="page-shell">
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker">Interactive</span>
+          <h2>Quick plan quiz</h2>
+          <p>Three taps. Live API match for a coaching plan and challenge path.</p>
+        </div>
+      </div>
+      <div class="ix-split">
+        <div id="planQuizRoot"></div>
+        <div>
+          <form class="goal-match-form" id="goalMatchForm">
+            <div class="goal-match-steps">
+              <label class="goal-field">
+                <span>Your primary goal</span>
+                <select name="goal" required>
+                  <option value="weight-loss">Lose fat / recomp</option>
+                  <option value="strength">Build strength</option>
+                  <option value="yoga">Yoga &amp; stress relief</option>
+                  <option value="running">Running &amp; endurance</option>
+                  <option value="kids">Kids fitness</option>
+                  <option value="rehab">Injury rehab</option>
+                </select>
+              </label>
+              <label class="goal-field">
+                <span>Experience</span>
+                <select name="experience" required>
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="advanced">Advanced</option>
+                </select>
+              </label>
+              <label class="goal-field">
+                <span>How you want to train</span>
+                <select name="preference" required>
+                  <option value="in-person">In-person / doorstep</option>
+                  <option value="virtual">Virtual coaching</option>
+                </select>
+              </label>
+            </div>
+            <button class="primary-button" type="submit">Match me</button>
+          </form>
+          <div class="goal-match-result" id="goalMatchResult" hidden></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<section class="cta-strip">
       <div class="page-shell">
       <div>
         <h2>Not sure which plan is right?</h2>

@@ -8,8 +8,8 @@
   <link rel="stylesheet" href="styles.css" />
   <script src="app.js" defer></script>
   <style>
-    .consult-page { min-height: calc(100vh - 140px); display: grid; place-items: center; padding: 120px 20px 60px; }
-    .consult-page-card { width: min(640px, 100%); background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 32px; }
+    .consult-page { min-height: calc(100vh - 140px); display: grid; place-items: center; padding: 40px 20px 60px; }
+    .consult-page-card { width: min(720px, 100%); background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 32px; }
     .consult-page-card h1 { margin: 12px 0 8px; font-size: 1.8rem; }
     .consult-page-card > p { color: rgba(255,255,255,0.65); margin-bottom: 22px; }
     .consult-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
@@ -20,6 +20,9 @@
     }
     .consult-page-trust { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 18px; color: rgba(255,255,255,0.55); font-size: 0.78rem; }
     .consult-page-trust span { display: inline-flex; align-items: center; gap: 6px; }
+    .consult-live-trust { display: flex; gap: 16px; flex-wrap: wrap; margin: 0 0 18px; }
+    .consult-live-trust strong { display: block; font-size: 1.2rem; color: #b8f23d; }
+    .consult-live-trust span { color: rgba(255,255,255,0.55); font-size: 0.75rem; }
     @media (max-width: 640px) { .consult-row { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -76,22 +79,46 @@
   </div>
 </nav>
 
+  <section class="site-live-bar" id="liveStats" aria-live="polite">
+    <div class="site-live-inner">
+      <div class="site-live-pulse">
+        <span class="site-live-dot" aria-hidden="true"></span>
+        <span data-live-pulse>Loading live activity…</span>
+      </div>
+      <div class="site-live-stats">
+        <div><strong data-live="activeNow" data-live-raw>0</strong><span>Active now</span></div>
+        <div><strong data-live="inquiriesToday" data-live-raw>0</strong><span>Inquiries today</span></div>
+        <div><strong data-live="clientsTransformed">0</strong><span>Transformed</span></div>
+      </div>
+    </div>
+  </section>
+
   <main class="consult-page">
     <div class="consult-page-card">
       <div class="consult-page-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       </div>
       <h1>Buy Now / Book Consultation</h1>
-      <p>Tell us about yourself and we'll craft a plan for you. No commitment — just a conversation about your goals.</p>
+      <p>Tell us about yourself and we'll craft a plan for you. Prefills from the quiz or challenge matcher when you arrive with a link.</p>
+
+      <div class="consult-live-trust">
+        <div><strong data-live="inquiriesToday" data-live-raw>0</strong><span>Inquiries today</span></div>
+        <div><strong data-live="coaches" data-live-raw>0</strong><span>Coaches ready</span></div>
+        <div><strong data-live="challengeJoins" data-live-raw>0</strong><span>Challenge joins</span></div>
+      </div>
+
+      <div class="consult-match-preview goal-match-result" id="consultMatchPreview" hidden></div>
+
       <form id="consultPageForm">
         <input type="hidden" name="form_type" value="consultation" />
+        <input type="hidden" name="coach" id="consultCoachField" value="" />
         <div class="consult-row">
           <label>Your name<input name="name" autocomplete="name" required placeholder="e.g. Rahul Sharma" /></label>
           <label>Phone<input name="phone" type="tel" autocomplete="tel" required placeholder="+91 98765 43210" /></label>
         </div>
         <div class="consult-row">
           <label>Email<input name="email" type="email" autocomplete="email" placeholder="you@example.com" /></label>
-          <label>Program<select name="program" required>
+          <label>Program<select name="program" required data-hydrate="plans">
             <option value="">Select</option>
             <option>Strength Training</option>
             <option>Running</option>
@@ -112,6 +139,7 @@
         <span>Free — no commitment</span>
         <span>Response within 24 hours</span>
         <span>Saved to office database</span>
+        <a href="transformation-challenge.html#tcQuiz">Prefer the challenge quiz?</a>
       </div>
     </div>
   </main>
