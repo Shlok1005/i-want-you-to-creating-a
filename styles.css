@@ -2923,6 +2923,25 @@ from { opacity: 0; transform: translateY(8px); }
 
 .ccv2-profile-btn:hover { background: rgba(255,255,255,0.08); transform: scale(1.03); }
 
+.ccv2-schedule-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 12px;
+  border: 1px solid;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--white);
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.ccv2-schedule-btn:hover { background: rgba(255,255,255,0.08); transform: scale(1.03); }
+
 .ccv2-book-btn {
   display: inline-flex;
   align-items: center;
@@ -13221,6 +13240,28 @@ from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:transl
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 16px;
   margin-top: 18px;
+}
+.services-api-grid.compare-view {
+  display: block;
+}
+.svc-compare-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.svc-compare-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.svc-compare-toolbar-note {
+  margin: 0;
+  color: rgba(255,255,255,0.55);
+  font-size: 0.9rem;
 }
 .consult-match-preview {
   margin-bottom: 18px;

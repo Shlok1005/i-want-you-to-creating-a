@@ -722,6 +722,9 @@
           <h2>Compare coaching plans</h2>
           <p>Pulled from the Fitness Gurukul API — compare and open pricing details.</p>
         </div>
+        <div class="svc-compare-actions">
+          <button type="button" class="ghost-button" id="compareToggle" data-compare-toggle>Compare (<span id="compareCount" data-compare-count>0</span>)</button>
+        </div>
       </div>
       <div class="services-api-grid" id="servicesGrid"></div>
       <div class="cta-actions" style="margin-top:18px">
@@ -828,6 +831,24 @@
           <button class="plans-hz-btn">View Details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
         </div>
         <div class="plans-hz-card-img"><img src="services/fg%20hyrox.png" alt="Fitness Gurukul Forge" loading="lazy" /></div>
+      </div>
+
+      <div class="plans-hz-card" onclick="openPlan('elite')">
+        <div class="plans-hz-card-body">
+          <h3>Virtual 1:1 Elite Transformation</h3>
+          <div class="plans-hz-sub">Weight Loss · Lean Muscle · Lifestyle Overhaul</div>
+          <div class="plans-hz-row">
+            <div class="plans-hz-price"><span class="amt">₹1,999</span><span class="period">/month</span></div>
+            <div class="plans-hz-sessions">Online · Digital Coaching</div>
+          </div>
+          <ul class="plans-hz-features">
+            <li>Dedicated fitness &amp; nutrition coach</li>
+            <li>Custom workout &amp; Indian meal plan</li>
+            <li>Weekly video reviews + daily chat</li>
+          </ul>
+          <button class="plans-hz-btn">View Details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+        </div>
+        <div class="plans-hz-card-img"><img src="services/fg%20core.png" alt="Virtual Elite Transformation" loading="lazy" /></div>
       </div>
       </div>
     </section>
@@ -1143,6 +1164,7 @@ var planData = {
 
 function openPlan(id) {
   var d = planData[id];
+  if (!d) return;
   var badge = d.bestValue ? '<div class="overlay-best-value">Best Value</div>' : '';
   var text = badge + '<h2>' + d.name + '</h2><div class="plan-overlay-sub">' + d.sub + '</div>';
   text += '<div class="plan-overlay-tiers">';

@@ -1018,6 +1018,7 @@ function renderFilteredCoaches() {
         <div class="ccv2-tags">${(coach.focus || []).map(function(f) { return '<span style="border-color:' + hc + '33;color:' + hc + '">' + safe(f) + '</span>'; }).join("")}</div>
         <div class="ccv2-actions">
           <span class="ccv2-profile-btn" style="border-color:${ac}">View Profile</span>
+          <button type="button" class="ccv2-schedule-btn" style="border-color:${ac}" data-coach-calendar="${safe(coach.slug)}">Schedule</button>
           <button class="ccv2-book-btn coach-card-book-btn" style="background:${ac}" data-coach="${safe(coach.name)}">Book</button>
         </div>
       </div>
@@ -1934,7 +1935,7 @@ function wireCoachPopups() {
 
     var card = e.target.closest(".coach-card, .coach-card-v2, .home-coach-card, .about-team-card");
     if (!card || !card.dataset.coachId) return;
-    if (e.target.closest(".coach-inline-form, .coach-card-book-btn, .ccv2-profile-btn")) return;
+    if (e.target.closest(".coach-inline-form, .coach-card-book-btn, .ccv2-profile-btn, .ccv2-schedule-btn, [data-coach-calendar]")) return;
     e.preventDefault();
     var coach = allCoaches.find(function(c) { return c.slug === card.dataset.coachId; });
     if (coach) renderCoachPopup(coach);
@@ -2169,7 +2170,9 @@ function initPlanCards() {
 
 /* -- Plan Modals (Core + Signature) --- */
 function initPlanModals() {
-  if (qs("#planOverlay")) return;
+  /* services.html has its own #planOverlay + openPlan(); still wire
+     compare/plan CTAs on #servicesGrid instead of bailing out entirely. */
+  var usePageOverlay = !!qs("#planOverlay");
   var modalsInjected = false;
   function buildPlanHero(info) {
     var metaHtml = info.meta.map(function(m) {
@@ -2400,7 +2403,7 @@ function initPlanModals() {
   }
 
   function openModal(id) {
-    injectModals();
+    if (!usePageOverlay) injectModals();
     var modal = qs("#" + id);
     if (!modal) return;
     modal.classList.add("open");
@@ -2410,20 +2413,33 @@ function initPlanModals() {
     qsa(".plan-modal-overlay.open").forEach(function(m) { m.classList.remove("open"); });
     document.body.style.overflow = "";
   }
+  var modalByPlan = {
+    core: "corePlanModal",
+    prime: "primePlanModal",
+    signature: "sigPlanModal",
+    endurance: "endurancePlanModal",
+    forge: "forgePlanModal",
+    elite: "elitePlanModal"
+  };
+  function openPlanByKey(key) {
+    if (!key) return;
+    if (usePageOverlay && typeof window.openPlan === "function") {
+      window.openPlan(key);
+      return;
+    }
+    var modalId = modalByPlan[key];
+    if (modalId) openModal(modalId);
+  }
   document.addEventListener("click", function(e) {
     var target = e.target;
     /* psc-card click */
     var card = target.closest(".psc-card");
     if (card) {
       if (card.tagName === "A") e.preventDefault();
-      var plan = card.dataset.plan;
-      if (plan === "core") { openModal("corePlanModal"); return; }
-      if (plan === "prime") { openModal("primePlanModal"); return; }
-      if (plan === "signature") { openModal("sigPlanModal"); return; }
-      if (plan === "endurance") { openModal("endurancePlanModal"); return; }
-      if (plan === "elite") { openModal("elitePlanModal"); return; }
+      openPlanByKey(card.dataset.plan);
+      return;
     }
-    /* compare toggle */
+    /* compare toggle on card */
     var compareBtn = target.closest(".svc-compare-btn");
     if (compareBtn) {
       e.preventDefault();
@@ -2433,7 +2449,9 @@ function initPlanModals() {
         if (selectedPlans.has(comparePlan)) selectedPlans.delete(comparePlan);
         else selectedPlans.add(comparePlan);
         updateCompareCount();
-        renderServices(getServiceCatalog());
+        var grid = qs("#servicesGrid");
+        if (grid && grid.classList.contains("compare-view")) showCompareView();
+        else renderServices(getServiceCatalog());
       }
       return;
     }
@@ -2441,16 +2459,11 @@ function initPlanModals() {
     var planBtn = target.closest("[data-plan]");
     if (planBtn && !planBtn.classList.contains("svc-compare-btn")) {
       if (planBtn.tagName === "A") e.preventDefault();
-      var p2 = planBtn.dataset.plan;
-      if (p2 === "core") { openModal("corePlanModal"); return; }
-      if (p2 === "prime") { openModal("primePlanModal"); return; }
-      if (p2 === "signature") { openModal("sigPlanModal"); return; }
-      if (p2 === "endurance") { openModal("endurancePlanModal"); return; }
-      if (p2 === "forge") { openModal("forgePlanModal"); return; }
-      if (p2 === "elite") { openModal("elitePlanModal"); return; }
+      openPlanByKey(planBtn.dataset.plan);
+      return;
     }
     /* core plan card on homepage */
-    if (target.closest("#corePlanCard")) { openModal("corePlanModal"); return; }
+    if (target.closest("#corePlanCard")) { openPlanByKey("core"); return; }
     /* close buttons */
     if (target.closest("[data-close-modal]") || target.closest("#corePlanModalClose")) { closeAllModals(); return; }
     /* backdrop click */
@@ -2459,6 +2472,25 @@ function initPlanModals() {
   });
   document.addEventListener("keydown", function(e) {
     if (e.key === "Escape" && qs(".plan-modal-overlay.open")) closeAllModals();
+  });
+}
+
+function initCompareControls() {
+  if (!has("#servicesGrid")) return;
+  document.addEventListener("click", function(e) {
+    var compareToggle = e.target.closest("#compareToggle, [data-compare-toggle]");
+    if (compareToggle) {
+      e.preventDefault();
+      showCompareView();
+      return;
+    }
+    var gridToggle = e.target.closest("#gridToggle, [data-grid-toggle]");
+    if (gridToggle) {
+      e.preventDefault();
+      var grid = qs("#servicesGrid");
+      if (grid) grid.classList.remove("compare-view");
+      renderServices(getServiceCatalog());
+    }
   });
 }
 
@@ -2504,14 +2536,42 @@ function initEcoCarousel() {
   var next = qs("#ecoArrowRight");
   if (!track || !prev || !next) return;
   var scrollAmount = 320;
+  var offset = 0;
+  var manual = false;
+  var resumeTimer;
+  function maxOffset() {
+    return -Math.max(0, Math.floor(track.scrollWidth / 2) - scrollAmount);
+  }
+  function applyOffset() {
+    manual = true;
+    track.style.animation = "none";
+    track.style.transform = "translateX(" + offset + "px)";
+  }
+  function resumeAuto() {
+    clearTimeout(resumeTimer);
+    resumeTimer = setTimeout(function() {
+      manual = false;
+      offset = 0;
+      track.style.transform = "";
+      track.style.animation = "";
+    }, 8000);
+  }
   function pauseAnimation() {
-    track.style.animationPlayState = "paused";
+    if (!manual) track.style.animationPlayState = "paused";
   }
   function resumeAnimation() {
-    track.style.animationPlayState = "running";
+    if (!manual) track.style.animationPlayState = "running";
   }
-  prev.addEventListener("click", function() { pauseAnimation(); track.scrollBy({ left: -scrollAmount, behavior: "smooth" }); });
-  next.addEventListener("click", function() { pauseAnimation(); track.scrollBy({ left: scrollAmount, behavior: "smooth" }); });
+  prev.addEventListener("click", function() {
+    offset = Math.min(0, offset + scrollAmount);
+    applyOffset();
+    resumeAuto();
+  });
+  next.addEventListener("click", function() {
+    offset = Math.max(maxOffset(), offset - scrollAmount);
+    applyOffset();
+    resumeAuto();
+  });
   track.addEventListener("mouseenter", pauseAnimation);
   track.addEventListener("mouseleave", resumeAnimation);
 }
@@ -3069,7 +3129,12 @@ function showCompareView() {
   };
   var checkMark = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16" style="color:var(--white)"><polyline points="20 6 9 17 4 12"/></svg>';
   var crossMark = '<span style="color:var(--muted)">&mdash;</span>';
-  var html = '<div class="svc-compare-wrap"><table class="svc-compare-table"><thead><tr><th>Feature</th>';
+  var selectedLabel = selectedPlans.size ? (selectedPlans.size + " selected") : "all plans";
+  var html = '<div class="svc-compare-toolbar">' +
+    '<p class="svc-compare-toolbar-note">Comparing ' + selectedLabel + '</p>' +
+    '<button type="button" class="ghost-button" id="gridToggle" data-grid-toggle>Back to grid</button>' +
+    '</div>';
+  html += '<div class="svc-compare-wrap"><table class="svc-compare-table"><thead><tr><th>Feature</th>';
   services.forEach(function(s) { html += '<th>' + safe(s.name) + '</th>'; });
   html += '</tr></thead><tbody>';
   fields.forEach(function(f) {
@@ -3092,12 +3157,14 @@ function showCompareView() {
   });
   html += '</tr></tbody></table></div>';
   container.innerHTML = html;
+  updateCompareCount();
 }
 
 
 async function boot() {
   /* wire modals immediately so buttons work even before async ops finish */
   try { initPlanModals(); } catch (e) { console.warn("boot:initPlanModals", e); }
+  try { initCompareControls(); } catch (e) { console.warn("boot:initCompareControls", e); }
   try { renderServices(realData.services); } catch (e) { console.warn("boot:seedServices", e); }
   try { wireAppDropdown(); } catch (e) { console.warn("boot:wireAppDropdown", e); }
   try { initInteractiveMotion(); } catch (e) { console.warn("boot:initInteractiveMotion", e); }
@@ -3504,12 +3571,22 @@ function initCycleCarousel() {
           '<p style="font-size:0.8rem;color:rgba(255,255,255,0.5);line-height:1.6;margin:0 0 14px">' + d.name + ' is a certified ' + d.role.toLowerCase() + ' at Fitness Gurukul, dedicated to helping clients achieve their fitness goals through personalized coaching.</p>' +
           '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">' + d.tags.map(function(t) { return '<span style="font-size:0.68rem;color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:3px 10px">' + t + '</span>'; }).join("") + '</div>' +
           '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px">' + certHtml + '</div>' +
-          '<a href="contact.html#booking" style="display:block;padding:12px;border-radius:10px;background:#fff;color:#000;font-weight:700;font-size:0.85rem;text-decoration:none;text-align:center">Book ' + d.name.split(" ")[0] + '</a>' +
+          '<div style="display:flex;flex-direction:column;gap:10px">' +
+            '<a href="book-consultation.html?coach=' + encodeURIComponent(d.name) + '" style="display:block;padding:12px;border-radius:10px;background:#fff;color:#000;font-weight:700;font-size:0.85rem;text-decoration:none;text-align:center">Book ' + d.name.split(" ")[0] + '</a>' +
+            (coachSchedules[id] ? '<button type="button" id="cpViewSchedule" style="display:block;width:100%;padding:12px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.2);color:#fff;font-weight:600;font-size:0.85rem;cursor:pointer;font-family:inherit">View schedule</button>' : '') +
+          '</div>' +
         '</div>';
       overlay.style.opacity = "1";
       overlay.style.visibility = "visible";
       overlay.querySelector("div > div").style.transform = "translateY(0)";
       document.body.style.overflow = "hidden";
+      var schedBtn = document.getElementById("cpViewSchedule");
+      if (schedBtn) {
+        schedBtn.addEventListener("click", function() {
+          closeCoachProfile();
+          openCoachOverlay(id);
+        });
+      }
     }
 
     function wireProfileButtons(root) {
@@ -3521,6 +3598,16 @@ function initCycleCarousel() {
           if (!card) return;
           e.preventDefault();
           openCoachProfile(card.getAttribute("data-coach-id"));
+        });
+      });
+      root.querySelectorAll("[data-coach-calendar]").forEach(function(el) {
+        if (el.dataset.calWired) return;
+        el.dataset.calWired = "1";
+        el.addEventListener("click", function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var coachId = el.getAttribute("data-coach-calendar");
+          if (coachId) openCoachOverlay(coachId);
         });
       });
     }
@@ -3770,35 +3857,7 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 });
 
-/* Corporate event inquiry form */
-(function() {
-  var frm = document.getElementById("corpEventForm");
-  if (!frm) return;
-  frm.addEventListener("submit", function(e) {
-    e.preventDefault();
-    var status = document.getElementById("corpFormStatus");
-    var payload = Object.fromEntries(new FormData(frm).entries());
-    payload.form_type = "corporate_event";
-    if (status) {
-      status.textContent = "Sending\u2026";
-      status.style.color = "rgba(255,255,255,0.6)";
-    }
-    submitFormPayload(payload, frm)
-      .then(function() {
-        if (status) {
-          status.textContent = "\u2705 Thank you! Our events team will contact you within 24 hours.";
-          status.style.color = "#4ade80";
-        }
-        frm.reset();
-      })
-      .catch(function() {
-        if (status) {
-          status.textContent = "\u26a0\ufe0f Something went wrong. Please try again.";
-          status.style.color = "#dc3545";
-        }
-      });
-  });
-})();
+/* Corporate event inquiry form is wired once via wireForms() / bindFormSubmit */
 
 /* Consult modal removed — using standalone book-consultation.html page */
 
