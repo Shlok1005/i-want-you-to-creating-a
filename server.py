@@ -861,8 +861,10 @@ class AppHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         ensure_database()
         path = urlparse(self.path).path
-        # Easy DB frontend + staff backend entry points.
-        if path in {"/dashboard", "/leads"}:
+        # Two interfaces:
+        # - User website: /, index.html, public pages
+        # - Owner portal: /me, /owner, /dashboard
+        if path in {"/me", "/owner", "/dashboard", "/leads"}:
             self.path = "/dashboard.html"
             path = self.path
         elif path in {"/backend", "/office", "/admin", "/staff"}:
@@ -888,11 +890,13 @@ class AppHandler(SimpleHTTPRequestHandler):
                 return self.send_json({
                     "ok": True,
                     "backendUrl": "/backend",
-                    "dashboardUrl": "/dashboard",
+                    "dashboardUrl": "/me",
+                    "ownerUrl": "/me",
+                    "userUrl": "/",
                     "adminConfigured": bool(admin_token()),
                     "mode": mode,
                     "localDefaultPassword": LOCAL_DEFAULT_PASSWORD if mode == "local-default" else "",
-                    "openUrl": f"http://{host_hdr}/dashboard",
+                    "openUrl": f"http://{host_hdr}/me",
                     "hint": (
                         f"Local default password: {LOCAL_DEFAULT_PASSWORD}"
                         if mode == "local-default"
@@ -1104,24 +1108,24 @@ if __name__ == "__main__":
     print("=" * 56)
     print(" Fitness Gurukul")
     print("=" * 56)
-    print(f" Website:   http://127.0.0.1:{port}")
-    print(f" DASHBOARD: http://127.0.0.1:{port}/dashboard  (easy DB frontend)")
-    print(f" BACKEND:   http://127.0.0.1:{port}/backend")
+    print(f" USER WEBSITE:  http://127.0.0.1:{port}/")
+    print(f" OWNER PORTAL:  http://127.0.0.1:{port}/me")
+    print(f" FULL BACKEND:  http://127.0.0.1:{port}/backend")
     if cred_mode == "local-default":
-        print(" Staff password (local default): fitnessgurukul")
-        print(" Tip: /dashboard unlocks automatically on this computer.")
+        print(" Owner password (local default): fitnessgurukul")
+        print(" Tip: /me unlocks automatically on this computer.")
     elif cred_mode == "generated":
-        print(f" Staff password (generated): {admin_token()}")
+        print(f" Owner password (generated): {admin_token()}")
         print(" Tip: add ADMIN_TOKEN to .env so it stays the same next restart.")
     else:
-        print(" Staff password: loaded from .env (ADMIN_TOKEN / ADMIN_PASSWORD)")
+        print(" Owner password: loaded from .env (ADMIN_TOKEN / ADMIN_PASSWORD)")
     if host in {"0.0.0.0", "::"}:
         try:
             local_ip = socket.gethostbyname(socket.gethostname())
         except OSError:
             local_ip = "YOUR-LAPTOP-IP"
-        print(f" LAN site: http://{local_ip}:{port}")
-        print(f" LAN dashboard: http://{local_ip}:{port}/dashboard")
+        print(f" LAN user site: http://{local_ip}:{port}/")
+        print(f" LAN owner portal: http://{local_ip}:{port}/me")
     else:
         print(" Bound to localhost only. Set HOST=0.0.0.0 to share on Wi-Fi.")
     print("=" * 56)

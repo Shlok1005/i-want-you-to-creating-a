@@ -4,243 +4,223 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex,nofollow" />
-  <title>Leads Dashboard | Fitness Gurukul</title>
-  <meta name="description" content="Live Fitness Gurukul leads dashboard connected to the SQLite database." />
-  <link rel="stylesheet" href="styles.css" />
+  <title>Owner Portal | Fitness Gurukul</title>
   <style>
-    .db-page { padding: 120px 0 80px; min-height: 70vh; }
-    .db-hero {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-      align-items: flex-end;
-      flex-wrap: wrap;
-      margin-bottom: 28px;
+    :root {
+      --bg: #0a0c0f;
+      --panel: #12171e;
+      --line: rgba(255,255,255,0.08);
+      --text: #f3f6fa;
+      --muted: #9aa6b2;
+      --accent: #4ade80;
+      --warn: #fbbf24;
+      --danger: #f87171;
+      --user: #93c5fd;
     }
-    .db-hero h1 { font-size: clamp(1.8rem, 3vw, 2.4rem); margin: 8px 0; }
-    .db-hero p { color: rgba(255,255,255,0.65); max-width: 520px; }
-    .db-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-    .db-stats {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
-      margin-bottom: 22px;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(74,222,128,0.12), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(147,197,253,0.08), transparent 28%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
     }
-    .db-stat {
-      padding: 18px;
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px;
-      background: linear-gradient(160deg, rgba(74,222,128,0.08), rgba(255,255,255,0.02));
+    .topbar {
+      position: sticky; top: 0; z-index: 20;
+      display: flex; justify-content: space-between; gap: 16px; align-items: center;
+      padding: 14px 22px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(10,12,15,0.92);
+      backdrop-filter: blur(10px);
     }
-    .db-stat span { display: block; color: rgba(255,255,255,0.5); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
-    .db-stat strong { font-size: 1.8rem; color: #4ade80; }
-    .db-panel {
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 18px;
-      background: rgba(255,255,255,0.02);
-      padding: 18px;
+    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+    .brand img { width: 36px; height: 36px; object-fit: contain; }
+    .brand strong { display: block; font-size: 0.95rem; }
+    .brand small { color: var(--accent); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; }
+    .top-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn, button, select, input {
+      font: inherit; border-radius: 10px; border: 1px solid var(--line);
+      background: rgba(255,255,255,0.05); color: var(--text); padding: 10px 12px;
     }
-    .db-toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
-    .db-toolbar input, .db-toolbar select {
-      min-width: 180px;
-      flex: 1;
-      padding: 11px 12px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(0,0,0,0.35);
-      color: #fff;
-      font: inherit;
+    .btn, button { cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.84rem; }
+    .btn.primary, button.primary { background: rgba(74,222,128,0.16); border-color: rgba(74,222,128,0.35); color: var(--accent); }
+    .btn.user { background: rgba(147,197,253,0.12); border-color: rgba(147,197,253,0.3); color: var(--user); }
+    .btn:hover, button:hover { filter: brightness(1.08); }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 28px 20px 56px; }
+    .split {
+      display: grid; grid-template-columns: 1.2fr 1fr; gap: 14px; margin-bottom: 18px;
     }
-    .db-table-wrap { overflow: auto; }
-    .db-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-    .db-table th, .db-table td {
-      text-align: left;
-      padding: 12px 10px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      vertical-align: top;
+    .card {
+      background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 20px;
     }
-    .db-table th { color: rgba(255,255,255,0.45); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; }
-    .db-name { font-weight: 700; color: #fff; }
-    .db-meta { color: rgba(255,255,255,0.55); font-size: 0.82rem; margin-top: 4px; }
-    .db-badge {
-      display: inline-block;
-      padding: 3px 8px;
-      border-radius: 999px;
-      font-size: 0.72rem;
-      font-weight: 700;
-      background: rgba(255,255,255,0.08);
-      color: rgba(255,255,255,0.65);
+    .card h1 { font-size: 1.5rem; margin-bottom: 8px; }
+    .card h2 { font-size: 1.05rem; margin-bottom: 10px; }
+    .muted { color: var(--muted); font-size: 0.92rem; line-height: 1.5; }
+    .iface {
+      display: grid; gap: 10px;
     }
-    .db-badge.new { color: #fbbf24; background: rgba(251,191,36,0.12); }
-    .db-badge.contacted { color: #93c5fd; background: rgba(147,197,253,0.12); }
-    .db-badge.qualified { color: #4ade80; background: rgba(74,222,128,0.12); }
-    .db-badge.closed { color: #cbd5e1; background: rgba(148,163,184,0.12); }
-    .db-empty, .db-gate, .db-note { color: rgba(255,255,255,0.6); }
-    .db-gate {
-      max-width: 460px;
-      margin: 40px auto;
-      padding: 28px;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.03);
-      text-align: left;
+    .iface a {
+      display: flex; justify-content: space-between; gap: 12px; align-items: center;
+      padding: 14px; border-radius: 12px; border: 1px solid var(--line);
+      text-decoration: none; color: inherit; background: rgba(255,255,255,0.02);
     }
-    .db-gate h2 { color: #fff; margin-bottom: 8px; }
-    .db-gate label { display: grid; gap: 8px; margin: 18px 0 12px; font-size: 0.85rem; }
-    .db-gate input {
-      padding: 12px 14px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(0,0,0,0.35);
-      color: #fff;
-      font: inherit;
+    .iface a:hover { border-color: rgba(255,255,255,0.18); }
+    .iface .tag { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+    .iface .tag.user { color: var(--user); }
+    .iface .tag.owner { color: var(--accent); }
+    .stats { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin-bottom: 18px; }
+    .stat { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+    .stat span { display: block; color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+    .stat strong { font-size: 1.7rem; color: var(--accent); }
+    .toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    .toolbar input, .toolbar select { min-width: 180px; flex: 1; }
+    .table-wrap { overflow: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+    th, td { text-align: left; padding: 12px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .name { font-weight: 700; }
+    .meta { color: var(--muted); font-size: 0.8rem; margin-top: 4px; }
+    .badge {
+      display: inline-block; padding: 3px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 700;
+      background: rgba(255,255,255,0.08); color: var(--muted);
     }
-    .db-error { color: #f87171; min-height: 1.2em; margin-bottom: 10px; font-size: 0.85rem; }
-    .db-hint {
-      margin-top: 12px;
-      padding: 12px;
-      border-radius: 12px;
-      background: rgba(74,222,128,0.08);
-      border: 1px solid rgba(74,222,128,0.22);
-      color: #bbf7d0;
-      font-size: 0.85rem;
+    .badge.new { color: var(--warn); background: rgba(251,191,36,0.12); }
+    .badge.contacted { color: #93c5fd; background: rgba(147,197,253,0.12); }
+    .badge.qualified { color: var(--accent); background: rgba(74,222,128,0.12); }
+    .badge.closed { color: #cbd5e1; background: rgba(148,163,184,0.12); }
+    .row-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    .row-actions select, .row-actions button { padding: 7px 8px; font-size: 0.78rem; }
+    .gate { max-width: 460px; margin: 48px auto; }
+    .gate label { display: grid; gap: 8px; margin: 16px 0 10px; font-size: 0.84rem; color: var(--muted); }
+    .gate input { width: 100%; }
+    .hint {
+      margin-top: 12px; padding: 12px; border-radius: 12px;
+      background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.22); color: #bbf7d0; font-size: 0.85rem;
     }
-    .db-sync { font-size: 0.82rem; color: rgba(255,255,255,0.45); margin-top: 12px; }
+    .error { color: var(--danger); min-height: 1.2em; margin: 8px 0; font-size: 0.85rem; }
     .hidden { display: none !important; }
-    .db-row-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-    .db-row-actions select, .db-row-actions button {
-      font: inherit;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.05);
-      color: #fff;
-      padding: 7px 10px;
-      cursor: pointer;
-    }
+    .note { margin-top: 12px; color: var(--muted); font-size: 0.8rem; }
     @media (max-width: 900px) {
-      .db-stats { grid-template-columns: repeat(2, 1fr); }
+      .split, .stats { grid-template-columns: 1fr 1fr; }
     }
-    @media (max-width: 560px) {
-      .db-stats { grid-template-columns: 1fr; }
-      .db-page { padding-top: 100px; }
+    @media (max-width: 640px) {
+      .split, .stats { grid-template-columns: 1fr; }
+      .topbar { align-items: flex-start; flex-direction: column; }
     }
   </style>
-  <script src="app.js" defer></script>
 </head>
 <body>
-  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
-  <header class="site-header">
-    <div class="header-inner">
-      <div class="header-left">
-        <a class="brand" href="index.html">
-          <span class="brand-mark"><img src="assets/fitness-gurukul-logo.png" alt="" /></span>
-          <span class="brand-text"><strong>Fitness</strong><span>Gurukul</span></span>
-        </a>
-      </div>
-      <nav class="desktop-nav">
-        <a href="index.html">Home</a>
-        <a href="services.html">Services</a>
-        <a href="coaches.html">Coaches</a>
-        <a href="events.html">Events</a>
-        <a href="testimonials.html">Testimonials</a>
-        <a href="tools.html">Tools</a>
-        <a href="dashboard.html" class="active">Dashboard</a>
-      </nav>
-      <div class="header-app-dropdown">
-        <button class="header-play-btn" type="button" aria-expanded="false" aria-haspopup="true" data-app-menu-btn>
-          <span>Get the App</span>
-        </button>
-        <div class="header-app-menu" data-app-menu hidden>
-          <a href="https://play.google.com/store/apps/details?id=com.fitnessgurukul.app" target="_blank" rel="noopener">Android — Google Play</a>
-          <a href="https://apps.apple.com/us/app/fitness-gurukul/id6771451272" target="_blank" rel="noopener">iOS — App Store</a>
-        </div>
-      </div>
-      <button class="menu-button" id="menuButton" aria-label="Open navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+  <header class="topbar">
+    <a class="brand" href="/me">
+      <img src="assets/fitness-gurukul-logo.png" alt="" />
+      <span>
+        <strong>Fitness Gurukul</strong>
+        <small>Owner interface</small>
+      </span>
+    </a>
+    <div class="top-actions">
+      <a class="btn user" href="/">Open user website</a>
+      <a class="btn" href="/backend">Full backend tools</a>
+      <button class="btn hidden" type="button" id="signOutBtn">Sign out</button>
     </div>
   </header>
-  <nav class="mobile-nav" id="mobileNav">
-    <div class="mobile-nav-header">
-      <a class="brand" href="index.html">
-        <span class="brand-mark"><img src="assets/fitness-gurukul-logo.png" alt="" /></span>
-        <span class="brand-text"><strong>Fitness</strong><span>Gurukul</span></span>
-      </a>
-      <button class="mobile-nav-close" id="mobileNavClose">&times;</button>
+
+  <main class="wrap">
+    <div class="split">
+      <section class="card">
+        <h1>Two interfaces</h1>
+        <p class="muted">This portal is for you (owner). Customers use the public website to browse and submit forms. Their data lands here in SQLite.</p>
+        <div class="iface" style="margin-top:16px">
+          <a href="/">
+            <div>
+              <div class="tag user">User interface</div>
+              <strong>Public website</strong>
+              <div class="muted">Home, services, coaches, booking forms</div>
+            </div>
+            <span>→</span>
+          </a>
+          <a href="/me">
+            <div>
+              <div class="tag owner">Owner interface</div>
+              <strong>My leads dashboard</strong>
+              <div class="muted">Live database of form submissions</div>
+            </div>
+            <span>→</span>
+          </a>
+        </div>
+      </section>
+      <section class="card">
+        <h2>Quick links</h2>
+        <p class="muted">Use the public site to get customers. Use this page to manage leads.</p>
+        <div class="iface" style="margin-top:14px">
+          <a href="/book-consultation.html"><div><strong>Test a booking form</strong><div class="muted">Creates a DB lead</div></div><span>→</span></a>
+          <a href="/contact.html"><div><strong>Test contact form</strong><div class="muted">Creates a DB lead</div></div><span>→</span></a>
+          <a href="/backend"><div><strong>Advanced backend</strong><div class="muted">Chat logs, calculators, CSV tools</div></div><span>→</span></a>
+        </div>
+      </section>
     </div>
-    <a href="index.html">Home</a>
-    <a href="services.html">Services</a>
-    <a href="coaches.html">Coaches</a>
-    <a href="events.html">Events</a>
-    <a href="testimonials.html">Testimonials</a>
-    <a href="tools.html">Tools</a>
-    <a href="dashboard.html" class="active">Dashboard</a>
-  </nav>
 
-  <main class="db-page">
-    <div class="page-shell">
-      <div class="db-hero">
-        <div>
-          <span class="section-kicker">Connected to SQLite</span>
-          <h1>Leads Dashboard</h1>
-          <p>A normal website page that reads and updates your live database — form submissions, WhatsApp-ready contacts, and lead status.</p>
-        </div>
-        <div class="db-actions hidden" id="dashActions">
-          <button class="ghost-button" type="button" id="refreshBtn">Refresh</button>
-          <button class="ghost-button" type="button" id="exportBtn">Export CSV</button>
-          <button class="ghost-button" type="button" id="signOutBtn">Sign out</button>
-        </div>
+    <div id="gate" class="card gate">
+      <h2>Unlock owner portal</h2>
+      <p class="muted">Connected to the live SQLite database. On this computer it can open automatically.</p>
+      <div class="hint hidden" id="localHint"></div>
+      <label>
+        Owner password
+        <input id="tokenInput" type="password" autocomplete="current-password" placeholder="ADMIN_TOKEN from .env" />
+      </label>
+      <div class="error" id="gateError" role="status"></div>
+      <button class="primary" type="button" id="unlockBtn" style="width:100%">Open my dashboard</button>
+      <p class="note">Local default password is usually <code>fitnessgurukul</code>.</p>
+    </div>
+
+    <div id="board" class="hidden">
+      <div class="stats">
+        <div class="stat"><span>Total leads</span><strong id="statTotal">0</strong></div>
+        <div class="stat"><span>New</span><strong id="statNew">0</strong></div>
+        <div class="stat"><span>Last 24h</span><strong id="statToday">0</strong></div>
+        <div class="stat"><span>Corporate</span><strong id="statCorp">0</strong></div>
       </div>
 
-      <div id="gate" class="db-gate">
-        <h2>Open your database</h2>
-        <p class="db-note">This page loads leads straight from SQLite. On this computer it can unlock automatically.</p>
-        <div class="db-hint hidden" id="localHint"></div>
-        <label>
-          Staff password
-          <input id="tokenInput" type="password" autocomplete="current-password" placeholder="Password from .env ADMIN_TOKEN" />
-        </label>
-        <div class="db-error" id="gateError" role="status"></div>
-        <button class="primary-button" type="button" id="unlockBtn" style="width:100%;justify-content:center">Open dashboard</button>
-        <p class="db-note" style="margin-top:14px">Tip: local default password is usually <code>fitnessgurukul</code>.</p>
-      </div>
-
-      <div id="board" class="hidden">
-        <div class="db-stats">
-          <div class="db-stat"><span>Total leads</span><strong id="statTotal">0</strong></div>
-          <div class="db-stat"><span>New</span><strong id="statNew">0</strong></div>
-          <div class="db-stat"><span>Last 24h</span><strong id="statToday">0</strong></div>
-          <div class="db-stat"><span>Corporate</span><strong id="statCorp">0</strong></div>
-        </div>
-
-        <div class="db-panel">
-          <div class="db-toolbar">
-            <input id="searchInput" type="search" placeholder="Search name, phone, email, goal…" />
-            <select id="statusFilter">
-              <option value="all">All statuses</option>
-              <option value="new">New</option>
-              <option value="contacted">Contacted</option>
-              <option value="qualified">Qualified</option>
-              <option value="closed">Closed</option>
-            </select>
+      <section class="card">
+        <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px;align-items:center">
+          <div>
+            <h2>Live leads from the database</h2>
+            <p class="muted" id="syncNote">Waiting for database…</p>
           </div>
-          <div class="db-table-wrap">
-            <table class="db-table">
-              <thead>
-                <tr>
-                  <th>Lead</th>
-                  <th>Contact</th>
-                  <th>Details</th>
-                  <th>Status</th>
-                  <th>When</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="tableBody"></tbody>
-            </table>
-            <div class="db-empty hidden" id="emptyState" style="padding:36px;text-align:center">No leads in the database yet. Submit a form on the website and it will show up here.</div>
+          <div class="top-actions">
+            <button type="button" id="refreshBtn">Refresh</button>
+            <button type="button" id="exportBtn">Export CSV</button>
           </div>
-          <p class="db-sync" id="syncNote">Waiting for database…</p>
         </div>
-      </div>
+        <div class="toolbar">
+          <input id="searchInput" type="search" placeholder="Search name, phone, email, goal…" />
+          <select id="statusFilter">
+            <option value="all">All statuses</option>
+            <option value="new">New</option>
+            <option value="contacted">Contacted</option>
+            <option value="qualified">Qualified</option>
+            <option value="closed">Closed</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Lead</th>
+                <th>Contact</th>
+                <th>Details</th>
+                <th>Status</th>
+                <th>When</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+          <div class="muted hidden" id="emptyState" style="padding:36px;text-align:center">No leads yet. Submit a form on the user website and it will appear here.</div>
+        </div>
+      </section>
     </div>
   </main>
 
@@ -262,7 +242,7 @@
         localStorage.removeItem(LOCAL_KEY);
         if (pollTimer) clearInterval(pollTimer);
         qs("board").classList.add("hidden");
-        qs("dashActions").classList.add("hidden");
+        qs("signOutBtn").classList.add("hidden");
         qs("gate").classList.remove("hidden");
         qs("tokenInput").value = "";
       }
@@ -286,18 +266,18 @@
       async function unlock(token) {
         token = (token || qs("tokenInput").value || "").trim();
         var error = qs("gateError");
-        if (!token) { error.textContent = "Enter your staff password."; return; }
+        if (!token) { error.textContent = "Enter your owner password."; return; }
         setToken(token);
         try {
           await loadData(true);
           qs("gate").classList.add("hidden");
           qs("board").classList.remove("hidden");
-          qs("dashActions").classList.remove("hidden");
+          qs("signOutBtn").classList.remove("hidden");
           if (pollTimer) clearInterval(pollTimer);
           pollTimer = setInterval(function() { loadData(false); }, 12000);
         } catch (err) {
           clearToken();
-          error.textContent = err.message || "Could not open dashboard.";
+          error.textContent = err.message || "Could not open owner portal.";
         }
       }
 
@@ -314,7 +294,7 @@
         rows = json.submissions || [];
         renderStats();
         renderTable();
-        qs("syncNote").textContent = "Live SQLite · " + rows.length + " leads · updated " + new Date().toLocaleTimeString("en-IN");
+        qs("syncNote").textContent = "Owner DB sync · " + rows.length + " leads · updated " + new Date().toLocaleTimeString("en-IN");
       }
 
       function filteredRows() {
@@ -343,19 +323,19 @@
           var isCorp = r.form_type === "corporate_event";
           var status = r.status || "new";
           var details = isCorp
-            ? esc(r.company || "—") + "<div class='db-meta'>" + esc(r.event_type || "") + " · " + esc(r.attendees || "") + "</div>"
-            : esc(r.program || "—") + "<div class='db-meta'>Goal: " + esc(r.goal || "—") + "</div>";
+            ? esc(r.company || "—") + "<div class='meta'>" + esc(r.event_type || "") + " · " + esc(r.attendees || "") + "</div>"
+            : esc(r.program || "—") + "<div class='meta'>Goal: " + esc(r.goal || "—") + "</div>";
           var phone = String(r.phone || "").replace(/[^\d+]/g, "");
           var wa = phone.replace(/^\+/, "");
           return "<tr>" +
-            "<td><div class='db-name'>" + esc(r.name) + "</div><span class='db-badge'>" + esc(isCorp ? "Corporate" : "Consultation") + "</span></td>" +
-            "<td><a href='tel:" + esc(phone) + "'>" + esc(r.phone || "—") + "</a><div class='db-meta'>" + esc(r.email || "—") + "</div>" +
-              (wa ? "<div class='db-meta'><a href='https://wa.me/" + esc(wa) + "' target='_blank' rel='noopener'>WhatsApp</a></div>" : "") +
+            "<td><div class='name'>" + esc(r.name) + "</div><span class='badge'>" + esc(isCorp ? "Corporate" : "Consultation") + "</span></td>" +
+            "<td><a href='tel:" + esc(phone) + "' style='color:inherit'>" + esc(r.phone || "—") + "</a><div class='meta'>" + esc(r.email || "—") + "</div>" +
+              (wa ? "<div class='meta'><a href='https://wa.me/" + esc(wa) + "' target='_blank' rel='noopener' style='color:#4ade80'>WhatsApp</a></div>" : "") +
             "</td>" +
             "<td>" + details + "</td>" +
-            "<td><span class='db-badge " + esc(status) + "'>" + esc(status) + "</span></td>" +
+            "<td><span class='badge " + esc(status) + "'>" + esc(status) + "</span></td>" +
             "<td>" + esc(fmtTime(r.created_at || r.timestamp)) + "</td>" +
-            "<td class='db-row-actions'>" +
+            "<td class='row-actions'>" +
               "<select data-status-for='" + esc(r.id) + "'>" +
                 ["new","contacted","qualified","closed"].map(function(s) {
                   return "<option value='" + s + "'" + (status === s ? " selected" : "") + ">" + s + "</option>";
@@ -389,7 +369,7 @@
       }
 
       async function deleteRow(id) {
-        if (!confirm("Delete this lead from the database?")) return;
+        if (!confirm("Delete this lead from your owner database?")) return;
         var res = await fetch("/api/submissions/" + encodeURIComponent(id), {
           method: "DELETE",
           headers: authHeaders()
@@ -413,7 +393,7 @@
         });
         var a = document.createElement("a");
         a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
-        a.download = "leads_" + new Date().toISOString().slice(0, 10) + ".csv";
+        a.download = "owner_leads_" + new Date().toISOString().slice(0, 10) + ".csv";
         a.click();
       }
 
@@ -425,14 +405,12 @@
       qs("searchInput").addEventListener("input", renderTable);
       qs("statusFilter").addEventListener("change", renderTable);
 
-      async function bootDash() {
+      async function bootOwner() {
         var info = null;
-        try {
-          info = await fetch("/api/backend-info").then(function(r) { return r.json(); });
-        } catch (e) {}
+        try { info = await fetch("/api/backend-info").then(function(r) { return r.json(); }); } catch (e) {}
         if (info && info.mode === "local-default" && info.localDefaultPassword) {
           qs("localHint").classList.remove("hidden");
-          qs("localHint").innerHTML = "Local computer detected — unlocking with <code>" + esc(info.localDefaultPassword) + "</code>…";
+          qs("localHint").innerHTML = "This is your computer — opening owner portal with <code>" + esc(info.localDefaultPassword) + "</code>…";
           qs("tokenInput").value = info.localDefaultPassword;
           await unlock(info.localDefaultPassword);
           return;
@@ -440,12 +418,10 @@
         if (getToken()) {
           qs("tokenInput").value = getToken();
           await unlock(getToken());
-          return;
         }
-        if (info && info.hint) qs("localHint").classList.add("hidden");
       }
 
-      bootDash();
+      bootOwner();
     })();
   </script>
 </body>

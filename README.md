@@ -7,7 +7,7 @@ Multi-page Fitness Gurukul website with a responsive frontend, **Python** backen
 - Frontend: HTML pages at the repo root (`index.html`, `services.html`, …) plus `styles.css` and `app.js`
 - Backend: dependency-free Python HTTP API in `server.py` (port **8000**)
 - Database: SQLite file created automatically as `fitness_gurukul.sqlite3` (gitignored)
-- Staff backend: `/backend` (also `/office`, `/admin`, `/staff`) — password protected
+- Two interfaces: user website (`/`) and owner portal (`/me`) — plus full backend at `/backend`
 
 The old Node/Express server is deprecated. Use Python only.
 
@@ -60,23 +60,32 @@ Open the website:
 http://127.0.0.1:8000
 ```
 
-### Easy database frontend (recommended)
+### Two interfaces
+
+**1) User website** (customers):
 
 ```text
-http://127.0.0.1:8000/dashboard
+http://127.0.0.1:8000/
 ```
 
-This is a normal website page (header/nav included) connected to the live SQLite database.
+Public pages only: home, services, coaches, booking forms. No owner tools in the main menu.
 
-1. Start the server (`py server.py` on Windows, or `python3 server.py` on macOS/Linux)
-2. Open **Dashboard** in the site menu, or go to `/dashboard`
-3. On your own computer it usually unlocks automatically
+**2) Owner portal** (you):
+
+```text
+http://127.0.0.1:8000/me
+```
+
+Your private DB dashboard for leads. On your computer it usually unlocks automatically.
+
+Aliases for the owner portal: `/owner`, `/dashboard`  
+Full advanced tools: `/backend` (aliases: `/office`, `/admin`, `/staff`)
 
 Local defaults:
 - If you copy `.env.example`, password is `fitnessgurukul`
-- If no password is set and the server is on localhost, it also defaults to `fitnessgurukul` and auto-unlocks `/dashboard`
+- If no password is set and the server is on localhost, it also defaults to `fitnessgurukul` and auto-unlocks `/me`
 
-Full staff tools also available at `/backend` (aliases: `/office`, `/admin`, `/staff`).
+The public footer keeps a small **Owner login** link; it is not in the customer navigation.
 
 By default the server binds to `127.0.0.1`. To share on the same Wi-Fi:
 
@@ -111,8 +120,8 @@ PORT=8000
 - `testimonials.html` — client stories
 - `tools.html` — fitness calculators
 - `contact.html` / `book-consultation.html` — lead forms
-- `dashboard.html` via `/dashboard` — easy DB-connected frontend for leads
-- `office.html` via `/backend` — full staff backend tools
+- `dashboard.html` via `/me` — owner portal (your DB interface)
+- `office.html` via `/backend` — full advanced backend tools
 - `owner-data.html` — optional protected SQLite viewer
 
 ## API endpoints
