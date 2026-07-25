@@ -284,9 +284,14 @@
         const note = document.getElementById("infoNote");
         if (info.mode === "local-default" && info.localDefaultPassword) {
           hint.classList.remove("hidden");
-          hint.innerHTML = "Local mode detected. Quick password: <code>" + esc(info.localDefaultPassword) + "</code> — change it later in <code>.env</code>.";
+          hint.innerHTML = "Local mode detected. Unlocking with <code>" + esc(info.localDefaultPassword) + "</code>… Prefer the easy page at <a href='/dashboard' style='color:inherit'>/dashboard</a>.";
           const input = document.getElementById("tokenInput");
           if (!input.value) input.value = info.localDefaultPassword;
+          if (!getToken()) {
+            setToken(info.localDefaultPassword, true);
+            unlock();
+            return;
+          }
         } else if (info.hint) {
           note.textContent = info.hint;
         }

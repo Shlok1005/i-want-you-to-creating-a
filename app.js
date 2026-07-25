@@ -1696,7 +1696,23 @@ function wireAppDropdown() {
   });
 }
 
+function injectDashboardNavLink() {
+  const targets = [qs(".desktop-nav"), qs("#mobileNav")];
+  targets.forEach((nav) => {
+    if (!nav) return;
+    if (nav.querySelector('a[href="dashboard.html"], a[href="/dashboard"]')) return;
+    const anchor = document.createElement("a");
+    anchor.href = "dashboard.html";
+    anchor.textContent = "Dashboard";
+    const tools = nav.querySelector('a[href="tools.html"]');
+    if (tools && tools.nextSibling) nav.insertBefore(anchor, tools.nextSibling);
+    else if (tools) tools.insertAdjacentElement("afterend", anchor);
+    else nav.appendChild(anchor);
+  });
+}
+
 function wireNavigationAids() {
+  try { injectDashboardNavLink(); } catch (e) { console.warn("injectDashboardNavLink", e); }
   const menuBtn = qs("#menuButton");
   const mobileNav = qs("#mobileNav");
   const mobileNavClose = qs("#mobileNavClose");
@@ -1720,7 +1736,8 @@ function wireNavigationAids() {
   const current = window.location.pathname.split("/").pop() || "index.html";
   qsa(".desktop-nav a, .mobile-nav a").forEach((link) => {
     const href = link.getAttribute("href") || "";
-    link.classList.toggle("active", href === current || (current === "" && href === "index.html"));
+    const isDash = (current === "dashboard.html" || current === "dashboard") && (href === "dashboard.html" || href === "/dashboard");
+    link.classList.toggle("active", isDash || href === current || (current === "" && href === "index.html"));
   });
   qsa(".nav-dropdown").forEach((dd) => {
     const match = [...dd.querySelectorAll("a")].some((a) => a.getAttribute("href") === current);
@@ -2355,7 +2372,7 @@ function injectFooter() {
   if (existing) existing.remove();
   var f = document.createElement("footer");
   f.className = "site-footer footer-refresh";
-  f.innerHTML = `<div class="footer-topline"><a class="footer-logo" href="index.html"><img src="assets/fitness-gurukul-logo.png" alt="Fitness Gurukul" /><span class="footer-logo-text"><strong>Fitness</strong><span>Gurukul</span></span></a><p>Personal training, made personal.</p><a class="footer-cta" href="contact.html">Talk to a coach <span aria-hidden="true">&rarr;</span></a></div><div class="footer-refresh-grid"><div class="footer-intro"><p>Built for stronger, healthier lives in Hyderabad&mdash;at the studio, at home, and wherever you train.</p><a href="tel:+917207113310">+91 72071 13310</a></div><div class="footer-col"><h4>Discover</h4><nav class="footer-nav"><a href="about.html">About us</a><a href="coaches.html">Our coaches</a><a href="workouts.html">Workout programs</a></nav></div><div class="footer-col"><h4>Start here</h4><nav class="footer-nav"><a href="tools.html">Fitness tools</a><a href="events.html">Events</a><a href="testimonials.html">Success stories</a><a href="contact.html">Book a consultation</a></nav></div><div class="footer-col"><h4>Contact Us</h4><div class="footer-contact-col"><a href="tel:+917207113310"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>+91 72071 13310</a><a href="mailto:contact@fitnessgurukul.co.in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>contact@fitnessgurukul.co.in</a><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Manikonda, Hyderabad</span><a class="footer-contact-cta" href="contact.html">Get Directions &rarr;</a></div></div><div class="footer-col"><h4>Visit</h4><p class="footer-address">Manikonda, Hyderabad<br />Telangana, India</p><div class="footer-social"><a href="https://www.instagram.com/fitnessgurukulofficial/" target="_blank" rel="noopener" aria-label="Instagram">IG</a><a href="https://www.facebook.com/fitnessgurukul7/" target="_blank" rel="noopener" aria-label="Facebook">fb</a><a href="https://www.youtube.com/channel/UCLt2Qs1MeV_uf_xMJ7AaPlA" target="_blank" rel="noopener" aria-label="YouTube">YT</a></div></div></div><div class="footer-bottom"><p class="footer-copy">&copy; 2026 Fitness Gurukul. All rights reserved.</p><span class="footer-bottom-links"><a href="contact.html">Contact Us</a><a class="footer-staff-link" href="/backend">Staff login</a></span></div>`;
+  f.innerHTML = `<div class="footer-topline"><a class="footer-logo" href="index.html"><img src="assets/fitness-gurukul-logo.png" alt="Fitness Gurukul" /><span class="footer-logo-text"><strong>Fitness</strong><span>Gurukul</span></span></a><p>Personal training, made personal.</p><a class="footer-cta" href="contact.html">Talk to a coach <span aria-hidden="true">&rarr;</span></a></div><div class="footer-refresh-grid"><div class="footer-intro"><p>Built for stronger, healthier lives in Hyderabad&mdash;at the studio, at home, and wherever you train.</p><a href="tel:+917207113310">+91 72071 13310</a></div><div class="footer-col"><h4>Discover</h4><nav class="footer-nav"><a href="about.html">About us</a><a href="coaches.html">Our coaches</a><a href="workouts.html">Workout programs</a></nav></div><div class="footer-col"><h4>Start here</h4><nav class="footer-nav"><a href="tools.html">Fitness tools</a><a href="events.html">Events</a><a href="testimonials.html">Success stories</a><a href="contact.html">Book a consultation</a></nav></div><div class="footer-col"><h4>Contact Us</h4><div class="footer-contact-col"><a href="tel:+917207113310"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>+91 72071 13310</a><a href="mailto:contact@fitnessgurukul.co.in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>contact@fitnessgurukul.co.in</a><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Manikonda, Hyderabad</span><a class="footer-contact-cta" href="contact.html">Get Directions &rarr;</a></div></div><div class="footer-col"><h4>Visit</h4><p class="footer-address">Manikonda, Hyderabad<br />Telangana, India</p><div class="footer-social"><a href="https://www.instagram.com/fitnessgurukulofficial/" target="_blank" rel="noopener" aria-label="Instagram">IG</a><a href="https://www.facebook.com/fitnessgurukul7/" target="_blank" rel="noopener" aria-label="Facebook">fb</a><a href="https://www.youtube.com/channel/UCLt2Qs1MeV_uf_xMJ7AaPlA" target="_blank" rel="noopener" aria-label="YouTube">YT</a></div></div></div><div class="footer-bottom"><p class="footer-copy">&copy; 2026 Fitness Gurukul. All rights reserved.</p><span class="footer-bottom-links"><a href="contact.html">Contact Us</a><a class="footer-staff-link" href="dashboard.html">Dashboard</a></span></div>`;
   document.body.appendChild(f);
 }
 

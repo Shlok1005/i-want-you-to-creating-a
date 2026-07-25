@@ -60,21 +60,23 @@ Open the website:
 http://127.0.0.1:8000
 ```
 
-### Easy backend access
+### Easy database frontend (recommended)
 
 ```text
-http://127.0.0.1:8000/backend
+http://127.0.0.1:8000/dashboard
 ```
 
+This is a normal website page (header/nav included) connected to the live SQLite database.
+
 1. Start the server (`py server.py` on Windows, or `python3 server.py` on macOS/Linux)
-2. Open `/backend` (also linked as **Staff login** in the site footer)
-3. Enter the staff password from `.env` (`ADMIN_TOKEN`)
+2. Open **Dashboard** in the site menu, or go to `/dashboard`
+3. On your own computer it usually unlocks automatically
 
 Local defaults:
 - If you copy `.env.example`, password is `fitnessgurukul`
-- If no password is set and the server is on localhost, it also defaults to `fitnessgurukul` and prints that on startup
+- If no password is set and the server is on localhost, it also defaults to `fitnessgurukul` and auto-unlocks `/dashboard`
 
-Aliases that open the same dashboard: `/office`, `/admin`, `/staff`.
+Full staff tools also available at `/backend` (aliases: `/office`, `/admin`, `/staff`).
 
 By default the server binds to `127.0.0.1`. To share on the same Wi-Fi:
 
@@ -109,7 +111,8 @@ PORT=8000
 - `testimonials.html` — client stories
 - `tools.html` — fitness calculators
 - `contact.html` / `book-consultation.html` — lead forms
-- `office.html` via `/backend` — staff backend dashboard (leads + SQLite)
+- `dashboard.html` via `/dashboard` — easy DB-connected frontend for leads
+- `office.html` via `/backend` — full staff backend tools
 - `owner-data.html` — optional protected SQLite viewer
 
 ## API endpoints

@@ -861,8 +861,11 @@ class AppHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         ensure_database()
         path = urlparse(self.path).path
-        # One easy backend entry: /backend, /office, and /admin all open the office UI.
-        if path in {"/backend", "/office", "/admin", "/staff"}:
+        # Easy DB frontend + staff backend entry points.
+        if path in {"/dashboard", "/leads"}:
+            self.path = "/dashboard.html"
+            path = self.path
+        elif path in {"/backend", "/office", "/admin", "/staff"}:
             self.path = "/office.html"
             path = self.path
 
@@ -885,10 +888,11 @@ class AppHandler(SimpleHTTPRequestHandler):
                 return self.send_json({
                     "ok": True,
                     "backendUrl": "/backend",
+                    "dashboardUrl": "/dashboard",
                     "adminConfigured": bool(admin_token()),
                     "mode": mode,
                     "localDefaultPassword": LOCAL_DEFAULT_PASSWORD if mode == "local-default" else "",
-                    "openUrl": f"http://{host_hdr}/backend",
+                    "openUrl": f"http://{host_hdr}/dashboard",
                     "hint": (
                         f"Local default password: {LOCAL_DEFAULT_PASSWORD}"
                         if mode == "local-default"
@@ -1100,11 +1104,12 @@ if __name__ == "__main__":
     print("=" * 56)
     print(" Fitness Gurukul")
     print("=" * 56)
-    print(f" Website:  http://127.0.0.1:{port}")
-    print(f" BACKEND:  http://127.0.0.1:{port}/backend")
+    print(f" Website:   http://127.0.0.1:{port}")
+    print(f" DASHBOARD: http://127.0.0.1:{port}/dashboard  (easy DB frontend)")
+    print(f" BACKEND:   http://127.0.0.1:{port}/backend")
     if cred_mode == "local-default":
         print(" Staff password (local default): fitnessgurukul")
-        print(" Tip: set ADMIN_TOKEN in .env to choose your own password.")
+        print(" Tip: /dashboard unlocks automatically on this computer.")
     elif cred_mode == "generated":
         print(f" Staff password (generated): {admin_token()}")
         print(" Tip: add ADMIN_TOKEN to .env so it stays the same next restart.")
@@ -1116,7 +1121,7 @@ if __name__ == "__main__":
         except OSError:
             local_ip = "YOUR-LAPTOP-IP"
         print(f" LAN site: http://{local_ip}:{port}")
-        print(f" LAN backend: http://{local_ip}:{port}/backend")
+        print(f" LAN dashboard: http://{local_ip}:{port}/dashboard")
     else:
         print(" Bound to localhost only. Set HOST=0.0.0.0 to share on Wi-Fi.")
     print("=" * 56)

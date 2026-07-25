@@ -36,10 +36,13 @@ jobs:
           -H 'Content-Type: application/json' \
           -d '{"goal":"yoga","experience":"beginner","preference":"in-person"}' \
           | grep -q '"ok": true'
-        # Easy backend entry points
-        curl -sf http://127.0.0.1:8000/api/backend-info | grep -q '"backendUrl"'
+        # Easy backend / dashboard entry points
+        curl -sf http://127.0.0.1:8000/api/backend-info | grep -q '"dashboardUrl"'
         code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/backend)
         test "$code" = "200"
+        code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/dashboard)
+        test "$code" = "200"
+        curl -sf http://127.0.0.1:8000/dashboard | grep -q 'Leads Dashboard'
         # Admin data must require a token
         code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/api/admin-data)
         test "$code" = "401"
