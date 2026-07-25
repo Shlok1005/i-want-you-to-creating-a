@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex,nofollow" />
-  <title>Office Dashboard | Fitness Gurukul</title>
+  <title>Backend | Fitness Gurukul</title>
   <style>
     :root {
       --bg: #0b0d10;
@@ -19,7 +19,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: "Segoe UI", Tahoma, sans-serif;
-      background: radial-gradient(circle at top right, rgba(74,222,128,0.08), transparent 28%), var(--bg);
+      background: radial-gradient(circle at top right, rgba(74,222,128,0.1), transparent 30%), var(--bg);
       color: var(--text);
       min-height: 100vh;
     }
@@ -30,10 +30,48 @@
       border-radius: 16px;
       padding: 24px;
     }
-    .gate-card { max-width: 460px; margin: 80px auto; }
-    .gate-card h1, .top h1 { font-size: 1.4rem; margin-bottom: 8px; }
+    .gate-card { max-width: 480px; margin: 64px auto; }
+    .gate-kicker {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .gate-card h1, .top h1 { font-size: 1.45rem; margin-bottom: 8px; }
     .gate-card p, .muted { color: var(--muted); font-size: 0.92rem; line-height: 1.5; }
-    label { display: grid; gap: 8px; margin: 18px 0 12px; font-size: 0.82rem; color: var(--muted); }
+    .steps {
+      margin: 18px 0 8px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+    .steps ol { margin-left: 18px; display: grid; gap: 6px; }
+    .steps code, .hint code {
+      color: var(--accent);
+      background: rgba(74,222,128,0.08);
+      padding: 1px 6px;
+      border-radius: 6px;
+      font-size: 0.84em;
+    }
+    .hint {
+      margin: 12px 0 0;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(74,222,128,0.25);
+      background: rgba(74,222,128,0.08);
+      color: #bbf7d0;
+      font-size: 0.86rem;
+      line-height: 1.45;
+    }
+    .hint.hidden { display: none; }
+    label { display: grid; gap: 8px; margin: 18px 0 8px; font-size: 0.82rem; color: var(--muted); }
+    .password-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
     input, select, button, textarea {
       font: inherit;
       border-radius: 10px;
@@ -42,15 +80,30 @@
       color: var(--text);
       padding: 11px 12px;
     }
+    .remember {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 10px 0 14px;
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
+    .remember input { width: auto; padding: 0; }
     button, .btn {
       cursor: pointer;
       background: rgba(255,255,255,0.06);
       color: var(--text);
       font-weight: 600;
       font-size: 0.84rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
-    button.primary { background: rgba(74,222,128,0.18); border-color: rgba(74,222,128,0.35); color: var(--accent); }
-    button:hover { filter: brightness(1.08); }
+    button.primary { background: rgba(74,222,128,0.18); border-color: rgba(74,222,128,0.35); color: var(--accent); width: 100%; padding: 12px; }
+    button:hover, .btn:hover { filter: brightness(1.08); }
+    .gate-links { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+    .gate-links .btn { flex: 1; min-width: 120px; }
     .error { color: var(--danger); min-height: 1.2em; margin-bottom: 10px; font-size: 0.85rem; }
     .hidden { display: none !important; }
     .top { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; flex-wrap: wrap; margin-bottom: 18px; }
@@ -92,25 +145,46 @@
 <body>
   <div class="gate" id="gate">
     <div class="gate-card">
-      <h1>Fitness Gurukul Office</h1>
-      <p>Internal office file connected to the live SQLite database. Enter the server <code>ADMIN_TOKEN</code> to unlock leads, corporate inquiries, and calculator history.</p>
+      <span class="gate-kicker">Staff backend</span>
+      <h1>Fitness Gurukul Backend</h1>
+      <p>One place for leads, corporate inquiries, chat logs, and calculator history — live from SQLite.</p>
+      <div class="steps">
+        <ol>
+          <li>Open <code>/backend</code> (this page)</li>
+          <li>Enter your staff password</li>
+          <li>Manage submissions instantly</li>
+        </ol>
+      </div>
+      <div class="hint hidden" id="localHint"></div>
       <label>
-        Admin token
-        <input id="tokenInput" type="password" autocomplete="current-password" placeholder="Paste ADMIN_TOKEN" />
+        Staff password
+        <span class="password-row">
+          <input id="tokenInput" type="password" autocomplete="current-password" placeholder="Password from .env ADMIN_TOKEN" />
+          <button type="button" id="togglePassword" aria-label="Show password">Show</button>
+        </span>
+      </label>
+      <label class="remember">
+        <input id="rememberMe" type="checkbox" checked />
+        Keep me signed in on this device
       </label>
       <div class="error" id="gateError" role="status"></div>
-      <button class="primary" type="button" id="unlockBtn">Open office dashboard</button>
+      <button class="primary" type="button" id="unlockBtn">Open backend dashboard</button>
+      <div class="gate-links">
+        <a class="btn" href="/">← Website</a>
+        <button class="btn" type="button" id="copyLinkBtn">Copy backend link</button>
+      </div>
+      <p class="note" id="infoNote" style="margin-top:16px">Password lives in <code>.env</code> as <code>ADMIN_TOKEN</code> (or <code>ADMIN_PASSWORD</code>).</p>
     </div>
   </div>
 
   <div class="shell hidden" id="dashboard">
     <div class="top">
       <div>
-        <h1>Office Dashboard</h1>
+        <h1>Backend Dashboard</h1>
         <p class="muted" id="syncNote">Connected to SQLite via /api/admin-data</p>
       </div>
       <div class="actions">
-        <a class="btn" href="/" style="display:inline-flex;align-items:center;">Site</a>
+        <a class="btn" href="/" style="display:inline-flex;align-items:center;">Website</a>
         <button type="button" id="refreshBtn">Refresh</button>
         <button type="button" id="exportBtn">Export CSV</button>
         <button type="button" id="signOutBtn">Sign out</button>
@@ -157,15 +231,23 @@
   </div>
 
   <script>
-    const TOKEN_KEY = "fg_admin_token";
+    const SESSION_KEY = "fg_admin_token";
+    const LOCAL_KEY = "fg_admin_token_persistent";
     let adminData = { submissions: [], calculations: [], chat_messages: [] };
     let activeTab = "submissions";
     let pollTimer = null;
 
-    function getToken() { return sessionStorage.getItem(TOKEN_KEY) || ""; }
-    function setToken(token) { sessionStorage.setItem(TOKEN_KEY, token); }
+    function getToken() {
+      return sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(LOCAL_KEY) || "";
+    }
+    function setToken(token, remember) {
+      sessionStorage.setItem(SESSION_KEY, token);
+      if (remember) localStorage.setItem(LOCAL_KEY, token);
+      else localStorage.removeItem(LOCAL_KEY);
+    }
     function clearToken() {
-      sessionStorage.removeItem(TOKEN_KEY);
+      sessionStorage.removeItem(SESSION_KEY);
+      localStorage.removeItem(LOCAL_KEY);
       if (pollTimer) clearInterval(pollTimer);
       document.getElementById("dashboard").classList.add("hidden");
       document.getElementById("gate").classList.remove("hidden");
@@ -194,11 +276,31 @@
       return `<a href="tel:${esc(clean)}">${esc(phone)}</a> · <a href="https://wa.me/${esc(wa)}" target="_blank" rel="noopener">WhatsApp</a>`;
     }
 
+    async function loadBackendInfo() {
+      try {
+        const res = await fetch("/api/backend-info");
+        const info = await res.json();
+        const hint = document.getElementById("localHint");
+        const note = document.getElementById("infoNote");
+        if (info.mode === "local-default" && info.localDefaultPassword) {
+          hint.classList.remove("hidden");
+          hint.innerHTML = "Local mode detected. Quick password: <code>" + esc(info.localDefaultPassword) + "</code> — change it later in <code>.env</code>.";
+          const input = document.getElementById("tokenInput");
+          if (!input.value) input.value = info.localDefaultPassword;
+        } else if (info.hint) {
+          note.textContent = info.hint;
+        }
+      } catch (e) {
+        /* ignore */
+      }
+    }
+
     async function unlock() {
       const token = document.getElementById("tokenInput").value.trim();
+      const remember = document.getElementById("rememberMe").checked;
       const error = document.getElementById("gateError");
-      if (!token) { error.textContent = "Enter ADMIN_TOKEN from your .env file."; return; }
-      setToken(token);
+      if (!token) { error.textContent = "Enter your staff password."; return; }
+      setToken(token, remember);
       try {
         await loadData(true);
         document.getElementById("gate").classList.add("hidden");
@@ -207,7 +309,7 @@
         pollTimer = setInterval(function() { loadData(false); }, 15000);
       } catch (err) {
         clearToken();
-        error.textContent = err.message || "Could not unlock office dashboard.";
+        error.textContent = err.message || "Could not unlock backend.";
       }
     }
 
@@ -216,7 +318,7 @@
       const json = await res.json().catch(function() { return {}; });
       if (!res.ok) {
         if (res.status === 401 || res.status === 503) clearToken();
-        const err = new Error(json.error || "Failed to load office data");
+        const err = new Error(json.error || "Failed to load backend data");
         if (throwOnError) throw err;
         document.getElementById("syncNote").textContent = err.message;
         return;
@@ -341,7 +443,7 @@
     }
 
     async function deleteSubmission(id) {
-      if (!confirm("Delete this submission from the office database?")) return;
+      if (!confirm("Delete this submission from the backend database?")) return;
       const res = await fetch("/api/submissions/" + encodeURIComponent(id), {
         method: "DELETE",
         headers: authHeaders(),
@@ -380,12 +482,28 @@
       });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
-      a.download = "office_" + activeTab + "_" + new Date().toISOString().slice(0, 10) + ".csv";
+      a.download = "backend_" + activeTab + "_" + new Date().toISOString().slice(0, 10) + ".csv";
       a.click();
     }
 
     document.getElementById("unlockBtn").addEventListener("click", unlock);
     document.getElementById("tokenInput").addEventListener("keydown", function(e) { if (e.key === "Enter") unlock(); });
+    document.getElementById("togglePassword").addEventListener("click", function() {
+      const input = document.getElementById("tokenInput");
+      const show = input.type === "password";
+      input.type = show ? "text" : "password";
+      this.textContent = show ? "Hide" : "Show";
+    });
+    document.getElementById("copyLinkBtn").addEventListener("click", async function() {
+      const url = window.location.origin + "/backend";
+      try {
+        await navigator.clipboard.writeText(url);
+        this.textContent = "Copied!";
+        setTimeout(() => { this.textContent = "Copy backend link"; }, 1500);
+      } catch (e) {
+        prompt("Copy this backend link:", url);
+      }
+    });
     document.getElementById("refreshBtn").addEventListener("click", function() { loadData(false); });
     document.getElementById("exportBtn").addEventListener("click", exportCSV);
     document.getElementById("signOutBtn").addEventListener("click", clearToken);
@@ -400,8 +518,10 @@
       });
     });
 
+    loadBackendInfo();
     if (getToken()) {
       document.getElementById("tokenInput").value = getToken();
+      document.getElementById("rememberMe").checked = !!localStorage.getItem(LOCAL_KEY);
       unlock();
     }
   </script>

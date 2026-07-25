@@ -372,8 +372,34 @@ def init_db():
     DB_SCHEMA_READY = True
 
 
+LOCAL_DEFAULT_PASSWORD = "fitnessgurukul"
+ADMIN_CRED_MODE = "unconfigured"  # configured | local-default | generated
+
 def admin_token():
-    return os.environ.get("ADMIN_TOKEN", "").strip()
+    """Primary staff password. ADMIN_PASSWORD is accepted as a friendly alias."""
+    return (
+        os.environ.get("ADMIN_TOKEN", "").strip()
+        or os.environ.get("ADMIN_PASSWORD", "").strip()
+    )
+
+def ensure_admin_credentials(host="127.0.0.1"):
+    """
+    Make local backend access easy: on localhost, default to a memorable
+    password when none is configured. On LAN/public binds, generate a strong token.
+    Returns one of: "configured", "local-default", "generated".
+    """
+    global ADMIN_CRED_MODE
+    if admin_token():
+        ADMIN_CRED_MODE = "configured"
+        return ADMIN_CRED_MODE
+    if host in {"127.0.0.1", "localhost", "::1"}:
+        os.environ["ADMIN_TOKEN"] = LOCAL_DEFAULT_PASSWORD
+        ADMIN_CRED_MODE = "local-default"
+        return ADMIN_CRED_MODE
+    generated = secrets.token_urlsafe(24)
+    os.environ["ADMIN_TOKEN"] = generated
+    ADMIN_CRED_MODE = "generated"
+    return ADMIN_CRED_MODE
 
 
 def clip(value, max_len=500):
@@ -419,10 +445,14 @@ def require_admin(handler):
         return False
     provided = (
         handler.headers.get("X-Admin-Token")
-        or handler.headers.get("Authorization", "").removeprefix("Bearer ").strip()
-    )
+        or handler.headers.get("X-Admin-Password")
+        or ""
+    ).strip()
+    auth = (handler.headers.get("Authorization") or "").strip()
+    if not provided and auth.lower().startswith("bearer "):
+        provided = auth[7:].strip()
     if not provided or not hmac.compare_digest(provided, token):
-        handler.send_json({"error": "Unauthorized"}, 401)
+        handler.send_json({"error": "Unauthorized. Use the staff password from .env (ADMIN_TOKEN)."}, 401)
         return False
     return True
 
@@ -831,8 +861,9 @@ class AppHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         ensure_database()
         path = urlparse(self.path).path
-        if path in {"/admin", "/office"}:
-            self.path = "/office.html" if path == "/office" else "/admin.html"
+        # One easy backend entry: /backend, /office, and /admin all open the office UI.
+        if path in {"/backend", "/office", "/admin", "/staff"}:
+            self.path = "/office.html"
             path = self.path
 
         if path.startswith("/api/"):
@@ -842,7 +873,27 @@ class AppHandler(SimpleHTTPRequestHandler):
                     "engine": "python",
                     "databaseExists": DB_PATH.exists(),
                     "adminConfigured": bool(admin_token()),
+                    "backendUrl": "/backend",
                     "aiEnabled": bool(os.environ.get("OPENAI_API_KEY", "").strip()),
+                })
+            if path == "/api/backend-info":
+                # Non-sensitive helper so the login screen can guide staff.
+                host_hdr = (self.headers.get("Host") or f"127.0.0.1:{os.environ.get('PORT', '8000')}").strip()
+                mode = ADMIN_CRED_MODE if ADMIN_CRED_MODE != "unconfigured" else (
+                    "configured" if admin_token() else "unconfigured"
+                )
+                return self.send_json({
+                    "ok": True,
+                    "backendUrl": "/backend",
+                    "adminConfigured": bool(admin_token()),
+                    "mode": mode,
+                    "localDefaultPassword": LOCAL_DEFAULT_PASSWORD if mode == "local-default" else "",
+                    "openUrl": f"http://{host_hdr}/backend",
+                    "hint": (
+                        f"Local default password: {LOCAL_DEFAULT_PASSWORD}"
+                        if mode == "local-default"
+                        else "Enter the staff password from your .env file (ADMIN_TOKEN or ADMIN_PASSWORD)."
+                    ),
                 })
             if path == "/api/content":
                 return self.send_json(content_payload())
@@ -1043,24 +1094,31 @@ if __name__ == "__main__":
     init_db()
     host = os.environ.get("HOST", "127.0.0.1").strip() or "127.0.0.1"
     port = int(os.environ.get("PORT", "8000"))
-    if not admin_token():
-        generated = secrets.token_urlsafe(24)
-        os.environ["ADMIN_TOKEN"] = generated
-        print("ADMIN_TOKEN was not set. Generated a temporary token for this process:")
-        print(f"  {generated}")
-        print("Add ADMIN_TOKEN to your .env file to keep a stable owner password.")
+    cred_mode = ensure_admin_credentials(host)
     server = ThreadingHTTPServer((host, port), AppHandler)
-    print(f"Fitness Gurukul running at http://127.0.0.1:{port}")
+    print("")
+    print("=" * 56)
+    print(" Fitness Gurukul")
+    print("=" * 56)
+    print(f" Website:  http://127.0.0.1:{port}")
+    print(f" BACKEND:  http://127.0.0.1:{port}/backend")
+    if cred_mode == "local-default":
+        print(" Staff password (local default): fitnessgurukul")
+        print(" Tip: set ADMIN_TOKEN in .env to choose your own password.")
+    elif cred_mode == "generated":
+        print(f" Staff password (generated): {admin_token()}")
+        print(" Tip: add ADMIN_TOKEN to .env so it stays the same next restart.")
+    else:
+        print(" Staff password: loaded from .env (ADMIN_TOKEN / ADMIN_PASSWORD)")
     if host in {"0.0.0.0", "::"}:
         try:
             local_ip = socket.gethostbyname(socket.gethostname())
         except OSError:
             local_ip = "YOUR-LAPTOP-IP"
-        print(f"LAN bind enabled. Share: http://{local_ip}:{port}")
-        print("Admin APIs require the X-Admin-Token header.")
+        print(f" LAN site: http://{local_ip}:{port}")
+        print(f" LAN backend: http://{local_ip}:{port}/backend")
     else:
-        print("Bound to localhost only. Set HOST=0.0.0.0 to share on Wi-Fi.")
-    print(f"Office dashboard: http://127.0.0.1:{port}/office")
-    print(f"Admin dashboard: http://127.0.0.1:{port}/admin")
-    print(f"Owner data: http://127.0.0.1:{port}/owner-data.html")
+        print(" Bound to localhost only. Set HOST=0.0.0.0 to share on Wi-Fi.")
+    print("=" * 56)
+    print("")
     server.serve_forever()

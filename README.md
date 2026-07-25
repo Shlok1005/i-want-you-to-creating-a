@@ -7,7 +7,7 @@ Multi-page Fitness Gurukul website with a responsive frontend, **Python** backen
 - Frontend: HTML pages at the repo root (`index.html`, `services.html`, …) plus `styles.css` and `app.js`
 - Backend: dependency-free Python HTTP API in `server.py` (port **8000**)
 - Database: SQLite file created automatically as `fitness_gurukul.sqlite3` (gitignored)
-- Owner tools: `/admin` and `owner-data.html` (require `ADMIN_TOKEN`)
+- Staff backend: `/backend` (also `/office`, `/admin`, `/staff`) — password protected
 
 The old Node/Express server is deprecated. Use Python only.
 
@@ -15,7 +15,6 @@ The old Node/Express server is deprecated. Use Python only.
 
 ```bash
 cp .env.example .env
-# set ADMIN_TOKEN to a long random string
 python3 server.py
 ```
 
@@ -25,24 +24,27 @@ Or:
 npm start
 ```
 
-Open:
+Open the website:
 
 ```text
 http://127.0.0.1:8000
 ```
 
-Office dashboard (DB-connected internal file):
+### Easy backend access
 
 ```text
-http://127.0.0.1:8000/office
+http://127.0.0.1:8000/backend
 ```
 
-Legacy admin / owner viewers:
+1. Start the server (`python3 server.py`)
+2. Open `/backend` (also linked as **Staff login** in the site footer)
+3. Enter the staff password from `.env` (`ADMIN_TOKEN`)
 
-```text
-http://127.0.0.1:8000/admin
-http://127.0.0.1:8000/owner-data.html
-```
+Local defaults:
+- If you copy `.env.example`, password is `fitnessgurukul`
+- If no password is set and the server is on localhost, it also defaults to `fitnessgurukul` and prints that on startup
+
+Aliases that open the same dashboard: `/office`, `/admin`, `/staff`.
 
 By default the server binds to `127.0.0.1`. To share on the same Wi-Fi:
 
@@ -50,7 +52,7 @@ By default the server binds to `127.0.0.1`. To share on the same Wi-Fi:
 HOST=0.0.0.0 python3 server.py
 ```
 
-Then open `http://YOUR-LAPTOP-IP:8000` on another device. Admin APIs still require `ADMIN_TOKEN`.
+Then open `http://YOUR-LAPTOP-IP:8000/backend` on another device. Backend APIs still require the staff password.
 
 ## Environment
 
@@ -59,13 +61,13 @@ Copy `.env.example` to `.env`:
 ```text
 OPENAI_API_KEY=
 OPENAI_MODEL=gpt-5.6
-ADMIN_TOKEN=replace-with-a-long-random-string
+ADMIN_TOKEN=fitnessgurukul
 HOST=127.0.0.1
 PORT=8000
 ```
 
 - Without `OPENAI_API_KEY`, the chat widget answers from local website facts.
-- Without `ADMIN_TOKEN` in `.env`, the server generates a temporary token for that process and prints it on startup.
+- Change `ADMIN_TOKEN` (or `ADMIN_PASSWORD`) before sharing the server beyond your machine.
 
 ## Pages
 
@@ -77,8 +79,8 @@ PORT=8000
 - `testimonials.html` — client stories
 - `tools.html` — fitness calculators
 - `contact.html` / `book-consultation.html` — lead forms
-- `admin.html` — protected submissions dashboard
-- `owner-data.html` — protected SQLite viewer
+- `office.html` via `/backend` — staff backend dashboard (leads + SQLite)
+- `owner-data.html` — optional protected SQLite viewer
 
 ## API endpoints
 
@@ -105,12 +107,13 @@ Protected (header `X-Admin-Token: <ADMIN_TOKEN>`):
 - `PATCH /api/submissions/:id/status` — `new` | `contacted` | `qualified` | `closed`
 - `DELETE /api/submissions/:id`
 
-Office UI (`/office` → `office.html`) reads the live SQLite database and lets staff search leads, update status, export CSV, and delete records.
+Backend UI (`/backend` → `office.html`) reads the live SQLite database and lets staff search leads, update status, export CSV, and delete records.
 
 Sensitive paths (`.env`, `*.sqlite3`, `data/`, `server.py`, etc.) are not served as static files.
 
 ## Security notes
 
 - Do not commit `.env`, `*.sqlite3`, or `data/*.json`
-- Never share `/admin` or `owner-data.html` without the token
+- Never share `/backend` or `owner-data.html` without the staff password
 - Prefer localhost bind unless you intentionally need LAN access
+- Change the default local password before exposing the server on Wi‑Fi
