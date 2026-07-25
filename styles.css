@@ -13067,3 +13067,22 @@ from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:transl
 @media (max-width: 520px) {
   .stats-grid { grid-template-columns: 1fr; }
 }
+
+/* Staff dashboard entry on homepage */
+.db-entry-strip {
+  padding: 48px 0;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  background: linear-gradient(90deg, rgba(74,222,128,0.08), transparent 55%);
+}
+.db-entry-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.db-entry-inner h2 { margin: 6px 0 8px; font-size: 1.5rem; }
+.db-entry-inner p { margin: 0; color: rgba(255,255,255,0.65); max-width: 460px; }
+@media (max-width: 640px) {
+  .db-entry-inner { align-items: flex-start; }
+}
