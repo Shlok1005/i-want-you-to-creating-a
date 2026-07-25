@@ -3,15 +3,18 @@ services:
     name: fitness-gurukul-api
     runtime: python
     plan: free
-    buildCommand: pip install -r requirements.txt
-    startCommand: python server.py
+    buildCommand: pip install --upgrade pip
+    startCommand: python -u server.py
     healthCheckPath: /api/health
     envVars:
       - key: HOST
         value: "0.0.0.0"
+      - key: PYTHON_VERSION
+        value: "3.12.11"
       - key: ADMIN_TOKEN
         generateValue: true
+      # Writable path inside the service; do NOT use /var/data without a Render Disk.
+      - key: DATA_DIR
+        value: "./data"
       - key: CORS_ORIGINS
-        value: "*"
-      - key: PYTHON_VERSION
-        value: "3.12.8"
+        value: "https://fitnessgurukul.co.in,https://www.fitnessgurukul.co.in,https://fitnessgurukul.in,https://www.fitnessgurukul.in,https://jade-puppy-0909d4.netlify.app"
