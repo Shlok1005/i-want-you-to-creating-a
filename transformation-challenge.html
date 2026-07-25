@@ -5,20 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Transformation Challenge | Fitness Gurukul</title>
   <meta name="description" content="Join Fitness Gurukul transformation challenges in Hyderabad. Take a quick quiz for a plan recommendation, pick a challenge, and start with coach support." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <style>
     :root {
-      /* Match main site palette: black / white / soft gray + light accent */
+      /* Site black/white base + light amber accent (not a separate neon theme) */
       --tc-ink: #ffffff;
-      --tc-muted: #999999;
-      --tc-line: rgba(255,255,255,0.1);
-      --tc-accent: #ffffff;
-      --tc-ember: rgba(255,255,255,0.55);
+      --tc-muted: rgba(255,255,255,0.62);
+      --tc-line: rgba(255,255,255,0.12);
+      --tc-accent: #f5f5f5;
+      --tc-ember: #fbbf24;
       --tc-deep: #000000;
-      --tc-panel: rgba(17, 17, 17, 0.92);
-      --tc-accent-soft: rgba(255,255,255,0.08);
-      --tc-display: "Public Sans", Helvetica, Arial, sans-serif;
-      --tc-body: "Public Sans", Helvetica, Arial, sans-serif;
+      --tc-panel: rgba(17, 17, 17, 0.88);
+      --tc-display: "Barlow Condensed", "Public Sans", sans-serif;
+      --tc-body: "Manrope", "Public Sans", sans-serif;
     }
 
     body.tc-page {
@@ -29,8 +31,8 @@
     }
     body.tc-page h1, body.tc-page h2, body.tc-page h3, .tc-brand {
       font-family: var(--tc-display);
-      letter-spacing: -0.02em;
-      text-transform: none;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
     }
 
     .tc-hero {
@@ -43,7 +45,7 @@
     .tc-hero-media {
       position: absolute; inset: 0;
       background:
-        linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.55) 45%, rgba(0,0,0,0.94) 100%),
+        linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.55) 45%, rgba(0,0,0,0.94) 100%),
         url("https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1800&q=85&auto=format&fit=crop") center/cover no-repeat;
       transform: scale(1.05);
       animation: tcKen 16s ease-in-out infinite alternate;
@@ -65,7 +67,7 @@
       line-height: 0.9;
       font-weight: 800;
     }
-    .tc-brand span { color: rgba(255,255,255,0.72); display: block; }
+    .tc-brand span { color: var(--tc-ember); display: block; }
     .tc-hero h1 {
       margin: 0 0 12px;
       max-width: 16ch;
@@ -98,7 +100,7 @@
 
     .tc-live {
       border-block: 1px solid var(--tc-line);
-      background: linear-gradient(90deg, rgba(255,255,255,0.04), transparent 45%, rgba(255,255,255,0.03));
+      background: linear-gradient(90deg, rgba(255,255,255,0.05), transparent 40%, rgba(251,191,36,0.06));
     }
     .tc-live-inner {
       width: min(1120px, calc(100% - 40px));
@@ -117,11 +119,11 @@
     .tc-dot {
       width: 8px; height: 8px; border-radius: 50%;
       background: var(--tc-accent);
-      box-shadow: 0 0 0 0 rgba(255,255,255,0.35);
+      box-shadow: 0 0 0 0 rgba(255,255,255,0.4);
       animation: tcDot 1.8s ease-out infinite;
     }
     @keyframes tcDot {
-      0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.35); }
+      0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.4); }
       70% { box-shadow: 0 0 0 10px rgba(255,255,255,0); }
       100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
     }
@@ -137,8 +139,8 @@
     .tc-section {
       padding: 72px 0;
       background:
-        radial-gradient(ellipse at 0% 0%, rgba(255,255,255,0.04), transparent 42%),
-        radial-gradient(ellipse at 100% 20%, rgba(255,255,255,0.03), transparent 38%);
+        radial-gradient(ellipse at 0% 0%, rgba(251,191,36,0.08), transparent 42%),
+        radial-gradient(ellipse at 100% 20%, rgba(251,191,36,0.06), transparent 38%);
     }
     .tc-shell { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
     .tc-section-head { margin-bottom: 28px; max-width: 640px; }
@@ -154,7 +156,7 @@
       border: 1px solid var(--tc-line);
       background: rgba(255,255,255,0.03);
       color: var(--tc-muted);
-      border-radius: 10px;
+      border-radius: 999px;
       padding: 8px 14px;
       font: inherit;
       font-size: 0.82rem;
@@ -239,7 +241,7 @@
       font-family: var(--tc-display);
       font-size: 1.7rem;
       line-height: 1;
-      color: var(--tc-accent);
+      color: #fff;
     }
     .tc-metric span { color: var(--tc-muted); font-size: 0.75rem; }
 
@@ -284,7 +286,7 @@
       display: block;
     }
     .tc-milestone.active { color: #fff; transform: translateX(2px); }
-    .tc-milestone.active i { background: var(--tc-accent); }
+    .tc-milestone.active i { background: var(--tc-ember); }
 
     .tc-focus { display: flex; flex-wrap: wrap; gap: 8px; }
     .tc-focus span {
@@ -329,8 +331,8 @@
     .tc-quiz-section {
       padding: 72px 0;
       background:
-        linear-gradient(180deg, rgba(255,255,255,0.03), transparent 30%),
-        radial-gradient(ellipse at 80% 0%, rgba(255,255,255,0.04), transparent 40%);
+        linear-gradient(180deg, rgba(251,191,36,0.06), transparent 30%),
+        radial-gradient(ellipse at 80% 0%, rgba(251,191,36,0.08), transparent 40%);
     }
     .tc-quiz-layout {
       display: grid;
@@ -355,7 +357,7 @@
       display: block;
       height: 100%;
       width: 25%;
-      background: linear-gradient(90deg, #fff, rgba(255,255,255,0.55));
+      background: linear-gradient(90deg, #fff 0%, var(--tc-ember) 100%);
       transition: width .35s ease;
     }
     .tc-q {
@@ -403,8 +405,8 @@
       align-items: center;
       justify-content: center;
       width: 72px; height: 72px;
-      border: 2px solid var(--tc-accent);
-      color: var(--tc-accent);
+      border: 2px solid #fff;
+      color: #fff;
       font-family: var(--tc-display);
       font-size: 1.6rem;
       margin-bottom: 10px;
@@ -416,8 +418,8 @@
     }
     .tc-result-panel .lead { color: var(--tc-muted); margin: 0 0 14px; }
     .tc-plan-box {
-      border: 1px solid rgba(255,255,255,0.2);
-      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.22);
+      background: rgba(255,255,255,0.05);
       padding: 14px;
       margin-bottom: 14px;
     }
@@ -430,7 +432,7 @@
       margin-bottom: 4px;
     }
     .tc-plan-box strong { display: block; font-size: 1.1rem; }
-    .tc-plan-box em { font-style: normal; color: var(--tc-accent); }
+    .tc-plan-box em { font-style: normal; color: var(--tc-ember); }
     .tc-reasons { margin: 0 0 14px; padding-left: 18px; color: var(--tc-muted); }
     .tc-reasons li { margin: 6px 0; }
     .tc-coaches {
@@ -494,7 +496,7 @@
       outline: 1px solid var(--tc-accent);
       border-color: var(--tc-accent);
     }
-    .tc-join-status { min-height: 1.2em; color: var(--tc-accent); font-size: 0.9rem; }
+    .tc-join-status { min-height: 1.2em; color: var(--tc-ember); font-size: 0.9rem; }
 
     .tc-reveal {
       opacity: 0;
