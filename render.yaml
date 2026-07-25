@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: fitness-gurukul-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python server.py
+    healthCheckPath: /api/health
+    envVars:
+      - key: HOST
+        value: "0.0.0.0"
+      - key: ADMIN_TOKEN
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: "*"
+      - key: PYTHON_VERSION
+        value: "3.12.8"

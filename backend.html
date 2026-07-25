@@ -110,6 +110,7 @@
       .topbar { align-items: flex-start; flex-direction: column; }
     }
   </style>
+  <script src="config.js"></script>
 </head>
 <body>
   <header class="topbar">
@@ -282,7 +283,7 @@
       }
 
       async function loadData(throwOnError) {
-        var res = await fetch("/api/admin-data", { headers: authHeaders() });
+        var res = await fetch((window.fgApiUrl?window.fgApiUrl("/api/admin-data"):"/api/admin-data"), { headers: authHeaders() });
         var json = await res.json().catch(function() { return {}; });
         if (!res.ok) {
           if (res.status === 401 || res.status === 503) clearToken();
@@ -355,7 +356,7 @@
       }
 
       async function updateStatus(id, status) {
-        var res = await fetch("/api/submissions/" + encodeURIComponent(id) + "/status", {
+        var res = await fetch((window.fgApiUrl?window.fgApiUrl("/api/submissions/"):"/api/submissions/") + encodeURIComponent(id) + "/status", {
           method: "PATCH",
           headers: authHeaders(true),
           body: JSON.stringify({ status: status })
@@ -370,7 +371,7 @@
 
       async function deleteRow(id) {
         if (!confirm("Delete this lead from your owner database?")) return;
-        var res = await fetch("/api/submissions/" + encodeURIComponent(id), {
+        var res = await fetch((window.fgApiUrl?window.fgApiUrl("/api/submissions/"):"/api/submissions/") + encodeURIComponent(id), {
           method: "DELETE",
           headers: authHeaders()
         });
@@ -407,7 +408,7 @@
 
       async function bootOwner() {
         var info = null;
-        try { info = await fetch("/api/backend-info").then(function(r) { return r.json(); }); } catch (e) {}
+        try { info = await fetch((window.fgApiUrl?window.fgApiUrl("/api/backend-info"):"/api/backend-info")).then(function(r) { return r.json(); }); } catch (e) {}
         if (info && info.mode === "local-default" && info.localDefaultPassword) {
           qs("localHint").classList.remove("hidden");
           qs("localHint").innerHTML = "This is your computer — opening backend.html with <code>" + esc(info.localDefaultPassword) + "</code>…";

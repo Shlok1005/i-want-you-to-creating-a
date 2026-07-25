@@ -320,11 +320,35 @@ function list(items = []) {
   return `<ul>${items.map((item) => `<li>${safe(item)}</li>`).join("")}</ul>`;
 }
 
+function getApiBase() {
+  if (typeof window !== "undefined" && window.FG_API_BASE) {
+    return String(window.FG_API_BASE).replace(/\/$/, "");
+  }
+  var meta = typeof document !== "undefined" ? document.querySelector('meta[name="fg-api-base"]') : null;
+  if (meta && meta.content) return String(meta.content).replace(/\/$/, "");
+  try {
+    var stored = localStorage.getItem("fg_api_base");
+    if (stored) return String(stored).replace(/\/$/, "");
+  } catch (e) {}
+  return "";
+}
+
+function apiUrl(path) {
+  if (typeof window !== "undefined" && typeof window.fgApiUrl === "function") {
+    return window.fgApiUrl(path);
+  }
+  var base = getApiBase();
+  if (!path) return base || "/";
+  if (/^https?:\/\//i.test(path)) return path;
+  if (!base) return path.charAt(0) === "/" ? path : "/" + path;
+  return base + (path.charAt(0) === "/" ? path : "/" + path);
+}
+
 async function api(path, options = {}) {
   const controller = new AbortController();
-  const timer = setTimeout(function() { controller.abort(); }, 5000);
+  const timer = setTimeout(function() { controller.abort(); }, 8000);
   try {
-    const res = await fetch(path, {
+    const res = await fetch(apiUrl(path), {
       headers: { "Content-Type": "application/json" },
       signal: controller.signal,
       ...options,
@@ -343,6 +367,10 @@ async function detectBackend() {
   try {
     const health = await api("/api/health");
     usesLocalBackend = Boolean(health.ok);
+    if (usesLocalBackend && typeof document !== "undefined") {
+      document.documentElement.dataset.apiReady = "1";
+      if (getApiBase()) document.documentElement.dataset.apiRemote = "1";
+    }
   } catch (e) {
     usesLocalBackend = false;
   }
@@ -1799,7 +1827,7 @@ function openBookModal(coachName) {
 async function submitFormPayload(payload, formEl) {
   var body = Object.assign({ form_type: payload.form_type || "consultation" }, payload || {});
   try {
-    var res = await fetch("/api/submit", {
+    var res = await fetch(apiUrl("/api/submit"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
@@ -2883,7 +2911,7 @@ function injectSiteChatbot() {
       var controller = new AbortController();
       var timer = setTimeout(function() { controller.abort(); }, 30000);
       try {
-        var res = await fetch("/api/chat", {
+        var res = await fetch(apiUrl("/api/chat"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           signal: controller.signal,

@@ -141,6 +141,7 @@
     @media (max-width: 960px) { .stats { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 640px) { .stats { grid-template-columns: 1fr; } .toolbar input, .toolbar select { min-width: 100%; flex: 1; } }
   </style>
+  <script src="config.js"></script>
 </head>
 <body>
   <div class="gate" id="gate">
@@ -278,7 +279,7 @@
 
     async function loadBackendInfo() {
       try {
-        const res = await fetch("/api/backend-info");
+        const res = await fetch((window.fgApiUrl?window.fgApiUrl("/api/backend-info"):"/api/backend-info"));
         const info = await res.json();
         const hint = document.getElementById("localHint");
         const note = document.getElementById("infoNote");
@@ -319,7 +320,7 @@
     }
 
     async function loadData(throwOnError) {
-      const res = await fetch("/api/admin-data", { headers: authHeaders() });
+      const res = await fetch((window.fgApiUrl?window.fgApiUrl("/api/admin-data"):"/api/admin-data"), { headers: authHeaders() });
       const json = await res.json().catch(function() { return {}; });
       if (!res.ok) {
         if (res.status === 401 || res.status === 503) clearToken();
@@ -434,7 +435,7 @@
     }
 
     async function updateStatus(id, status) {
-      const res = await fetch("/api/submissions/" + encodeURIComponent(id) + "/status", {
+      const res = await fetch((window.fgApiUrl?window.fgApiUrl("/api/submissions/"):"/api/submissions/") + encodeURIComponent(id) + "/status", {
         method: "PATCH",
         headers: authHeaders(true),
         body: JSON.stringify({ status }),
@@ -449,7 +450,7 @@
 
     async function deleteSubmission(id) {
       if (!confirm("Delete this submission from the backend database?")) return;
-      const res = await fetch("/api/submissions/" + encodeURIComponent(id), {
+      const res = await fetch((window.fgApiUrl?window.fgApiUrl("/api/submissions/"):"/api/submissions/") + encodeURIComponent(id), {
         method: "DELETE",
         headers: authHeaders(),
       });

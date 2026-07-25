@@ -15,7 +15,6 @@ import uuid
 
 ROOT = Path(__file__).parent.resolve()
 PUBLIC = ROOT
-DB_PATH = ROOT / "fitness_gurukul.sqlite3"
 DB_SCHEMA_READY = False
 MAX_JSON_BYTES = 64 * 1024
 RATE_LIMIT_WINDOW = 60
@@ -30,6 +29,17 @@ RATE_LIMITS = {
 }
 _rate_lock = threading.Lock()
 _rate_buckets = {}
+
+
+def resolve_db_path():
+    """Allow cloud hosts to persist SQLite under DATA_DIR when available."""
+    data_dir = (os.environ.get("DATA_DIR") or "").strip()
+    if data_dir:
+        path = Path(data_dir)
+        path.mkdir(parents=True, exist_ok=True)
+        return path / "fitness_gurukul.sqlite3"
+    return ROOT / "fitness_gurukul.sqlite3"
+
 
 BLOCKED_STATIC_PREFIXES = (
     "/.env",
@@ -70,6 +80,20 @@ def load_env_file():
             os.environ[key] = value
 
 load_env_file()
+DB_PATH = resolve_db_path()
+
+
+def cors_origin_for(handler):
+    """Allow Hostinger static site to call this API on Render/Railway/Fly."""
+    configured = (os.environ.get("CORS_ORIGINS") or "*").strip()
+    request_origin = (handler.headers.get("Origin") or "").strip()
+    if not configured or configured == "*":
+        return request_origin or "*"
+    allowed = [part.strip() for part in configured.split(",") if part.strip()]
+    if request_origin and request_origin in allowed:
+        return request_origin
+    return allowed[0] if allowed else "*"
+
 
 CONTACT = {
     "phone": "08042781491",
@@ -1027,9 +1051,27 @@ class AppHandler(SimpleHTTPRequestHandler):
     def log_message(self, format, *args):
         print("%s - %s" % (self.address_string(), format % args))
 
+    def apply_cors_headers(self):
+        origin = cors_origin_for(self)
+        self.send_header("Access-Control-Allow-Origin", origin)
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
+        self.send_header(
+            "Access-Control-Allow-Headers",
+            "Content-Type, X-Admin-Token, Authorization",
+        )
+        self.send_header("Access-Control-Max-Age", "86400")
+        if origin != "*":
+            self.send_header("Vary", "Origin")
+
     def end_headers(self):
         self.send_header("Cache-Control", "no-store")
+        self.apply_cors_headers()
         super().end_headers()
+
+    def do_OPTIONS(self):
+        # Browser preflight for Hostinger site → cloud API.
+        self.send_response(204)
+        self.end_headers()
 
     def send_json(self, payload, status=200):
         body = json.dumps(payload).encode("utf-8")
@@ -1081,6 +1123,8 @@ class AppHandler(SimpleHTTPRequestHandler):
                     "adminConfigured": bool(admin_token()),
                     "backendUrl": "/backend",
                     "aiEnabled": bool(os.environ.get("OPENAI_API_KEY", "").strip()),
+                    "cors": (os.environ.get("CORS_ORIGINS") or "*"),
+                    "cloudReady": True,
                 })
             if path == "/api/backend-info":
                 # Non-sensitive helper so the login screen can guide staff.
@@ -1332,34 +1376,36 @@ class AppHandler(SimpleHTTPRequestHandler):
 
 if __name__ == "__main__":
     init_db()
-    host = os.environ.get("HOST", "127.0.0.1").strip() or "127.0.0.1"
+    # Cloud platforms (Render/Railway/Fly) inject PORT. Bind publicly there.
     port = int(os.environ.get("PORT", "8000"))
+    default_host = "0.0.0.0" if os.environ.get("PORT") else "127.0.0.1"
+    host = (os.environ.get("HOST") or default_host).strip() or default_host
     cred_mode = ensure_admin_credentials(host)
     server = ThreadingHTTPServer((host, port), AppHandler)
     print("")
     print("=" * 56)
-    print(" Fitness Gurukul")
+    print(" Fitness Gurukul API")
     print("=" * 56)
-    print(f" USER WEBSITE:  http://127.0.0.1:{port}/")
-    print(f" OWNER BACKEND: http://127.0.0.1:{port}/backend.html")
-    print(f" FULL BACKEND:  http://127.0.0.1:{port}/backend")
+    print(f" Listening: {host}:{port}")
+    print(f" Health:    /api/health")
+    print(f" Website:   http://127.0.0.1:{port}/")
+    print(f" Backend:   http://127.0.0.1:{port}/backend.html")
+    print(f" Database:  {DB_PATH}")
+    print(f" CORS:      {os.environ.get('CORS_ORIGINS', '*')}")
     if cred_mode == "local-default":
         print(" Owner password (local default): fitnessgurukul")
         print(" Tip: open backend.html — unlocks automatically on this computer.")
     elif cred_mode == "generated":
         print(f" Owner password (generated): {admin_token()}")
-        print(" Tip: add ADMIN_TOKEN to .env so it stays the same next restart.")
+        print(" Tip: set ADMIN_TOKEN in the host dashboard so it stays stable.")
     else:
-        print(" Owner password: loaded from .env (ADMIN_TOKEN / ADMIN_PASSWORD)")
+        print(" Owner password: loaded from env (ADMIN_TOKEN / ADMIN_PASSWORD)")
     if host in {"0.0.0.0", "::"}:
         try:
             local_ip = socket.gethostbyname(socket.gethostname())
         except OSError:
             local_ip = "YOUR-LAPTOP-IP"
-        print(f" LAN user site: http://{local_ip}:{port}/")
-        print(f" LAN owner backend: http://{local_ip}:{port}/backend.html")
-    else:
-        print(" Bound to localhost only. Set HOST=0.0.0.0 to share on Wi-Fi.")
+        print(f" LAN site: http://{local_ip}:{port}/")
     print("=" * 56)
     print("")
     server.serve_forever()

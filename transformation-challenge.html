@@ -515,6 +515,7 @@
       .tc-hero-inner { padding-top: 110px; }
     }
   </style>
+  <script src="config.js"></script>
   <script src="app.js" defer></script>
 </head>
 <body class="tc-page">
@@ -779,7 +780,7 @@
 
       async function loadLive() {
         try {
-          var res = await fetch("/api/live");
+          var res = await fetch((window.fgApiUrl ? window.fgApiUrl("/api/live") : "/api/live"));
           var live = await res.json();
           if (!live || !live.ok) return;
           animateCount($("tcJoined"), live.challengeJoins || live.inquiriesToday || 0);
@@ -791,7 +792,7 @@
 
       async function loadChallenges() {
         try {
-          var res = await fetch("/api/challenges");
+          var res = await fetch((window.fgApiUrl ? window.fgApiUrl("/api/challenges") : "/api/challenges"));
           var data = await res.json();
           challenges = (data && data.challenges) || [];
         } catch (e) {
@@ -904,7 +905,7 @@
         var panel = $("tcQuizResult");
         panel.innerHTML = '<div class="tc-result-empty"><strong>Matching via /api/quiz…</strong><span>Pulling live plans and coaches.</span></div>';
         try {
-          var res = await fetch("/api/quiz", {
+          var res = await fetch((window.fgApiUrl ? window.fgApiUrl("/api/quiz") : "/api/quiz"), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(answers)
@@ -1000,7 +1001,7 @@
           status.textContent = "Saving to database…";
           var payload = Object.fromEntries(new FormData($("tcJoinForm")).entries());
           try {
-            var res = await fetch("/api/challenge-join", {
+            var res = await fetch((window.fgApiUrl ? window.fgApiUrl("/api/challenge-join") : "/api/challenge-join"), {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(payload)

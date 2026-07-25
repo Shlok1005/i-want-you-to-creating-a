@@ -110,6 +110,66 @@ PORT=8000
 - Without `OPENAI_API_KEY`, the chat widget answers from local website facts.
 - Change `ADMIN_TOKEN` (or `ADMIN_PASSWORD`) before sharing the server beyond your machine.
 
+## Deploy: Hostinger site + always-on API (Render / Railway / Fly)
+
+Your laptop does **not** need to stay on. Recommended setup:
+
+1. **Website files** on Hostinger (static HTML/CSS/JS)
+2. **Python API** (`server.py`) on Render, Railway, or Fly.io (always online)
+
+### A) Deploy the API (pick one)
+
+**Render (easiest)**
+1. Go to [https://render.com](https://render.com) → New → Blueprint / Web Service
+2. Connect this GitHub repo (`main`)
+3. Runtime: Python · Start command: `python server.py`
+4. Set env vars:
+   - `HOST=0.0.0.0`
+   - `ADMIN_TOKEN=` (choose a strong password)
+   - `CORS_ORIGINS=*` (or your Hostinger domain)
+5. Deploy → copy the URL, e.g. `https://fitness-gurukul-api.onrender.com`
+
+**Railway**
+1. [https://railway.app](https://railway.app) → New Project → Deploy from GitHub
+2. Start command: `python server.py`
+3. Add the same env vars as above
+4. Generate a public domain and copy it
+
+**Fly.io**
+```bash
+fly launch
+fly secrets set ADMIN_TOKEN=your-strong-password CORS_ORIGINS=*
+fly deploy
+```
+
+Health check: open `https://YOUR-API-URL/api/health` — should return `{"ok": true, ...}`.
+
+### B) Point the Hostinger website at the API
+
+Edit `config.js` on Hostinger (or in Git then redeploy):
+
+```js
+window.FG_API_BASE = "https://YOUR-API-URL";
+```
+
+Example:
+
+```js
+window.FG_API_BASE = "https://fitness-gurukul-api.onrender.com";
+```
+
+Leave it as `""` only when the site and API are on the same origin (local `server.py`).
+
+### C) Redeploy Hostinger
+
+Pull/upload the latest `main` (includes `config.js`) and make sure your edited API URL is live.
+
+Then forms, quiz, live stats, chat, and `backend.html` keep working with your laptop off.
+
+**Notes**
+- Free Render apps may sleep after idle; first request can take ~30s to wake.
+- SQLite on free tiers is usually ephemeral (resets on redeploy). For permanent leads, use a paid disk/volume or export regularly from the owner backend.
+
 ## Pages
 
 - `index.html` — home
