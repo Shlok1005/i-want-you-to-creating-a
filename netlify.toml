@@ -1,0 +1,42 @@
+# Fitness Gurukul — static site on Netlify
+# Media paths must stay URL-safe (no spaces) so Git LFS downloads succeed.
+
+[build]
+  publish = "."
+  command = "echo 'Static site — no build step'"
+
+[build.environment]
+  # Pull Git LFS media during prepare (paths are now space-free).
+  GIT_LFS_ENABLED = "true"
+  NODE_VERSION = "20"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/backend.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/office.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/owner-data.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/admin.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/dashboard.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
