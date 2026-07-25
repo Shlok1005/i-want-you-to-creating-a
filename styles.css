@@ -29,7 +29,11 @@ body {
   margin: 0;
   min-height: 100vh;
   overflow-x: hidden;
-  background: linear-gradient(180deg, rgba(8, 11, 20, 0.95), rgba(0, 0, 0, 0.98)), radial-gradient(circle at 72% 8%, rgba(245, 158, 11, 0.1), transparent 34%), radial-gradient(circle at 12% 28%, rgba(13, 202, 240, 0.08), transparent 28%), var(--bg);
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -8%, rgba(255,255,255,0.06), transparent 55%),
+    radial-gradient(circle at 78% 12%, rgba(245, 158, 11, 0.12), transparent 32%),
+    radial-gradient(circle at 14% 30%, rgba(255,255,255,0.04), transparent 26%),
+    linear-gradient(180deg, #070707 0%, #000 42%, #050505 100%);
   color: var(--text);
   font-family: var(--font-body);
   font-size: 16px;
@@ -41,9 +45,13 @@ body::before {
   position: fixed;
   inset: 0;
   z-index: -2;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.96), rgba(0, 0, 0, 0.7) 42%, rgba(0, 0, 0, 0.94)), linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.92)), url("assets/cdn/bg-1.png") center top / cover no-repeat;
-  opacity: 0.45;
-  filter: saturate(0.75) contrast(1.02) brightness(0.7);
+  background:
+    radial-gradient(ellipse at center, transparent 42%, rgba(0,0,0,0.72) 100%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.92), rgba(0, 0, 0, 0.58) 46%, rgba(0, 0, 0, 0.9)),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.88)),
+    url("assets/cdn/bg-1.png") center top / cover no-repeat;
+  opacity: 0.55;
+  filter: saturate(0.8) contrast(1.04) brightness(0.68);
 }
 
 body::after {
@@ -52,10 +60,14 @@ body::after {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background-image: linear-gradient(rgba(247, 251, 255, 0.024) 1px, transparent 1px), linear-gradient(90deg, rgba(247, 251, 255, 0.024) 1px, transparent 1px);
-  background-size: 72px 72px;
-  -webkit-mask-image: linear-gradient(to bottom, black, transparent 76%);
-  mask-image: linear-gradient(to bottom, black, transparent 76%);
+  background-image:
+    radial-gradient(circle at 20% 18%, rgba(251,191,36,0.05), transparent 22%),
+    radial-gradient(circle at 82% 70%, rgba(255,255,255,0.035), transparent 24%),
+    linear-gradient(rgba(247, 251, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(247, 251, 255, 0.03) 1px, transparent 1px);
+  background-size: auto, auto, 64px 64px, 64px 64px;
+  -webkit-mask-image: linear-gradient(to bottom, black, transparent 82%);
+  mask-image: linear-gradient(to bottom, black, transparent 82%);
   animation: floorBreath 16s ease-in-out infinite alternate;
 }
 
@@ -334,10 +346,10 @@ main,
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: 100%;
+  max-width: min(1280px, 100%);
   margin: 0 auto;
-  padding: 0 32px;
-  height: 68px;
+  padding: 0 clamp(20px, 4vw, 48px);
+  height: 72px;
   gap: 20px;
   position: relative;
   z-index: 2;
@@ -975,7 +987,7 @@ p { margin: 0; color: var(--muted); font-weight: 300; line-height: 1.7; }
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 120px 24px 80px;
+  padding: 128px clamp(24px, 5vw, 56px) 88px;
   animation: heroContentFade 1s ease-out 0.3s both;
 }
 
@@ -2525,7 +2537,7 @@ from {
 .updates-band,
 .plans-section,
 .faq-section {
-  padding: 64px 0;
+  padding: clamp(72px, 8vw, 96px) 0;
 }
 
 .booking-band {
@@ -2545,14 +2557,14 @@ from {
 }
 
 .cta-strip {
-  padding: 32px;
+  padding: clamp(28px, 4vw, 40px);
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 24px;
   align-items: center;
   position: relative;
-  width: min(1180px, calc(100% - 48px));
-  margin: 34px auto 72px;
+  width: min(1180px, calc(100% - clamp(40px, 8vw, 96px)));
+  margin: 40px auto 80px;
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: 18px;
   background: linear-gradient(120deg, rgba(0,0,0,0.94) 0%, rgba(15,10,18,0.96) 54%, rgba(29,5,18,0.92) 100%), radial-gradient(ellipse at 88% 38%, rgba(248,113,113,0.12), transparent 58%);
@@ -5642,43 +5654,44 @@ from { opacity: 0; transform: translateY(24px); }
 
 .bg-ambient { position: fixed; inset: 0; z-index: -3; overflow: hidden; pointer-events: none; }
 
-.bg-orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.12; will-change: transform; }
+.bg-orb { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.16; will-change: transform; }
 
 .bg-orb--1 {
-  width: 600px;
-  height: 600px;
-  top: -10%;
-  left: -8%;
-  background: radial-gradient(circle, var(--white), transparent 70%);
+  width: 640px;
+  height: 640px;
+  top: -12%;
+  left: -10%;
+  background: radial-gradient(circle, rgba(255,255,255,0.55), transparent 70%);
   animation: floatA 28s ease-in-out infinite;
 }
 
 .bg-orb--2 {
-  width: 500px;
-  height: 500px;
-  bottom: -12%;
-  right: -6%;
-  background: radial-gradient(circle, var(--white), transparent 70%);
+  width: 540px;
+  height: 540px;
+  bottom: -14%;
+  right: -8%;
+  background: radial-gradient(circle, rgba(251,191,36,0.45), transparent 72%);
+  opacity: 0.14;
   animation: floatB 35s ease-in-out infinite;
 }
 
 .bg-orb--3 {
-  width: 400px;
-  height: 400px;
-  top: 40%;
-  right: 20%;
-  background: radial-gradient(circle, var(--white), transparent 70%);
-  opacity: 0.07;
+  width: 420px;
+  height: 420px;
+  top: 38%;
+  right: 18%;
+  background: radial-gradient(circle, rgba(255,255,255,0.4), transparent 70%);
+  opacity: 0.1;
   animation: floatC 40s ease-in-out infinite;
 }
 
 .bg-orb--4 {
-  width: 350px;
-  height: 350px;
-  bottom: 15%;
-  left: 10%;
-  background: radial-gradient(circle, var(--white), transparent 70%);
-  opacity: 0.06;
+  width: 380px;
+  height: 380px;
+  bottom: 12%;
+  left: 8%;
+  background: radial-gradient(circle, rgba(251,191,36,0.35), transparent 70%);
+  opacity: 0.1;
   animation: floatD 32s ease-in-out infinite;
 }
 
@@ -11933,7 +11946,15 @@ from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:transl
   padding: 3px 10px;
 }
 
-.page-shell { width: min(1200px, calc(100% - 48px)); margin: 0 auto; }
+.page-shell { width: min(1200px, calc(100% - clamp(40px, 8vw, 96px))); margin: 0 auto; }
+
+main {
+  position: relative;
+}
+
+main > section:first-child:not(.hero-fittr):not(.tc-hero) {
+  margin-top: 12px;
+}
 
 .home-page { overflow-x: clip; }
 
