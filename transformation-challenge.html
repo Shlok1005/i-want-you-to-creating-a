@@ -5,21 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Transformation Challenge | Fitness Gurukul</title>
   <meta name="description" content="Join Fitness Gurukul transformation challenges in Hyderabad. Take a quick quiz for a plan recommendation, pick a challenge, and start with coach support." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <style>
     :root {
-      --tc-ink: #f3f6f4;
-      --tc-muted: rgba(243,246,244,0.68);
-      --tc-line: rgba(255,255,255,0.12);
-      --tc-accent: #b8f23d;
-      --tc-ember: #ff6a3d;
-      --tc-deep: #07110c;
-      --tc-panel: rgba(10, 22, 16, 0.72);
-      --tc-display: "Barlow Condensed", "Public Sans", sans-serif;
-      --tc-body: "Manrope", "Public Sans", sans-serif;
+      /* Match main site palette: black / white / soft gray + light accent */
+      --tc-ink: #ffffff;
+      --tc-muted: #999999;
+      --tc-line: rgba(255,255,255,0.1);
+      --tc-accent: #ffffff;
+      --tc-ember: rgba(255,255,255,0.55);
+      --tc-deep: #000000;
+      --tc-panel: rgba(17, 17, 17, 0.92);
+      --tc-accent-soft: rgba(255,255,255,0.08);
+      --tc-display: "Public Sans", Helvetica, Arial, sans-serif;
+      --tc-body: "Public Sans", Helvetica, Arial, sans-serif;
     }
 
     body.tc-page {
@@ -30,8 +29,8 @@
     }
     body.tc-page h1, body.tc-page h2, body.tc-page h3, .tc-brand {
       font-family: var(--tc-display);
-      letter-spacing: 0.01em;
-      text-transform: uppercase;
+      letter-spacing: -0.02em;
+      text-transform: none;
     }
 
     .tc-hero {
@@ -44,7 +43,7 @@
     .tc-hero-media {
       position: absolute; inset: 0;
       background:
-        linear-gradient(180deg, rgba(7,17,12,0.2) 0%, rgba(7,17,12,0.55) 45%, rgba(7,17,12,0.94) 100%),
+        linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.55) 45%, rgba(0,0,0,0.94) 100%),
         url("https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1800&q=85&auto=format&fit=crop") center/cover no-repeat;
       transform: scale(1.05);
       animation: tcKen 16s ease-in-out infinite alternate;
@@ -66,7 +65,7 @@
       line-height: 0.9;
       font-weight: 800;
     }
-    .tc-brand span { color: var(--tc-accent); display: block; }
+    .tc-brand span { color: rgba(255,255,255,0.72); display: block; }
     .tc-hero h1 {
       margin: 0 0 12px;
       max-width: 16ch;
@@ -99,7 +98,7 @@
 
     .tc-live {
       border-block: 1px solid var(--tc-line);
-      background: linear-gradient(90deg, rgba(184,242,61,0.08), transparent 40%, rgba(255,106,61,0.08));
+      background: linear-gradient(90deg, rgba(255,255,255,0.04), transparent 45%, rgba(255,255,255,0.03));
     }
     .tc-live-inner {
       width: min(1120px, calc(100% - 40px));
@@ -118,13 +117,13 @@
     .tc-dot {
       width: 8px; height: 8px; border-radius: 50%;
       background: var(--tc-accent);
-      box-shadow: 0 0 0 0 rgba(184,242,61,0.55);
+      box-shadow: 0 0 0 0 rgba(255,255,255,0.35);
       animation: tcDot 1.8s ease-out infinite;
     }
     @keyframes tcDot {
-      0% { box-shadow: 0 0 0 0 rgba(184,242,61,0.55); }
-      70% { box-shadow: 0 0 0 10px rgba(184,242,61,0); }
-      100% { box-shadow: 0 0 0 0 rgba(184,242,61,0); }
+      0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.35); }
+      70% { box-shadow: 0 0 0 10px rgba(255,255,255,0); }
+      100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
     }
     .tc-live-stats { display: flex; gap: 18px; flex-wrap: wrap; }
     .tc-live-stats strong {
@@ -138,8 +137,8 @@
     .tc-section {
       padding: 72px 0;
       background:
-        radial-gradient(ellipse at 0% 0%, rgba(184,242,61,0.1), transparent 42%),
-        radial-gradient(ellipse at 100% 20%, rgba(255,106,61,0.08), transparent 38%);
+        radial-gradient(ellipse at 0% 0%, rgba(255,255,255,0.04), transparent 42%),
+        radial-gradient(ellipse at 100% 20%, rgba(255,255,255,0.03), transparent 38%);
     }
     .tc-shell { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
     .tc-section-head { margin-bottom: 28px; max-width: 640px; }
@@ -155,7 +154,7 @@
       border: 1px solid var(--tc-line);
       background: rgba(255,255,255,0.03);
       color: var(--tc-muted);
-      border-radius: 999px;
+      border-radius: 10px;
       padding: 8px 14px;
       font: inherit;
       font-size: 0.82rem;
@@ -164,9 +163,9 @@
     }
     .tc-filters button:hover { color: #fff; border-color: rgba(255,255,255,0.28); transform: translateY(-1px); }
     .tc-filters button.active {
-      color: #0a1408;
-      background: var(--tc-accent);
-      border-color: var(--tc-accent);
+      color: #000;
+      background: #fff;
+      border-color: #fff;
     }
 
     .tc-stage {
@@ -200,8 +199,8 @@
     }
     .tc-spotlight-copy .tag {
       display: inline-block;
-      color: #0a1408;
-      background: var(--tc-accent);
+      color: #000;
+      background: #fff;
       font-size: 0.72rem;
       font-weight: 700;
       letter-spacing: 0.06em;
@@ -322,16 +321,16 @@
     .tc-challenge-list button small { font-size: 0.72rem; }
     .tc-challenge-list button:hover { transform: translateY(-2px); color: #fff; }
     .tc-challenge-list button.active {
-      border-color: var(--tc-accent);
-      background: rgba(184,242,61,0.1);
+      border-color: rgba(255,255,255,0.55);
+      background: rgba(255,255,255,0.08);
       color: #fff;
     }
 
     .tc-quiz-section {
       padding: 72px 0;
       background:
-        linear-gradient(180deg, rgba(255,106,61,0.08), transparent 30%),
-        radial-gradient(ellipse at 80% 0%, rgba(184,242,61,0.1), transparent 40%);
+        linear-gradient(180deg, rgba(255,255,255,0.03), transparent 30%),
+        radial-gradient(ellipse at 80% 0%, rgba(255,255,255,0.04), transparent 40%);
     }
     .tc-quiz-layout {
       display: grid;
@@ -356,7 +355,7 @@
       display: block;
       height: 100%;
       width: 25%;
-      background: linear-gradient(90deg, var(--tc-accent), var(--tc-ember));
+      background: linear-gradient(90deg, #fff, rgba(255,255,255,0.55));
       transition: width .35s ease;
     }
     .tc-q {
@@ -380,8 +379,8 @@
     }
     .tc-option:hover { border-color: rgba(255,255,255,0.35); transform: translateX(3px); }
     .tc-option.selected {
-      border-color: var(--tc-accent);
-      background: rgba(184,242,61,0.12);
+      border-color: rgba(255,255,255,0.55);
+      background: rgba(255,255,255,0.08);
     }
     .tc-quiz-nav {
       display: flex;
@@ -417,8 +416,8 @@
     }
     .tc-result-panel .lead { color: var(--tc-muted); margin: 0 0 14px; }
     .tc-plan-box {
-      border: 1px solid rgba(184,242,61,0.35);
-      background: rgba(184,242,61,0.08);
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.06);
       padding: 14px;
       margin-bottom: 14px;
     }
