@@ -13,12 +13,42 @@ The old Node/Express server is deprecated. Use Python only.
 
 ## Run locally
 
+### Windows (PowerShell)
+
+`python3` often fails on Windows (Microsoft Store stub). Use one of these instead:
+
+```powershell
+copy .env.example .env
+py server.py
+```
+
+or:
+
+```powershell
+python server.py
+```
+
+or double-click / run:
+
+```powershell
+.\start.bat
+```
+
+If Windows says **Python was not found** / opens the Store:
+
+1. Install Python from https://www.python.org/downloads/
+2. During setup, check **Add python.exe to PATH**
+3. Open a **new** PowerShell window
+4. Optional: Settings → Apps → Advanced app settings → App execution aliases → turn **OFF** `python.exe` and `python3.exe`
+
+### macOS / Linux
+
 ```bash
 cp .env.example .env
 python3 server.py
 ```
 
-Or:
+### Any OS via npm
 
 ```bash
 npm start
@@ -36,7 +66,7 @@ http://127.0.0.1:8000
 http://127.0.0.1:8000/backend
 ```
 
-1. Start the server (`python3 server.py`)
+1. Start the server (`py server.py` on Windows, or `python3 server.py` on macOS/Linux)
 2. Open `/backend` (also linked as **Staff login** in the site footer)
 3. Enter the staff password from `.env` (`ADMIN_TOKEN`)
 

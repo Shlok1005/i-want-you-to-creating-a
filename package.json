@@ -4,9 +4,9 @@
   "description": "Fitness Gurukul website — Python backend launcher",
   "private": true,
   "scripts": {
-    "start": "python3 server.py",
-    "dev": "python3 server.py",
-    "test": "python3 -m py_compile server.py"
+    "start": "node start-node.js",
+    "dev": "node start-node.js",
+    "test": "node start-node.js --check"
   },
   "engines": {
     "node": ">=18"
