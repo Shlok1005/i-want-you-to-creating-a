@@ -87,8 +87,8 @@
     <div class="hero-fittr-overlay"></div>
     <div class="hero-fittr-content">
       <p class="hero-fittr-brand">Fitness Gurukul</p>
-      <h1 class="hero-fittr-headline">Train Smarter.<br>Live Stronger.</h1>
-      <p class="hero-fittr-sub">1:1 personal training in Hyderabad — Indian nutrition and doorstep coaching built around your body and schedule.</p>
+      <h1 class="hero-fittr-headline" id="heroHeadline">Train Smarter.<br>Live Stronger.</h1>
+      <p class="hero-fittr-sub" id="heroSubheadline">1:1 personal training in Hyderabad — Indian nutrition and doorstep coaching built around your body and schedule.</p>
       <div class="hero-actions">
         <a class="primary-button" href="book-consultation.html">Buy Now</a>
         <a class="ghost-button" href="https://wa.me/917207113310" target="_blank" rel="noopener">Have questions? Chat now</a>
@@ -132,6 +132,50 @@
           <span>Elite</span>
         </span>
       </div>
+    </div>
+  </section>
+
+
+  <!-- INTERACTIVE GOAL MATCHER -->
+  <section class="goal-match-section reveal" id="goalMatcher">
+    <div class="page-shell">
+      <div class="goal-match-head">
+        <span class="section-kicker">Interactive Match</span>
+        <h2>Find Your Path in <em>60 Seconds</em></h2>
+        <p>Answer three quick prompts and we will recommend a plan and coach from live Fitness Gurukul data.</p>
+      </div>
+      <form class="goal-match-form" id="goalMatchForm">
+        <div class="goal-match-steps">
+          <label class="goal-field">
+            <span>Your primary goal</span>
+            <select name="goal" required>
+              <option value="weight-loss">Lose fat / recomp</option>
+              <option value="strength">Build strength</option>
+              <option value="yoga">Yoga &amp; stress relief</option>
+              <option value="running">Running &amp; endurance</option>
+              <option value="kids">Kids fitness</option>
+              <option value="rehab">Injury rehab</option>
+            </select>
+          </label>
+          <label class="goal-field">
+            <span>Experience</span>
+            <select name="experience" required>
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
+            </select>
+          </label>
+          <label class="goal-field">
+            <span>How you want to train</span>
+            <select name="preference" required>
+              <option value="in-person">In-person / doorstep</option>
+              <option value="virtual">Virtual coaching</option>
+            </select>
+          </label>
+        </div>
+        <button class="primary-button" type="submit">Match me</button>
+      </form>
+      <div class="goal-match-result" id="goalMatchResult" hidden></div>
     </div>
   </section>
 
@@ -196,21 +240,21 @@
             <div class="ecosystem-card-img"><img src="INDEX/SERVICES/strength.png" alt="Strength Training" loading="lazy" /></div>
             <span class="ecosystem-card-badge">Strength</span>
             <h3>Strength Training</h3>
-            <p>Muscle gain, fat loss, maintenance phase, rehabilitation, general fitness, Hyrox, and Devil Circuit � coached programs for every goal.</p>
+            <p>Muscle gain, fat loss, maintenance phase, rehabilitation, general fitness, Hyrox, and Devil Circuit — coached programs for every goal.</p>
             <a class="ecosystem-card-cta" href="services.html">Explore programs &rarr;</a>
           </div>
           <div class="ecosystem-card">
             <div class="ecosystem-card-img"><img src="INDEX/SERVICES/CYCLING.JPG" alt="Cycling" loading="lazy" /></div>
             <span class="ecosystem-card-badge">Cycling</span>
             <h3>Cycling</h3>
-            <p>Structured plans for 5K, 10K, 25K, 50K, 100K rides � plus nutrition coaching and Hyrox-specific cycling training.</p>
+            <p>Structured plans for 5K, 10K, 25K, 50K, 100K rides — plus nutrition coaching and Hyrox-specific cycling training.</p>
             <a class="ecosystem-card-cta" href="services.html">View plans &rarr;</a>
           </div>
           <div class="ecosystem-card">
             <div class="ecosystem-card-img"><img src="INDEX/SERVICES/running.png" alt="Running" loading="lazy" /></div>
             <span class="ecosystem-card-badge">Running</span>
             <h3>Running</h3>
-            <p>Run plans, nutrition guidance, and Hyrox prep � from 5K beginners to endurance athletes chasing PRs.</p>
+            <p>Run plans, nutrition guidance, and Hyrox prep — from 5K beginners to endurance athletes chasing PRs.</p>
             <a class="ecosystem-card-cta" href="services.html">Start running &rarr;</a>
           </div>
           <div class="ecosystem-card">
@@ -224,14 +268,14 @@
             <div class="ecosystem-card-img"><img src="INDEX/SERVICES/indian nutrtion.png" alt="Indian Nutrition" loading="lazy" /></div>
             <span class="ecosystem-card-badge">Nutrition</span>
             <h3>Indian Nutrition</h3>
-            <p>Meal plans built for Indian kitchens � sustainable fat loss without crash diets or foreign ingredients.</p>
+            <p>Meal plans built for Indian kitchens — sustainable fat loss without crash diets or foreign ingredients.</p>
             <a class="ecosystem-card-cta" href="tools.html">Calculate macros &rarr;</a>
           </div>
           <div class="ecosystem-card">
             <div class="ecosystem-card-img"><img src="INDEX/SERVICES/community event.jpg" alt="Community & Events" loading="lazy" /></div>
             <span class="ecosystem-card-badge">Community</span>
             <h3>Community &amp; Events</h3>
-            <p>Cycling club, obstacle courses, summer camps, community runs, and Sip &amp; Stretch � fitness that is social and fun.</p>
+            <p>Cycling club, obstacle courses, summer camps, community runs, and Sip &amp; Stretch — fitness that is social and fun.</p>
             <a class="ecosystem-card-cta" href="events.html">Join the community &rarr;</a>
           </div>
           <!-- duplicate for seamless loop -->
@@ -239,21 +283,21 @@
             <div class="ecosystem-card-img"><img src="INDEX/SERVICES/strength.png" alt="Strength Training" loading="lazy" /></div>
             <span class="ecosystem-card-badge">Strength</span>
             <h3>Strength Training</h3>
-            <p>Muscle gain, fat loss, maintenance phase, rehabilitation, general fitness, Hyrox, and Devil Circuit � coached programs for every goal.</p>
+            <p>Muscle gain, fat loss, maintenance phase, rehabilitation, general fitness, Hyrox, and Devil Circuit — coached programs for every goal.</p>
             <a class="ecosystem-card-cta" href="services.html">Explore programs &rarr;</a>
           </div>
           <div class="ecosystem-card">
             <div class="ecosystem-card-img"><img src="INDEX/SERVICES/CYCLING.JPG" alt="Cycling" loading="lazy" /></div>
             <span class="ecosystem-card-badge">Cycling</span>
             <h3>Cycling</h3>
-            <p>Structured plans for 5K, 10K, 25K, 50K, 100K rides � plus nutrition coaching and Hyrox-specific cycling training.</p>
+            <p>Structured plans for 5K, 10K, 25K, 50K, 100K rides — plus nutrition coaching and Hyrox-specific cycling training.</p>
             <a class="ecosystem-card-cta" href="services.html">View plans &rarr;</a>
           </div>
           <div class="ecosystem-card">
             <div class="ecosystem-card-img"><img src="INDEX/SERVICES/running.png" alt="Running" loading="lazy" /></div>
             <span class="ecosystem-card-badge">Running</span>
             <h3>Running</h3>
-            <p>Run plans, nutrition guidance, and Hyrox prep � from 5K beginners to endurance athletes chasing PRs.</p>
+            <p>Run plans, nutrition guidance, and Hyrox prep — from 5K beginners to endurance athletes chasing PRs.</p>
             <a class="ecosystem-card-cta" href="services.html">Start running &rarr;</a>
           </div>
           <div class="ecosystem-card">
@@ -267,14 +311,14 @@
             <div class="ecosystem-card-img"><img src="INDEX/SERVICES/indian nutrtion.png" alt="Indian Nutrition" loading="lazy" /></div>
             <span class="ecosystem-card-badge">Nutrition</span>
             <h3>Indian Nutrition</h3>
-            <p>Meal plans built for Indian kitchens � sustainable fat loss without crash diets or foreign ingredients.</p>
+            <p>Meal plans built for Indian kitchens — sustainable fat loss without crash diets or foreign ingredients.</p>
             <a class="ecosystem-card-cta" href="tools.html">Calculate macros &rarr;</a>
           </div>
           <div class="ecosystem-card">
             <div class="ecosystem-card-img"><img src="INDEX/SERVICES/community event.jpg" alt="Community & Events" loading="lazy" /></div>
             <span class="ecosystem-card-badge">Community</span>
             <h3>Community &amp; Events</h3>
-            <p>Cycling club, obstacle courses, summer camps, community runs, and Sip &amp; Stretch � fitness that is social and fun.</p>
+            <p>Cycling club, obstacle courses, summer camps, community runs, and Sip &amp; Stretch — fitness that is social and fun.</p>
             <a class="ecosystem-card-cta" href="events.html">Join the community &rarr;</a>
           </div>
         </div>
@@ -285,21 +329,30 @@
     </div>
   </section>
 
-  <!-- STATS STRIP -->
-  <section class="stats-strip">
+  <!-- LIVE STATS STRIP -->
+  <section class="stats-strip" id="liveStats">
     <div class="page-shell">
+      <div class="live-pulse-bar" aria-live="polite">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span id="livePulseText">Syncing live studio activity…</span>
+        <span class="live-active"><strong id="liveActiveNow">—</strong> exploring now</span>
+      </div>
       <div class="stats-grid">
         <div class="stat-item">
-          <span class="stat-num">1,000+</span>
+          <span class="stat-num" data-live="clientsTransformed">1,000+</span>
           <span class="stat-label">Clients Transformed</span>
         </div>
         <div class="stat-item">
-          <span class="stat-num">13</span>
+          <span class="stat-num" data-live="years">13</span>
           <span class="stat-label">Years of Excellence</span>
         </div>
         <div class="stat-item">
-          <span class="stat-num">50+</span>
+          <span class="stat-num" data-live="events">50+</span>
           <span class="stat-label">Events Conducted</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" data-live="coaches">—</span>
+          <span class="stat-label">Active Coaches</span>
         </div>
       </div>
     </div>
@@ -311,7 +364,7 @@
       <div class="journey-head">
         <span class="section-kicker">Our Proven Framework</span>
         <h2>Science-Backed. <em>Results-Driven.</em></h2>
-        <p>Four steps to lasting transformation � from baseline assessment to lifelong wellness.</p>
+        <p>Four steps to lasting transformation — from baseline assessment to lifelong wellness.</p>
       </div>
       <div class="journey-track">
       <div class="journey-line"></div>
@@ -319,7 +372,7 @@
         <div class="journey-card">
           <span class="journey-num">01</span>
           <h3>Assess Your Body's Baseline</h3>
-          <p>We measure your body composition, movement patterns, lifestyle habits, and fitness goals � building your personal blueprint for transformation.</p>
+          <p>We measure your body composition, movement patterns, lifestyle habits, and fitness goals — building your personal blueprint for transformation.</p>
         </div>
         <div class="journey-visual"><img src="INDEX/story map/1.png" alt="" loading="lazy" /></div>
       </div>
@@ -327,7 +380,7 @@
         <div class="journey-card">
           <span class="journey-num">02</span>
           <h3>Personalised Intervention Plan</h3>
-          <p>Your coach designs a custom blend of training, nutrition, and recovery tailored to Indian lifestyles � no cookie-cutter templates.</p>
+          <p>Your coach designs a custom blend of training, nutrition, and recovery tailored to Indian lifestyles — no cookie-cutter templates.</p>
         </div>
         <div class="journey-visual"><img src="INDEX/story map/2.png" alt="" loading="lazy" /></div>
       </div>
@@ -335,7 +388,7 @@
         <div class="journey-card">
           <span class="journey-num">03</span>
           <h3>Train. Track. Iterate.</h3>
-          <p>Weekly check-ins, progress tracking, and real-time plan adjustments keep you moving forward � whether at our studio or your doorstep.</p>
+          <p>Weekly check-ins, progress tracking, and real-time plan adjustments keep you moving forward — whether at our studio or your doorstep.</p>
         </div>
         <div class="journey-visual"><img src="INDEX/story map/3.png" alt="" loading="lazy" /></div>
       </div>
@@ -363,117 +416,10 @@
       <a href="coaches.html">Meet our coaches &rarr;</a>
     </div>
     <div class="eco-scroll-wrap">
-      <div class="eco-scroll-track minds-scroll-track">
-        <div class="minds-card">
-          <div class="minds-card-avatar"><img src="assets/coaches/aditya-gururani.jpg" alt="Aditya Gururani" loading="lazy" /></div>
-          <h4>Aditya Gururani</h4>
-          <p>Yoga Instructor &amp; Breathing Specialist</p>
-          <div class="minds-card-meta">
-            <span class="minds-card-cert">Breathwork Expert</span>
-            <span class="minds-card-exp">Stress management &amp; functional mobility</span>
-          </div>
-        </div>
-        <div class="minds-card">
-          <div class="minds-card-avatar"><img src="assets/coaches/b-yashwanth.jpg" alt="B Yashwanth" loading="lazy" /></div>
-          <h4>B Yashwanth</h4>
-          <p>Basketball Coach</p>
-          <div class="minds-card-meta">
-            <span class="minds-card-cert">Sports Specialist</span>
-            <span class="minds-card-exp">Sports coaching &amp; athletic conditioning</span>
-          </div>
-        </div>
-        <div class="minds-card">
-          <div class="minds-card-avatar"><img src="assets/coaches/deepesh-kumar.jpg" alt="Deepesh Kumar" loading="lazy" /></div>
-          <h4>Deepesh Kumar</h4>
-          <p>Fitness Trainer</p>
-          <div class="minds-card-meta">
-            <span class="minds-card-cert">Strength Coach</span>
-            <span class="minds-card-exp">Strength training &amp; body recomposition</span>
-          </div>
-        </div>
-        <div class="minds-card">
-          <div class="minds-card-avatar"><img src="assets/coaches/s-jeetender.jpg" alt="S Jeetender" loading="lazy" /></div>
-          <h4>S Jeetender</h4>
-          <p>Fitness Trainer</p>
-          <div class="minds-card-meta">
-            <span class="minds-card-cert">Conditioning Pro</span>
-            <span class="minds-card-exp">Functional fitness &amp; endurance</span>
-          </div>
-        </div>
-        <div class="minds-card">
-          <div class="minds-card-avatar"><img src="assets/coaches/vinay-ojha.jpg" alt="Vinay Ojha" loading="lazy" /></div>
-          <h4>Vinay Ojha</h4>
-          <p>Fitness Trainer</p>
-          <div class="minds-card-meta">
-            <span class="minds-card-cert">Fat Loss Specialist</span>
-            <span class="minds-card-exp">Weight management &amp; nutrition coaching</span>
-          </div>
-        </div>
-        <div class="minds-card">
-          <div class="minds-card-avatar"><img src="assets/coaches/mittal.jpg" alt="Devendra Mittal" loading="lazy" /></div>
-          <h4>Devendra Mittal</h4>
-          <p>Fitness Trainer</p>
-          <div class="minds-card-meta">
-            <span class="minds-card-cert">Strength &amp; Conditioning</span>
-            <span class="minds-card-exp">Strength training &amp; athletic performance</span>
-          </div>
-        </div>
-        <!-- duplicate for seamless loop -->
-        <div class="minds-card">
-          <div class="minds-card-avatar"><img src="assets/coaches/aditya-gururani.jpg" alt="Aditya Gururani" loading="lazy" /></div>
-          <h4>Aditya Gururani</h4>
-          <p>Yoga Instructor &amp; Breathing Specialist</p>
-          <div class="minds-card-meta">
-            <span class="minds-card-cert">Breathwork Expert</span>
-            <span class="minds-card-exp">Stress management &amp; functional mobility</span>
-          </div>
-        </div>
-        <div class="minds-card">
-          <div class="minds-card-avatar"><img src="assets/coaches/b-yashwanth.jpg" alt="B Yashwanth" loading="lazy" /></div>
-          <h4>B Yashwanth</h4>
-          <p>Basketball Coach</p>
-          <div class="minds-card-meta">
-            <span class="minds-card-cert">Sports Specialist</span>
-            <span class="minds-card-exp">Sports coaching &amp; athletic conditioning</span>
-          </div>
-        </div>
-        <div class="minds-card">
-          <div class="minds-card-avatar"><img src="assets/coaches/deepesh-kumar.jpg" alt="Deepesh Kumar" loading="lazy" /></div>
-          <h4>Deepesh Kumar</h4>
-          <p>Fitness Trainer</p>
-          <div class="minds-card-meta">
-            <span class="minds-card-cert">Strength Coach</span>
-            <span class="minds-card-exp">Strength training &amp; body recomposition</span>
-          </div>
-        </div>
-        <div class="minds-card">
-          <div class="minds-card-avatar"><img src="assets/coaches/s-jeetender.jpg" alt="S Jeetender" loading="lazy" /></div>
-          <h4>S Jeetender</h4>
-          <p>Fitness Trainer</p>
-          <div class="minds-card-meta">
-            <span class="minds-card-cert">Conditioning Pro</span>
-            <span class="minds-card-exp">Functional fitness &amp; endurance</span>
-          </div>
-        </div>
-        <div class="minds-card">
-          <div class="minds-card-avatar"><img src="assets/coaches/vinay-ojha.jpg" alt="Vinay Ojha" loading="lazy" /></div>
-          <h4>Vinay Ojha</h4>
-          <p>Fitness Trainer</p>
-          <div class="minds-card-meta">
-            <span class="minds-card-cert">Fat Loss Specialist</span>
-            <span class="minds-card-exp">Weight management &amp; nutrition coaching</span>
-          </div>
-        </div>
-        <div class="minds-card">
-          <div class="minds-card-avatar"><img src="assets/coaches/mittal.jpg" alt="Devendra Mittal" loading="lazy" /></div>
-          <h4>Devendra Mittal</h4>
-          <p>Fitness Trainer</p>
-          <div class="minds-card-meta">
-            <span class="minds-card-cert">Strength &amp; Conditioning</span>
-            <span class="minds-card-exp">Strength training &amp; athletic performance</span>
-          </div>
-        </div>
+      <div class="eco-scroll-track minds-scroll-track" id="mindsCarousel" aria-live="polite">
+        <div class="dyn-loading"><div class="dyn-skeleton"></div><div class="dyn-skeleton"></div><div class="dyn-skeleton"></div><p>Loading coaches…</p></div>
       </div>
+    </div>
     </div>
   </section>
 
@@ -483,7 +429,7 @@
       <div class="fg-app-header">
         <span class="home-eyebrow">Stay Connected</span>
         <h2>Fitness Gurukul <em>App</em></h2>
-        <p>Track workouts, book sessions, and stay connected � right from your phone.</p>
+        <p>Track workouts, book sessions, and stay connected — right from your phone.</p>
       </div>
       <div class="eco-scroll-wrap">
         <div class="eco-scroll-track app-scroll-track">

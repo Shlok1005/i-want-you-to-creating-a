@@ -282,9 +282,9 @@ const realData = {
     {n:"Athletic Conditioning: Speed, Agility & Power",c:"Athletic",l:"Intermediate",d:"8 weeks"},
   ],
   updates: [
-    { title: "Online Personal Trainer in Hyderabad � Flexible Coaching for Modern Lifestyles", date: "2026-02-17", summary: "Flexible coaching with check-ins, workouts, and nutrition support for modern schedules." },
-    { title: "Certified Personal Trainer in Hyderabad � Qualified Guidance You Can Trust", date: "2026-02-14", summary: "Qualified programming helps clients train safely, recover better, and build repeatable habits." },
-    { title: "Best Dietician for Weight Loss in Hyderabad � Practical Nutrition for Real Change", date: "2026-02-14", summary: "Food choices, portions, and routine design for sustainable weight management." },
+    { title: "Online Personal Trainer in Hyderabad — Flexible Coaching for Modern Lifestyles", date: "2026-02-17", summary: "Flexible coaching with check-ins, workouts, and nutrition support for modern schedules." },
+    { title: "Certified Personal Trainer in Hyderabad — Qualified Guidance You Can Trust", date: "2026-02-14", summary: "Qualified programming helps clients train safely, recover better, and build repeatable habits." },
+    { title: "Best Dietician for Weight Loss in Hyderabad — Practical Nutrition for Real Change", date: "2026-02-14", summary: "Food choices, portions, and routine design for sustainable weight management." },
   ],
   serviceAreas: ["Manikonda", "Lakshmi Nagar Colony", "Gachibowli", "Kokapet", "Narsingi", "Financial District", "HITEC City", "Madhapur", "Puppalaguda", "Shaikpet", "Jubilee Hills"],
   contact: {
@@ -299,7 +299,7 @@ const realData = {
 /* A focused, original workout library with a practical Indian nutrition note per plan. */
 const curatedWorkouts = [
   {n:"Foundation Strength",c:"Strength",l:"Beginner",d:"8 weeks",summary:"Three full-body sessions that teach the big lifts and build dependable strength.",diet:"Three balanced meals: protein at every meal, rice or roti around training, vegetables twice daily, and steady water intake."},
-  {n:"Build Muscle: Upper / Lower",c:"Hypertrophy",l:"Intermediate",d:"8 weeks",summary:"Four weekly sessions with progressive volume for balanced muscle growth.",diet:"Use a modest calorie surplus with protein in 3�4 meals. Add fruit, curd, paneer, eggs, dal, chicken, rice or roti based on preference."},
+  {n:"Build Muscle: Upper / Lower",c:"Hypertrophy",l:"Intermediate",d:"8 weeks",summary:"Four weekly sessions with progressive volume for balanced muscle growth.",diet:"Use a modest calorie surplus with protein in 3—4 meals. Add fruit, curd, paneer, eggs, dal, chicken, rice or roti based on preference."},
   {n:"Fat Loss & Conditioning",c:"Fat Loss",l:"All Levels",d:"6 weeks",summary:"Strength training plus focused conditioning to preserve muscle while improving fitness.",diet:"Build plates around lean protein, vegetables, dal, fruit, and measured rice or roti portions. Avoid crash dieting; progress comes from consistency."},
   {n:"Home Dumbbell Full Body",c:"Home",l:"Beginner",d:"6 weeks",summary:"Simple home sessions using a pair of dumbbells and clear weekly progression.",diet:"Keep it simple: protein at breakfast, lunch, and dinner; a fruit or curd snack; and enough carbs to support training without skipping meals."},
   {n:"Quick HIIT Express",c:"HIIT",l:"Intermediate",d:"4 weeks",summary:"Short interval sessions for days when you want intensity without a long workout.",diet:"Have a light carb-and-protein snack before hard sessions if needed, then recover with a complete meal and extra fluids afterward."},
@@ -307,7 +307,7 @@ const curatedWorkouts = [
   {n:"Bodyweight Anywhere",c:"Bodyweight",l:"All Levels",d:"6 weeks",summary:"A no-equipment plan for strength, work capacity, and consistency anywhere.",diet:"A balanced everyday approach works best: dal, eggs, dairy, chicken or paneer for protein; seasonal vegetables, fruit, and whole grains for fuel."},
   {n:"Runner's Strength Base",c:"Hybrid",l:"Intermediate",d:"8 weeks",summary:"Run-supportive strength sessions to build resilient legs, trunk, and conditioning.",diet:"Increase carbs on longer run days, keep protein consistent, and use simple recovery foods such as curd rice, fruit, milk, eggs, dal, or chicken."},
   {n:"Glutes & Lower Body",c:"Lower Body",l:"All Levels",d:"6 weeks",summary:"Squat, hinge, lunge, and carry patterns to strengthen legs and glutes.",diet:"Support lower-body volume with enough total food: protein every meal, carb portions near training, and iron-rich foods such as greens, legumes, and meat if you eat it."},
-  {n:"Push / Pull / Legs",c:"Split",l:"Intermediate",d:"8 weeks",summary:"A clear three-day split with enough volume and recovery for steady progress.",diet:"For performance, distribute protein across 3�4 meals and include a carb-rich meal before or after training. Adjust portions to your goal."},
+  {n:"Push / Pull / Legs",c:"Split",l:"Intermediate",d:"8 weeks",summary:"A clear three-day split with enough volume and recovery for steady progress.",diet:"For performance, distribute protein across 3—4 meals and include a carb-rich meal before or after training. Adjust portions to your goal."},
   {n:"Functional Fitness Starter",c:"Functional",l:"Beginner",d:"6 weeks",summary:"Practical strength, carries, conditioning, and movement confidence for daily life.",diet:"Choose repeatable meals over perfection: a protein source, vegetables, and a carb source at main meals; hydrate before and after sessions."},
   {n:"Desk Worker Posture & Strength",c:"Corrective",l:"All Levels",d:"6 weeks",summary:"Posture-friendly strength and mobility for stiff hips, shoulders, and long workdays.",diet:"Keep energy stable with regular meals and protein-rich snacks. Pair the plan with daily walking, water, and sufficient sleep for better recovery."}
 ];
@@ -420,6 +420,168 @@ function getServiceCatalog() {
 var _servicesData = [];
 var selectedPlans = new Set();
 
+
+function updateCompareCount() {
+  var count = selectedPlans.size;
+  qsa("[data-compare-count], #compareCount, .svc-compare-count").forEach(function(el) {
+    el.textContent = String(count);
+  });
+  qsa(".svc-compare-toggle, #compareToggle, [data-compare-toggle]").forEach(function(el) {
+    el.classList.toggle("has-selection", count > 0);
+    if (el.tagName === "BUTTON" || el.getAttribute("role") === "button") {
+      el.setAttribute("aria-label", count ? ("Compare " + count + " plans") : "Compare plans");
+    }
+  });
+}
+
+function mergeCoachMedia(coaches) {
+  var bySlug = {};
+  (realData.coaches || []).forEach(function(c) { if (c && c.slug) bySlug[c.slug] = c; });
+  return (coaches || []).map(function(coach) {
+    var local = bySlug[coach.slug] || {};
+    return Object.assign({}, local, coach, {
+      image: coach.image || local.image || "",
+      highlight: coach.highlight || local.highlight || "Coach",
+      color: coach.color || local.color || "cyan",
+      focus: coach.focus && coach.focus.length ? coach.focus : (local.focus || []),
+      bio: coach.bio || local.bio || coach.role || "",
+    });
+  });
+}
+
+function updateCategoryCounts(coaches) {
+  var counts = {};
+  (coaches || []).forEach(function(c) {
+    var key = c.category || "fitness";
+    counts[key] = (counts[key] || 0) + 1;
+  });
+  qsa("[data-cat-count]").forEach(function(el) {
+    var key = el.getAttribute("data-cat-count");
+    var n = counts[key] || 0;
+    el.textContent = n === 1 ? "1 Coach" : (n + " Coaches");
+  });
+  qsa("[data-live=\"coaches\"]").forEach(function(el) {
+    if (!el.classList.contains("counter-num")) return;
+    el.dataset.target = String((coaches || []).length);
+  });
+  qsa("[data-live=\"specialties\"]").forEach(function(el) {
+    if (!el.classList.contains("counter-num")) return;
+    el.dataset.target = String(Object.keys(counts).length || 7);
+  });
+}
+
+async function fetchLiveStats() {
+  try {
+    return await api("/api/live");
+  } catch (e) {
+    return null;
+  }
+}
+
+function applyLiveStats(live) {
+  if (!live) return;
+  var map = {
+    clientsTransformed: (live.clientsTransformed || 1000).toLocaleString() + "+",
+    years: String(live.years || 13),
+    events: String(live.events || 50) + "+",
+    coaches: String(live.coaches || ""),
+    specialties: String(live.specialties || 7),
+    inquiriesToday: String(live.inquiriesToday || 0),
+  };
+  Object.keys(map).forEach(function(key) {
+    qsa('[data-live="' + key + '"]').forEach(function(el) {
+      el.textContent = map[key];
+      if (el.classList.contains("counter-num")) {
+        el.dataset.target = String(live[key] || el.dataset.target || 0);
+      }
+    });
+  });
+  if (has("#livePulseText") && live.pulse) qs("#livePulseText").textContent = live.pulse;
+  if (has("#liveActiveNow")) qs("#liveActiveNow").textContent = String(live.activeNow || "—");
+}
+
+function initLivePulse() {
+  if (!has("#liveStats") && !qsa("[data-live]").length) return;
+  var tick = function() {
+    fetchLiveStats().then(function(live) {
+      if (live) applyLiveStats(live);
+    });
+  };
+  tick();
+  setInterval(tick, 45000);
+}
+
+function initGoalMatcher() {
+  var form = qs("#goalMatchForm");
+  var result = qs("#goalMatchResult");
+  if (!form || !result) return;
+  form.addEventListener("submit", async function(e) {
+    e.preventDefault();
+    var payload = Object.fromEntries(new FormData(form).entries());
+    result.hidden = false;
+    result.classList.remove("is-ready");
+    result.innerHTML = '<div class="goal-match-loading">Matching you with a plan and coach…</div>';
+    try {
+      var data = await api("/api/match", { method: "POST", body: JSON.stringify(payload) });
+      var plan = data.plan || {};
+      var coaches = data.coaches || [];
+      var match = data.match || {};
+      var coachHtml = coaches.slice(0, 3).map(function(c) {
+        var img = c.image ? '<img src="' + safe(c.image) + '" alt="" />' : '<span>' + safe(coachInitials(c.name)) + '</span>';
+        return '<article class="goal-coach-chip">' + img + '<div><strong>' + safe(c.name) + '</strong><small>' + safe(c.role) + '</small></div></article>';
+      }).join("");
+      result.innerHTML =
+        '<div class="goal-match-card">' +
+          '<div class="goal-match-score">' + safe(data.score || 90) + '% match</div>' +
+          '<h3>' + safe(match.title || plan.name || "Your plan") + '</h3>' +
+          '<p>' + safe(match.summary || plan.summary || "") + '</p>' +
+          '<p class="goal-match-tip">' + safe(data.tip || "") + ' ' + safe(data.mode || "") + '</p>' +
+          '<div class="goal-match-plan"><span>Recommended</span><strong>' + safe(plan.name || match.plan || "") + '</strong><em>' + safe(plan.price || "") + '</em></div>' +
+          '<div class="goal-match-coaches">' + (coachHtml || "<p>Browse all coaches to pick your fit.</p>") + '</div>' +
+          '<div class="goal-match-actions">' +
+            '<a class="primary-button" href="' + safe(match.cta || "book-consultation.html") + '">Buy Now</a>' +
+            '<a class="ghost-button" href="https://wa.me/917207113310" target="_blank" rel="noopener">Have questions? Chat now</a>' +
+          '</div>' +
+        '</div>';
+      result.classList.add("is-ready");
+      result.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    } catch (err) {
+      result.innerHTML = '<div class="goal-match-error">Could not match right now. <a href="book-consultation.html">Book a consultation</a> instead.</div>';
+    }
+  });
+}
+
+function initMagneticCtas() {
+  qsa(".primary-button, .ghost-button, .header-play-btn").forEach(function(btn) {
+    if (btn.dataset.magnetic === "1") return;
+    btn.dataset.magnetic = "1";
+    btn.addEventListener("pointermove", function(e) {
+      var rect = btn.getBoundingClientRect();
+      var x = e.clientX - rect.left - rect.width / 2;
+      var y = e.clientY - rect.top - rect.height / 2;
+      btn.style.transform = "translate(" + (x * 0.08) + "px," + (y * 0.08) + "px)";
+    });
+    btn.addEventListener("pointerleave", function() {
+      btn.style.transform = "";
+    });
+  });
+}
+
+function initInteractiveMotion() {
+  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  document.documentElement.classList.add("dyn-motion");
+  initMagneticCtas();
+  // Parallax ambient plus marks lightly on scroll
+  var ambient = qs("#bg-ambient");
+  if (ambient) {
+    window.addEventListener("scroll", function() {
+      var y = Math.min(40, window.scrollY * 0.04);
+      ambient.style.transform = "translate3d(0," + y + "px,0)";
+    }, { passive: true });
+  }
+}
+
+
 var FALLBACK_COACHES = [
   { name: "Aditya Gururani", role: "Yoga Instructor & Breathing Specialist", slug: "aditya-gururani", category: "yoga", bio: "A certified yoga instructor specializing in breathwork, stress management, and functional mobility.", focus: ["Breathwork", "Stress management", "Functional mobility"], highlight: "Breathwork Expert", color: "cyan", image: "assets/coaches/aditya-gururani.jpg" },
   { name: "Kritika Chauhan", role: "Fitness Trainer", slug: "kritika-chauhan", category: "fitness", bio: "Fitness Trainer specializing in flexibility, mobility, and general fitness.", focus: ["Flexibility", "Mobility", "General fitness"], highlight: "Flexibility Coach", color: "red", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0302-69538f34664ae75da3c69fce.jpg" },
@@ -430,12 +592,14 @@ var FALLBACK_COACHES = [
 ];
 
 function renderCoaches(coaches) {
-  if (!has("#coachGrid")) { console.log("[renderCoaches] no #coachGrid, skipping"); return; }
+  if (!has("#coachGrid") && !has("#mindsCarousel")) { console.log("[renderCoaches] no coach mounts, skipping"); return; }
   if (!coaches || !coaches.length) { console.log("[renderCoaches] using FALLBACK_COACHES"); coaches = FALLBACK_COACHES; }
+  coaches = mergeCoachMedia(coaches);
   console.log("[renderCoaches] coaches count:", coaches.length);
   allCoaches = coaches;
   coachProfiles = coaches;
-  renderFilteredCoaches();
+  updateCategoryCounts(coaches);
+  if (has("#coachGrid")) renderFilteredCoaches();
 }
 
 function coachInitials(name = "") {
@@ -890,7 +1054,7 @@ function openWorkoutOverlay(slug) {
     overlay.setAttribute("role", "dialog");
     overlay.setAttribute("aria-modal", "true");
     overlay.setAttribute("aria-label", "Workout program details");
-    overlay.innerHTML = '<div class="workout-overlay-bar"><span>Workout program</span><button type="button" class="workout-overlay-close" aria-label="Close workout details">Close <span aria-hidden="true">�</span></button></div><iframe class="workout-overlay-frame" title="Workout program details"></iframe>';
+    overlay.innerHTML = '<div class="workout-overlay-bar"><span>Workout program</span><button type="button" class="workout-overlay-close" aria-label="Close workout details">Close <span aria-hidden="true">—</span></button></div><iframe class="workout-overlay-frame" title="Workout program details"></iframe>';
     document.body.appendChild(overlay);
     overlay.querySelector(".workout-overlay-close").addEventListener("click", closeWorkoutOverlay);
     overlay.addEventListener("click", function(event) { if (event.target === overlay) closeWorkoutOverlay(); });
@@ -1132,9 +1296,9 @@ const quizQuestions = [
     question: "What is your experience level?",
     key: "level",
     options: [
-      { value: "beginner", label: "Beginner � new to fitness" },
-      { value: "intermediate", label: "Intermediate � some experience" },
-      { value: "advanced", label: "Advanced � regularly active" },
+      { value: "beginner", label: "Beginner — new to fitness" },
+      { value: "intermediate", label: "Intermediate — some experience" },
+      { value: "advanced", label: "Advanced — regularly active" },
     ],
   },
 ];
@@ -1450,10 +1614,14 @@ function wireCoachPopups() {
 function injectHeroContent(content) {
   var headline = qs("#heroHeadline");
   var subhead = qs("#heroSubheadline");
-  if (!headline) return;
+  if (!headline && !subhead) return;
   var d = content || realData;
-  headline.textContent = d.heroHeadline || "Fitness Coaching in Hyderabad";
-  if (subhead) subhead.textContent = d.heroSubhead || "At Fitness Gurukul, we believe in a holistic approach to health that incorporates fitness, nutrition, and lifestyle changes. We make health and fitness a part of everyday life.";
+  if (headline && d.heroHeadline) {
+    headline.innerHTML = safe(d.heroHeadline).replace(/\.\s+/g, ".<br>");
+  }
+  if (subhead) {
+    subhead.textContent = d.heroSubhead || "At Fitness Gurukul, we believe in a holistic approach to health that incorporates fitness, nutrition, and lifestyle changes. We make health and fitness a part of everyday life.";
+  }
 }
 
 
@@ -1768,7 +1936,7 @@ function initPlanModals() {
       return;
     }
     modalsInjected = true;
-    var html = '<div class="plan-modal-overlay" id="corePlanModal"><div class="plan-modal"><button class="plan-modal-close" data-close-modal><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button><div class="plan-modal-header"><div class="plan-modal-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><h2>Fitness Gurukul Core</h2><p class="plan-modal-sub">1-on-1 coaching � pick the plan that fits your journey</p></div><div class="plan-modal-tiers">';
+    var html = '<div class="plan-modal-overlay" id="corePlanModal"><div class="plan-modal"><button class="plan-modal-close" data-close-modal><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button><div class="plan-modal-header"><div class="plan-modal-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><h2>Fitness Gurukul Core</h2><p class="plan-modal-sub">1-on-1 coaching — pick the plan that fits your journey</p></div><div class="plan-modal-tiers">';
     var tiers = [
       { name: "Monthly", price: "₹5,999", period: "/mo", save: null },
       { name: "Quarterly", price: "₹15,999", period: "/qr", save: "Save ₹2,997 vs monthly" },
@@ -1802,7 +1970,7 @@ function initPlanModals() {
     var enduranceSteps = [
       { icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7M9 12l2 2 4-4M7 3h10l1 4H6L7 3z"/></svg>', title: "Digital Onboarding", desc: "Intake form covering running history, fitness level, goals, and medical background to build your runner profile." },
       { icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>', title: "Running Coach Assigned", desc: "Dedicated running coach assigned within hours. They connect via in-app chat to discuss your race goals." },
-      { icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>', title: "Running Plan Synced", desc: "Periodized training plan � track intervals, tempo runs, and long slow distance � synced to your app calendar." },
+      { icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>', title: "Running Plan Synced", desc: "Periodized training plan — track intervals, tempo runs, and long slow distance — synced to your app calendar." },
       { icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>', title: "Nutrition & Race Strategy", desc: "Endurance nutrition coaching, carb-loading plan, mid-run fueling, and pacing strategy loaded into your app." },
       { icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>', title: "Weekly Video Reviews", desc: "Form analysis, biofeedback tracking, and progress check-ins with your coach via weekly video calls." },
       { icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>', title: "Daily Coach Access", desc: "In-app chat support with your running coach. Get answers to training questions within 8 hours." }
@@ -1829,7 +1997,7 @@ function initPlanModals() {
     html += '<div class="plan-tier plan-tier-highlight" style="--i:0"><div class="plan-tier-badge">Premium</div><div class="plan-tier-top"><h4>Monthly Subscription</h4><p class="plan-tier-price"><span class="plan-actual">₹15,999</span><span class="plan-period">/month</span></p></div><div class="plan-tier-features"><span class="plan-tier-chip">5 sessions/week</span><span class="plan-tier-chip">1:1 coach</span><span class="plan-tier-chip">In-person PT</span><span class="plan-tier-chip">Nutrition plan</span><span class="plan-tier-chip">Structural assessment</span><span class="plan-tier-chip">App check-in</span></div><a class="primary-button" href="contact.html" style="justify-content:center;margin-top:16px">Book a Consultation</a></div>';
     html += '</div>' + howHtml(sigSteps) + '</div></div>';
     /* prime modal */
-    html += '<div class="plan-modal-overlay" id="primePlanModal"><div class="plan-modal"><button class="plan-modal-close" data-close-modal><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button><div class="plan-modal-header"><div class="plan-modal-icon" style="color:var(--white);border-color:rgba(251,191,36,0.2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><h2 style="background:linear-gradient(135deg,#fff 30%,var(--white));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Fitness Gurukul Prime</h2><p class="plan-modal-sub">Complete fitness & nutrition coaching � 3x/week in-person PT</p></div><div class="plan-modal-tiers">';
+    html += '<div class="plan-modal-overlay" id="primePlanModal"><div class="plan-modal"><button class="plan-modal-close" data-close-modal><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button><div class="plan-modal-header"><div class="plan-modal-icon" style="color:var(--white);border-color:rgba(251,191,36,0.2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><h2 style="background:linear-gradient(135deg,#fff 30%,var(--white));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Fitness Gurukul Prime</h2><p class="plan-modal-sub">Complete fitness & nutrition coaching — 3x/week in-person PT</p></div><div class="plan-modal-tiers">';
     var primeTiers = [
       { name: "Monthly", price: "₹9,500", period: "/mo", save: null },
       { name: "Quarterly", price: "₹26,999", period: "/qr", save: "Save ₹1,501 vs monthly" },
@@ -1847,7 +2015,7 @@ function initPlanModals() {
     html += '<div class="plan-tier plan-tier-highlight" style="--i:0"><div class="plan-tier-badge" style="background:#ffffff;color:#000">Popular</div><div class="plan-tier-top"><h4>Monthly Subscription</h4><p class="plan-tier-price"><span class="plan-actual">₹1,199</span><span class="plan-period">/month</span></p></div><div class="plan-tier-features"><span class="plan-tier-chip">Dedicated running coach</span><span class="plan-tier-chip">Periodized running program</span><span class="plan-tier-chip">Runner-specific S&amp;C</span><span class="plan-tier-chip">Endurance nutrition</span><span class="plan-tier-chip">Race strategy</span><span class="plan-tier-chip">Daily chat support</span></div><a class="primary-button" href="contact.html" style="justify-content:center;font-size:0.82rem;padding:10px 16px;border-radius:10px">Subscribe Now</a></div>';
     html += '</div>' + howHtml(enduranceSteps) + '</div></div>';
     /* forge modal */
-    html += '<div class="plan-modal-overlay" id="forgePlanModal"><div class="plan-modal"><button class="plan-modal-close" data-close-modal><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button><div class="plan-modal-header"><div class="plan-modal-icon" style="color:#ffffff;border-color:rgba(249,115,22,0.2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><h2 style="background:linear-gradient(135deg,#fff 30%,#ffffff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Fitness Gurukul Forge</h2><p class="plan-modal-sub">Hyrox / OCR Preparation � Functional Fitness Racing</p></div><div class="plan-modal-tiers" style="grid-template-columns:1fr;max-width:500px">';
+    html += '<div class="plan-modal-overlay" id="forgePlanModal"><div class="plan-modal"><button class="plan-modal-close" data-close-modal><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button><div class="plan-modal-header"><div class="plan-modal-icon" style="color:#ffffff;border-color:rgba(249,115,22,0.2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><h2 style="background:linear-gradient(135deg,#fff 30%,#ffffff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Fitness Gurukul Forge</h2><p class="plan-modal-sub">Hyrox / OCR Preparation — Functional Fitness Racing</p></div><div class="plan-modal-tiers" style="grid-template-columns:1fr;max-width:500px">';
     html += '<div class="plan-tier plan-tier-highlight" style="--i:0"><div class="plan-tier-badge" style="background:#ffffff;color:#000">New</div><div class="plan-tier-top"><h4>Monthly Subscription</h4><p class="plan-tier-price"><span class="plan-actual">₹999</span><span class="plan-period">/month</span></p></div><div class="plan-tier-features"><span class="plan-tier-chip">Dedicated S&amp;C Coach</span><span class="plan-tier-chip">Compounded S&amp;C</span><span class="plan-tier-chip">Engine building</span><span class="plan-tier-chip">Grip strength</span><span class="plan-tier-chip">Explosive power</span><span class="plan-tier-chip">Compromised running</span></div><a class="primary-button" href="contact.html" style="justify-content:center;font-size:0.82rem;padding:10px 16px;border-radius:10px">Subscribe Now</a></div>';
     html += '</div>' + howHtml(forgeSteps) + '</div></div>';
     /* elite modal */
@@ -1892,6 +2060,20 @@ function initPlanModals() {
       if (plan === "signature") { openModal("sigPlanModal"); return; }
       if (plan === "endurance") { openModal("endurancePlanModal"); return; }
       if (plan === "elite") { openModal("elitePlanModal"); return; }
+    }
+    /* compare toggle */
+    var compareBtn = target.closest(".svc-compare-btn");
+    if (compareBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      var comparePlan = compareBtn.dataset.plan;
+      if (comparePlan) {
+        if (selectedPlans.has(comparePlan)) selectedPlans.delete(comparePlan);
+        else selectedPlans.add(comparePlan);
+        updateCompareCount();
+        renderServices(getServiceCatalog());
+      }
+      return;
     }
     /* any button with data-plan (skip compare buttons) */
     var planBtn = target.closest("[data-plan]");
@@ -2555,20 +2737,29 @@ async function boot() {
   /* wire modals immediately so buttons work even before async ops finish */
   try { initPlanModals(); } catch (e) { console.warn("boot:initPlanModals", e); }
   try { renderServices(realData.services); } catch (e) { console.warn("boot:seedServices", e); }
+  try { wireAppDropdown(); } catch (e) { console.warn("boot:wireAppDropdown", e); }
+  try { initInteractiveMotion(); } catch (e) { console.warn("boot:initInteractiveMotion", e); }
   await detectBackend();
   const content = await loadContent();
   const d = content || realData;
-  try { renderServices(Array.isArray(d.services) && d.services.length ? d.services : realData.services); } catch (e) { console.warn("boot:renderServices", e); }
+  // Pricing cards use plan categories (core/prime/...). Prefer API plans over training services.
+  const planCatalog = (Array.isArray(d.plans) && d.plans.length) ? d.plans
+    : ((Array.isArray(d.services) && d.services.length && d.services[0].category && ["core","prime","signature","endurance","forge","elite"].includes(d.services[0].category)) ? d.services : realData.services);
+  try { renderServices(planCatalog); } catch (e) { console.warn("boot:renderServices", e); }
   try { initPlanCards(); } catch (e) { console.warn("boot:initPlanCards", e); }
-  try { renderCoaches(d.coaches || realData.coaches); } catch (e) { console.warn("boot:renderCoaches", e); }
+  const coaches = mergeCoachMedia(d.coaches || realData.coaches);
+  try { renderCoaches(coaches); } catch (e) { console.warn("boot:renderCoaches", e); }
   try { renderTestimonials(d.testimonials || realData.testimonials); } catch (e) { console.warn("boot:renderTestimonials", e); }
   try { renderUpdates(d.updates || realData.updates); } catch (e) { console.warn("boot:renderUpdates", e); }
   try { renderServiceAreas(d.serviceAreas || realData.serviceAreas); } catch (e) { console.warn("boot:renderServiceAreas", e); }
   try { renderWorkoutGrid(d.workouts || realData.workouts); } catch (e) { console.warn("boot:renderWorkoutGrid", e); }
   try { renderContact(d.contact || realData.contact); } catch (e) { console.warn("boot:renderContact", e); }
   try { injectAmbientBg(); } catch (e) { console.warn("boot:injectAmbientBg", e); }
-  try { renderMindsCarousel(d.coaches || realData.coaches); } catch (e) { console.warn("boot:renderMindsCarousel", e); }
+  try { renderMindsCarousel(coaches); } catch (e) { console.warn("boot:renderMindsCarousel", e); }
   try { injectHeroContent(d); } catch (e) { console.warn("boot:injectHeroContent", e); }
+  try { if (d.live) applyLiveStats(d.live); } catch (e) { console.warn("boot:applyLiveStats", e); }
+  try { initLivePulse(); } catch (e) { console.warn("boot:initLivePulse", e); }
+  try { initGoalMatcher(); } catch (e) { console.warn("boot:initGoalMatcher", e); }
   try { initHeroCarousel(); } catch (e) { console.warn("boot:initHeroCarousel", e); }
   try { initCoachCarousel(); } catch (e) { console.warn("boot:initCoachCarousel", e); }
   try { initEcoCarousel(); } catch (e) { console.warn("boot:initEcoCarousel", e); }
@@ -2598,14 +2789,14 @@ function initCycleCarousel() {
   if (!track) return;
 
   var slides = [
-    { img: "https://www.instagram.com/p/DZYWAPVE8mD/media/?size=l", caption: "World Bicycle Day 2026 � Flag Off at GMC Balayogi Stadium", link: "https://www.instagram.com/p/DZYWAPVE8mD/" },
-    { img: "https://fpimages.withfloats.com/actual/69844b5073641513f8f1e239.jpeg", caption: "Ride & Pose 2025 � Yoga Day Sunrise Ride at Narsingi", link: "https://www.instagram.com/p/DZoWDw4jyt6/" },
-    { img: "https://www.instagram.com/p/DZSe0wCpjXz/media/?size=l", caption: "World Bicycle Day 2026 � 2500+ Riders from Across Hyderabad", link: "https://www.instagram.com/p/DZSe0wCpjXz/" },
-    { img: "https://www.instagram.com/p/DUxmB6gklu8/media/?size=l", caption: "Hyderabad Club Run � 17th Edition at Gachibowli", link: "https://www.instagram.com/fitnessgurukulofficial/" },
-    { img: "https://www.instagram.com/p/DZYWAPVE8mD/media/?size=l", caption: "World Bicycle Day 2026 � Community Partner Fitness Gurukul", link: "https://www.instagram.com/p/DZYWAPVE8mD/" },
-    { img: "https://www.instagram.com/p/DZYWAPVE8mD/media/?size=l", caption: "World Bicycle Day 2026 � Riders at GMC Balayogi Stadium", link: "https://www.instagram.com/p/DZYWAPVE8mD/" },
-    { img: "https://www.instagram.com/p/DZYWAPVE8mD/media/?size=l", caption: "World Bicycle Day 2026 � Morning Ride Across Hyderabad", link: "https://www.instagram.com/p/DZYWAPVE8mD/" },
-    { img: "https://www.instagram.com/p/DZYWAPVE8mD/media/?size=l", caption: "World Bicycle Day 2026 � Fitness Gurukul Team at the Event", link: "https://www.instagram.com/p/DZYWAPVE8mD/" }
+    { img: "https://www.instagram.com/p/DZYWAPVE8mD/media/?size=l", caption: "World Bicycle Day 2026 — Flag Off at GMC Balayogi Stadium", link: "https://www.instagram.com/p/DZYWAPVE8mD/" },
+    { img: "https://fpimages.withfloats.com/actual/69844b5073641513f8f1e239.jpeg", caption: "Ride & Pose 2025 — Yoga Day Sunrise Ride at Narsingi", link: "https://www.instagram.com/p/DZoWDw4jyt6/" },
+    { img: "https://www.instagram.com/p/DZSe0wCpjXz/media/?size=l", caption: "World Bicycle Day 2026 — 2500+ Riders from Across Hyderabad", link: "https://www.instagram.com/p/DZSe0wCpjXz/" },
+    { img: "https://www.instagram.com/p/DUxmB6gklu8/media/?size=l", caption: "Hyderabad Club Run — 17th Edition at Gachibowli", link: "https://www.instagram.com/fitnessgurukulofficial/" },
+    { img: "https://www.instagram.com/p/DZYWAPVE8mD/media/?size=l", caption: "World Bicycle Day 2026 — Community Partner Fitness Gurukul", link: "https://www.instagram.com/p/DZYWAPVE8mD/" },
+    { img: "https://www.instagram.com/p/DZYWAPVE8mD/media/?size=l", caption: "World Bicycle Day 2026 — Riders at GMC Balayogi Stadium", link: "https://www.instagram.com/p/DZYWAPVE8mD/" },
+    { img: "https://www.instagram.com/p/DZYWAPVE8mD/media/?size=l", caption: "World Bicycle Day 2026 — Morning Ride Across Hyderabad", link: "https://www.instagram.com/p/DZYWAPVE8mD/" },
+    { img: "https://www.instagram.com/p/DZYWAPVE8mD/media/?size=l", caption: "World Bicycle Day 2026 — Fitness Gurukul Team at the Event", link: "https://www.instagram.com/p/DZYWAPVE8mD/" }
   ];
 
   var slideEls = [];
@@ -2831,7 +3022,7 @@ function initCycleCarousel() {
     Object.keys(coachData).forEach(function(id) {
       var d = coachData[id];
       if (!coachSchedules[id]) return;
-      html += '<div class="cal-coach-block"><div class="cal-coach-block-header"><div class="cal-coach-block-img"><img src="' + d.img + '" alt="' + d.name + '" loading="lazy" /></div><div class="cal-coach-block-info"><strong>' + d.name + '</strong><span>' + d.role + ' � ' + scheduleTotal(coachSchedules[id]) + ' weekly slots</span></div></div>';
+      html += '<div class="cal-coach-block"><div class="cal-coach-block-header"><div class="cal-coach-block-img"><img src="' + d.img + '" alt="' + d.name + '" loading="lazy" /></div><div class="cal-coach-block-info"><strong>' + d.name + '</strong><span>' + d.role + ' — ' + scheduleTotal(coachSchedules[id]) + ' weekly slots</span></div></div>';
       html += buildScheduleCalendarHTML(id, true);
       html += '</div>';
     });
@@ -2865,7 +3056,7 @@ function initCycleCarousel() {
     if (calGridWrap) {
       calGridWrap.innerHTML = '<div class="cal-coach-container">' + buildCumulativeHTML() + '</div>';
     }
-    if (calTitle) calTitle.textContent = "All Coaches Schedule � June 2026";
+    if (calTitle) calTitle.textContent = "All Coaches Schedule — June 2026";
 
     function openCoachOverlay(coachId) {
       var data = coachData[coachId];
@@ -2896,7 +3087,7 @@ function initCycleCarousel() {
 
     /* Schedule buttons removed */
 
-    /* Also wire "View Profile" and "Know More" clicks � self-contained popup */
+    /* Also wire "View Profile" and "Know More" clicks — self-contained popup */
     function openCoachProfile(id) {
       var d = coachData[id];
       if (!d) return;
@@ -2985,14 +3176,14 @@ function initCycleCarousel() {
         { name:"Fat Loss", desc:"Strategic calorie deficit programming combining resistance training and conditioning for sustainable fat loss while preserving muscle." },
         { name:"Maintenance Phase", desc:"Periodized programming to maintain strength and physique during off-seasons, travel, or between goal cycles." },
         { name:"Rehabilitation", desc:"Corrective exercise and mobility work to recover from injury, restore movement patterns, and prevent re-injury." },
-        { name:"General Fitness", desc:"Balanced programming for overall health � improving cardiovascular endurance, strength, flexibility, and daily energy." },
-        { name:"Hyrox Prep", desc:"Hybrid race preparation combining running with functional stations � SkiErg, sleds, wall balls, burpees, and compromised running stamina." },
-        { name:"Devil Circuit", desc:"Obstacle course race training � grip strength, climbing, crawling, agility, and mental toughness for OCR events." }
+        { name:"General Fitness", desc:"Balanced programming for overall health — improving cardiovascular endurance, strength, flexibility, and daily energy." },
+        { name:"Hyrox Prep", desc:"Hybrid race preparation combining running with functional stations — SkiErg, sleds, wall balls, burpees, and compromised running stamina." },
+        { name:"Devil Circuit", desc:"Obstacle course race training — grip strength, climbing, crawling, agility, and mental toughness for OCR events." }
       ]},
     { cat:"Yoga", sub:"Mind-body discipline for strength & flexibility", img:"https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=500&q=80",
       items:[
         { name:"Hatha Yoga", desc:"Slow-paced practice focusing on basic poses held for several breaths. Builds flexibility, balance, and mind-body awareness." },
-        { name:"Iyengar Yoga", desc:"Precision-focused alignment using props � blocks, straps, bolsters. Ideal for posture correction and therapeutic practice." },
+        { name:"Iyengar Yoga", desc:"Precision-focused alignment using props — blocks, straps, bolsters. Ideal for posture correction and therapeutic practice." },
         { name:"Vinyasa Yoga", desc:"Dynamic flow linking breath with movement. Builds cardiovascular endurance, strength, and coordination through sequenced transitions." },
         { name:"Ashtanga Yoga", desc:"Structured series of poses practiced in order with synchronized breathing. Builds heat, discipline, and deep flexibility." },
         { name:"Meditation", desc:"Guided mindfulness and breathing techniques to reduce stress, improve focus, and cultivate inner calm." },
@@ -3006,17 +3197,17 @@ function initCycleCarousel() {
         { name:"Vegan Plans", desc:"Complete plant-based nutrition covering all essential amino acids, micronutrients, and energy needs for training." },
         { name:"Vegetarian Plans", desc:"Lacto-ovo vegetarian meal plans with optimal protein distribution and iron/B12 management." },
         { name:"Intermittent Fasting", desc:"Time-restricted eating protocols aligned with training schedules for fat loss and metabolic flexibility." },
-        { name:"Ketogenic Diet", desc:"Low-carb, high-fat nutritional approach for ketosis � with proper electrolyte balance and adaptation guidance." },
-        { name:"Weight Loss & Gain", desc:"Custom plans for both directions � structured deficits for weight loss or controlled surpluses for healthy weight gain." }
+        { name:"Ketogenic Diet", desc:"Low-carb, high-fat nutritional approach for ketosis — with proper electrolyte balance and adaptation guidance." },
+        { name:"Weight Loss & Gain", desc:"Custom plans for both directions — structured deficits for weight loss or controlled surpluses for healthy weight gain." }
       ]},
     { cat:"Cycling", sub:"Structured ride programs for all distances", img:"https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=500&q=80",
       items:[
         { name:"Beginner Plans", desc:"Foundation-building programs covering bike fit, cadence, gear shifting, and group riding etiquette." },
-        { name:"5K Ride Prep", desc:"Short-distance speed work � interval training, pacing, and leg speed drills for fast 5K efforts." },
+        { name:"5K Ride Prep", desc:"Short-distance speed work — interval training, pacing, and leg speed drills for fast 5K efforts." },
         { name:"10K Ride Prep", desc:"Aerobic base building with tempo efforts, hill repeats, and sustained power output development." },
-        { name:"25K Ride Prep", desc:"Intermediate distance programming � endurance pacing, group ride tactics, and nutrition strategies." },
+        { name:"25K Ride Prep", desc:"Intermediate distance programming — endurance pacing, group ride tactics, and nutrition strategies." },
         { name:"50K Ride Prep", desc:"Long-distance preparation with lactate threshold work, prolonged tempo efforts, and fueling protocols." },
-        { name:"100K Ride Prep", desc:"Gran fondo and century training � periodized long rides, nutrition planning, and recovery management." },
+        { name:"100K Ride Prep", desc:"Gran fondo and century training — periodized long rides, nutrition planning, and recovery management." },
         { name:"Cycling Nutrition", desc:"Pre-ride fueling, on-bike carbohydrate intake, hydration strategy, and post-ride recovery nutrition." },
         { name:"Hyrox + Cycling", desc:"Hybrid programming combining cycling endurance with Hyrox functional stations for cross-training athletes." }
       ]},
@@ -3024,9 +3215,9 @@ function initCycleCarousel() {
       items:[
         { name:"Beginner Plans", desc:"Couch-to-5K style progression building confidence, consistency, and proper running form from scratch." },
         { name:"5K / 10K Prep", desc:"Structured speed work, interval training, and tempo runs targeting your best 5K or 10K time." },
-        { name:"Half Marathon Prep", desc:"Periodized 12�16 week plans combining easy runs, threshold work, long runs, and race-day strategy." },
+        { name:"Half Marathon Prep", desc:"Periodized 12—16 week plans combining easy runs, threshold work, long runs, and race-day strategy." },
         { name:"Marathon Prep", desc:"Full marathon programming with progressive long runs, pace work, nutrition, and taper planning." },
-        { name:"Running Nutrition", desc:"Fueling strategies for training and race day � carb loading, hydration, electrolyte balance, and recovery." },
+        { name:"Running Nutrition", desc:"Fueling strategies for training and race day — carb loading, hydration, electrolyte balance, and recovery." },
         { name:"Hyrox + Running", desc:"Specialized programming for compromised running after functional stations. Pacing, transitions, and fatigue management." }
       ]}
   ];
@@ -3036,7 +3227,7 @@ function initCycleCarousel() {
     items:[
       { name:"Combined Programming", desc:"Integrated cycling and Hyrox training plans that build both aerobic engines and functional station strength simultaneously." },
       { name:"Engine Building", desc:"Zone 2 base work combined with HIIT intervals to develop the cardiovascular capacity needed for hybrid racing." },
-      { name:"Compromised Running", desc:"Running on fatigued legs after station work � simulation drills to build race-specific resilience." },
+      { name:"Compromised Running", desc:"Running on fatigued legs after station work — simulation drills to build race-specific resilience." },
       { name:"Race Strategy", desc:"Pacing plans, transition practice, station approach tactics, and mental preparation for race day." },
       { name:"Nutrition & Recovery", desc:"Hybrid-specific fueling protocols balancing carbohydrate demands of cycling with protein needs for functional strength." }
     ]
@@ -3068,7 +3259,7 @@ function initCycleCarousel() {
     corpData.forEach(function(c) { cards += '<span>' + c + '</span>'; });
     cards += '</div></div>';
 
-    return '<div class="svc-cat-overlay" id="svcCatOverlay"><div class="svc-cat-modal"><button class="svc-cat-close" id="svcCatClose">&times;</button><div class="svc-cat-header"><h2>Our Services &amp; Programs</h2><p>From personal training to group wellness � find what fits your goal</p></div><div class="svc-cat-grid">' + cards + '</div></div></div>';
+    return '<div class="svc-cat-overlay" id="svcCatOverlay"><div class="svc-cat-modal"><button class="svc-cat-close" id="svcCatClose">&times;</button><div class="svc-cat-header"><h2>Our Services &amp; Programs</h2><p>From personal training to group wellness — find what fits your goal</p></div><div class="svc-cat-grid">' + cards + '</div></div></div>';
   }
 
   /* Inject trigger button */

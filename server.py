@@ -24,6 +24,7 @@ RATE_LIMITS = {
     "/api/submit": 30,
     "/api/leads": 30,
     "/api/calculations": 40,
+    "/api/match": 40,
 }
 _rate_lock = threading.Lock()
 _rate_buckets = {}
@@ -145,15 +146,186 @@ CHAT_SUGGESTIONS = [
     "Which coach is best for yoga?",
 ]
 
-def content_payload():
+COACH_MEDIA = {
+    "aditya-gururani": {"highlight": "Breathwork Expert", "color": "cyan", "image": "assets/coaches/aditya-gururani.jpg"},
+    "b-yashwanth": {"highlight": "Sports Specialist", "color": "blue", "image": "assets/coaches/b-yashwanth.jpg"},
+    "kritika-chauhan": {"highlight": "Flexibility Coach", "color": "cyan", "image": "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0302-69538f34664ae75da3c69fce.jpg"},
+    "shivajeet-kanaujiya": {"highlight": "Strength Builder", "color": "red", "image": "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0300-69538ef2474cc000b54586c5.jpg"},
+    "anand-yadav": {"highlight": "Kids Fitness Expert", "color": "blue", "image": "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0297-69538d52664ae75da3c69fc1.jpg"},
+    "chandan-mondal": {"highlight": "Bodybuilding Coach", "color": "red", "image": "assets/coaches/chandan-mondal.jpg"},
+    "aditya": {"highlight": "Mind-Body Coach", "color": "cyan", "image": "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0298-69538dd1474cc000b54586be.jpg"},
+    "nitu-arya": {"highlight": "Holistic Yoga", "color": "cyan", "image": "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0295-69538d35474cc000b54586b7.jpg"},
+    "deepesh-kumar": {"highlight": "Weight Loss Specialist", "color": "red", "image": "assets/coaches/deepesh-kumar.jpg"},
+    "s-jeetender": {"highlight": "Daily Fitness Pro", "color": "red", "image": "assets/coaches/s-jeetender.jpg"},
+    "rahul-dawar": {"highlight": "Health & Strength", "color": "red", "image": "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0291-69538ccf8c7b7b2c6178b6e1.jpg"},
+    "ravi-pal": {"highlight": "Injury Recovery", "color": "blue", "image": "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0289-69538c800222ba9c3d831802.jpg"},
+    "subedhar-yadav": {"highlight": "Special Needs Coach", "color": "blue", "image": "assets/coaches/subedhar-yadav.jpg"},
+    "sanjeev": {"highlight": "Strength Trainer", "color": "red", "image": "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/274dba00-8541-4bfc-8666-e0b5433b3781-69538a190222ba9c3d8317f4.jpg"},
+    "nandlal": {"highlight": "Transformation Coach", "color": "red", "image": "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/04ea7dfe-a988-4a17-97cb-8dc44240cb59-695389c4474cc000b54586a8.jpg"},
+    "vinay-ojha": {"highlight": "All-Round Fitness", "color": "red", "image": "assets/coaches/vinay-ojha.jpg"},
+    "ankit-singh-chauhan": {"highlight": "Calisthenics Expert", "color": "red", "image": "assets/coaches/ankit-singh-chauhan.jpg"},
+    "suresh-yadav": {"highlight": "Special Needs Expert", "color": "blue", "image": "assets/coaches/suresh-yadav.jpg"},
+    "parul-danu": {"highlight": "Yoga & Wellness", "color": "cyan", "image": "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/parul-695209395c5bdcd270817773.jpeg"},
+    "raju": {"highlight": "Fitness Guide", "color": "red", "image": "assets/coaches/raju.jpg"},
+    "vishal-choudhary": {"highlight": "Personal Training Pro", "color": "red", "image": "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/vishal-69520b6a5c5bdcd270817783.jpeg"},
+}
+
+GOAL_MATCHES = {
+    "weight-loss": {
+        "goal": "weight-loss",
+        "title": "Fat Loss & Body Recomposition",
+        "summary": "Blend strength work with Indian nutrition coaching so fat loss stays sustainable.",
+        "plan": "Fitness Gurukul Prime",
+        "planCategory": "prime",
+        "coachCategories": ["fitness", "yoga"],
+        "cta": "book-consultation.html",
+    },
+    "strength": {
+        "goal": "strength",
+        "title": "Strength & Muscle Building",
+        "summary": "Progressive personal training with form coaching and weekly accountability.",
+        "plan": "Fitness Gurukul Signature",
+        "planCategory": "signature",
+        "coachCategories": ["fitness"],
+        "cta": "book-consultation.html",
+    },
+    "yoga": {
+        "goal": "yoga",
+        "title": "Yoga, Breathwork & Stress Relief",
+        "summary": "Mobility, breath, and nervous-system reset with certified yoga instructors.",
+        "plan": "Yogic Wellness",
+        "planCategory": "recovery",
+        "coachCategories": ["yoga"],
+        "cta": "coaches.html",
+    },
+    "running": {
+        "goal": "running",
+        "title": "Running & Endurance",
+        "summary": "Periodized run plans plus strength support for race day performance.",
+        "plan": "Fitness Gurukul Endurance",
+        "planCategory": "endurance",
+        "coachCategories": ["fitness", "sports"],
+        "cta": "services.html",
+    },
+    "kids": {
+        "goal": "kids",
+        "title": "Kids Athletics & Confidence",
+        "summary": "Age-appropriate movement, sports skills, and fun fitness for children.",
+        "plan": "Kids Programs",
+        "planCategory": "training",
+        "coachCategories": ["kids", "special"],
+        "cta": "coaches.html",
+    },
+    "rehab": {
+        "goal": "rehab",
+        "title": "Injury Rehab & Return to Train",
+        "summary": "Guided recovery programming to rebuild strength safely after setbacks.",
+        "plan": "Personal Training",
+        "planCategory": "training",
+        "coachCategories": ["rehab", "fitness"],
+        "cta": "book-consultation.html",
+    },
+}
+
+def enriched_coaches():
+    out = []
+    for coach in COACHES:
+        row = dict(coach)
+        media = COACH_MEDIA.get(coach.get("slug"), {})
+        row["highlight"] = media.get("highlight") or row.get("highlight") or "Coach"
+        row["color"] = media.get("color") or row.get("color") or "cyan"
+        row["image"] = media.get("image") or row.get("image") or ""
+        out.append(row)
+    return out
+
+def live_payload():
+    base_clients = 1000
+    base_events = 50
+    coaches = len(COACHES)
+    try:
+        with get_connection() as conn:
+            leads = conn.execute("SELECT COUNT(*) AS c FROM submissions").fetchone()["c"]
+            calcs = conn.execute("SELECT COUNT(*) AS c FROM calculator_results").fetchone()["c"]
+            chats = conn.execute("SELECT COUNT(*) AS c FROM chat_messages WHERE role = 'user'").fetchone()["c"]
+            today = conn.execute(
+                "SELECT COUNT(*) AS c FROM submissions WHERE created_at >= ?",
+                (int(time.time()) - 24 * 60 * 60,),
+            ).fetchone()["c"]
+    except Exception:
+        leads = calcs = chats = today = 0
+    pulse = [
+        "A Hyderabad member just booked a free consultation",
+        "Coach match completed for yoga & mobility",
+        "Macro calculator used for Indian meal planning",
+        "Doorstep training inquiry from Gachibowli",
+        "Running plan comparison opened on Services",
+    ]
+    # Rotate pulse by minute so the site feels alive without fake realtime sockets.
+    idx = int(time.time() // 45) % len(pulse)
     return {
+        "ok": True,
+        "clientsTransformed": base_clients + max(leads, 0),
+        "years": 13,
+        "events": base_events,
+        "coaches": coaches,
+        "specialties": 7,
+        "inquiriesToday": today,
+        "toolUses": calcs,
+        "chatSessions": chats,
+        "activeNow": 3 + ((int(time.time()) // 30) % 9),
+        "pulse": pulse[idx],
+        "updatedAt": int(time.time()),
+    }
+
+def match_goal(payload):
+    goal = clip(str(payload.get("goal", "")).lower().replace(" ", "-"), 40)
+    experience = clip(str(payload.get("experience", "beginner")).lower(), 40)
+    preference = clip(str(payload.get("preference", "in-person")).lower(), 40)
+    match = GOAL_MATCHES.get(goal) or GOAL_MATCHES["weight-loss"]
+    coaches = [
+        c for c in enriched_coaches()
+        if c.get("category") in match["coachCategories"]
+    ][:3]
+    plan = next((p for p in PLANS if p.get("category") == match.get("planCategory")), None)
+    if not plan:
+        plan = next((s for s in SERVICES if s.get("name") == match.get("plan")), SERVICES[0])
+    tip = {
+        "beginner": "Start with a free consultation and a gentle 2-week ramp-up.",
+        "intermediate": "Expect progressive overload with weekly check-ins.",
+        "advanced": "We will bias intensity, recovery, and race or physique peaking.",
+    }.get(experience, "Start with a free consultation.")
+    mode = "Doorstep or studio sessions available in Hyderabad." if preference in {"in-person", "doorstep", "home"} else "Virtual coaching with app check-ins works great for your schedule."
+    return {
+        "ok": True,
+        "match": match,
+        "plan": plan,
+        "coaches": coaches,
+        "tip": tip,
+        "mode": mode,
+        "score": 92 if goal in GOAL_MATCHES else 78,
+    }
+
+def content_payload():
+    coaches = enriched_coaches()
+    return {
+        "heroHeadline": "Train Smarter. Live Stronger.",
+        "heroSubhead": "1:1 personal training in Hyderabad — Indian nutrition and doorstep coaching built around your body and schedule.",
         "services": SERVICES,
         "plans": PLANS,
-        "coaches": COACHES,
+        "coaches": coaches,
         "testimonials": TESTIMONIALS,
         "updates": UPDATES,
         "serviceAreas": SERVICE_AREAS,
         "contact": CONTACT,
+        "goals": list(GOAL_MATCHES.values()),
+        "stats": {
+            "clients": 1000,
+            "years": 13,
+            "events": 50,
+            "coaches": len(coaches),
+            "specialties": len({c.get("category") for c in coaches}),
+        },
+        "live": live_payload(),
     }
 
 def get_connection():
@@ -674,6 +846,10 @@ class AppHandler(SimpleHTTPRequestHandler):
                 })
             if path == "/api/content":
                 return self.send_json(content_payload())
+            if path == "/api/live":
+                return self.send_json(live_payload())
+            if path == "/api/goals":
+                return self.send_json({"ok": True, "goals": list(GOAL_MATCHES.values())})
             if path == "/api/chat/status":
                 has_openai = bool(os.environ.get("OPENAI_API_KEY", "").strip())
                 return self.send_json({
@@ -835,6 +1011,9 @@ class AppHandler(SimpleHTTPRequestHandler):
                 )
                 conn.commit()
             return self.send_json({"ok": True, "message": "Saved."}, 201)
+
+        if path == "/api/match":
+            return self.send_json(match_goal(payload))
 
         if path == "/api/chat":
             message = normalize_chat_text(payload.get("message", ""))

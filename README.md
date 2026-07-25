@@ -85,18 +85,27 @@ PORT=8000
 Public:
 
 - `GET /api/health`
-- `GET /api/content`
+- `GET /api/content` — plans, enriched coaches (images/highlights), testimonials, live snapshot
+- `GET /api/live` — rotating studio pulse + DB-backed inquiry/tool counters
+- `GET /api/goals` — goal matcher catalog
+- `POST /api/match` — interactive goal → plan/coach recommendation
 - `GET /api/chat/status`
 - `POST /api/chat`
 - `POST /api/submit` — consultation and corporate event forms
 - `POST /api/leads` — alias that stores into the same submissions/leads tables
 - `POST /api/calculations`
 
+The public pages are API-driven: coach grids, home minds carousel, live stats, and the goal matcher hydrate from these endpoints (with local fallbacks if the API is offline).
+
 Protected (header `X-Admin-Token: <ADMIN_TOKEN>`):
 
 - `GET /api/admin-data`
 - `GET /api/submissions`
+- `GET /api/office-stats`
+- `PATCH /api/submissions/:id/status` — `new` | `contacted` | `qualified` | `closed`
 - `DELETE /api/submissions/:id`
+
+Office UI (`/office` → `office.html`) reads the live SQLite database and lets staff search leads, update status, export CSV, and delete records.
 
 Sensitive paths (`.env`, `*.sqlite3`, `data/`, `server.py`, etc.) are not served as static files.
 
