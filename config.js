@@ -1,17 +1,19 @@
 /**
  * Fitness Gurukul — API endpoint config
  *
- * Hostinger static pages can save leads in two ways:
- *   1) Cloud Python API (Render/Railway/Fly) via FG_API_BASE
- *   2) Same-origin PHP endpoints in /api/*.php (works on Hostinger alone)
+ * Lead save order:
+ *   1) Cloud Python API via FG_API_BASE (Render / Railway / Fly / tunnel)
+ *   2) Same-origin /api/* (local python server.py)
+ *   3) Same-origin /api/*.php (Hostinger shared hosting)
+ *   4) WhatsApp prefilled fallback in app.js
  *
- * Leave FG_API_BASE as "" for Hostinger PHP / local Python.
- * Set it only when you deploy server.py to the cloud.
- *
- * Example cloud API:
- *   window.FG_API_BASE = "https://fitness-gurukul-api.onrender.com";
+ * Permanent cloud deploy (recommended):
+ *   1. Open https://render.com/deploy?repo=https://github.com/saikrishnacoder/i-want-you-to-creating-a
+ *   2. Create free Web Service from render.yaml
+ *   3. Paste the https://….onrender.com URL below
+ *   4. Redeploy Hostinger / push to main
  */
-window.FG_API_BASE = window.FG_API_BASE || "";
+window.FG_API_BASE = window.FG_API_BASE || "https://functional-sections-implement-handles.trycloudflare.com";
 
 (function (w) {
   var PHP_MAP = {
@@ -37,13 +39,12 @@ window.FG_API_BASE = window.FG_API_BASE || "";
     var primary = w.fgApiUrl(clean);
     if (primary) list.push(primary);
 
-    // Same-origin Python path when no remote base is configured.
-    if (!w.FG_API_BASE && list.indexOf(clean) === -1) list.push(clean);
+    // Same-origin Python path (local server.py / same-host API).
+    if (list.indexOf(clean) === -1) list.push(clean);
 
-    // Hostinger PHP fallback (only when not forced to a remote cloud API).
-    if (!w.FG_API_BASE && PHP_MAP[clean]) {
-      var phpPath = PHP_MAP[clean];
-      if (list.indexOf(phpPath) === -1) list.push(phpPath);
+    // Hostinger PHP fallback — always available if cloud/local API is down.
+    if (PHP_MAP[clean] && list.indexOf(PHP_MAP[clean]) === -1) {
+      list.push(PHP_MAP[clean]);
     }
     return list;
   };
