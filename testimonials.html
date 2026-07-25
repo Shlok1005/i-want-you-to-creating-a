@@ -3,485 +3,821 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Testimonials | Fitness Gurukul</title>
+  <title>Transformations | Fitness Gurukul</title>
+  <meta name="description" content="Real Fitness Gurukul transformations in Hyderabad — interactive before/after stories, video testimonials, and client journeys." />
   <link rel="stylesheet" href="styles.css" />
+  <style>
+    :root {
+      --xf-accent: #4ade80;
+      --xf-ink: #f4f7fb;
+      --xf-muted: rgba(244,247,251,0.68);
+      --xf-line: rgba(255,255,255,0.12);
+    }
+
+    .xf-page { overflow-x: hidden; }
+
+    /* HERO — one composition, brand first, full-bleed */
+    .xf-hero {
+      position: relative;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: grid;
+      align-items: end;
+      color: var(--xf-ink);
+    }
+    .xf-hero-media {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.55) 45%, rgba(0,0,0,0.88) 100%),
+        url("udit.png") center/cover no-repeat;
+      transform: scale(1.04);
+      animation: xfKen 18s ease-in-out infinite alternate;
+    }
+    @keyframes xfKen {
+      from { transform: scale(1.04) translate3d(0,0,0); }
+      to { transform: scale(1.1) translate3d(-1.5%, -1%, 0); }
+    }
+    .xf-hero-inner {
+      position: relative;
+      z-index: 2;
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 120px 0 56px;
+    }
+    .xf-brand {
+      font-size: clamp(2.4rem, 7vw, 5.2rem);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      font-weight: 800;
+      margin: 0 0 18px;
+    }
+    .xf-brand span { display: block; color: var(--xf-accent); }
+    .xf-hero h1 {
+      max-width: 14ch;
+      font-size: clamp(1.5rem, 3.4vw, 2.35rem);
+      line-height: 1.15;
+      margin: 0 0 12px;
+      font-weight: 600;
+    }
+    .xf-hero p {
+      max-width: 38ch;
+      color: var(--xf-muted);
+      font-size: 1.05rem;
+      margin: 0 0 22px;
+    }
+    .xf-hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .xf-scroll-hint {
+      margin-top: 28px;
+      color: rgba(255,255,255,0.45);
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      animation: xfPulse 2.2s ease-in-out infinite;
+    }
+    @keyframes xfPulse {
+      0%, 100% { opacity: 0.35; transform: translateY(0); }
+      50% { opacity: 0.9; transform: translateY(4px); }
+    }
+
+    /* INTERACTIVE STAGE */
+    .xf-stage {
+      padding: 72px 0 40px;
+      background:
+        radial-gradient(ellipse at 10% 0%, rgba(74,222,128,0.12), transparent 40%),
+        radial-gradient(ellipse at 90% 20%, rgba(255,255,255,0.05), transparent 35%);
+    }
+    .xf-stage-head {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto 28px;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: end;
+      flex-wrap: wrap;
+    }
+    .xf-stage-head h2 {
+      font-size: clamp(1.7rem, 3vw, 2.4rem);
+      margin: 8px 0 0;
+    }
+    .xf-filters { display: flex; gap: 8px; flex-wrap: wrap; }
+    .xf-filters button {
+      border: 1px solid var(--xf-line);
+      background: rgba(255,255,255,0.03);
+      color: var(--xf-muted);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font: inherit;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: border-color .2s, color .2s, background .2s, transform .2s;
+    }
+    .xf-filters button:hover { color: #fff; border-color: rgba(255,255,255,0.28); }
+    .xf-filters button.active {
+      color: #04140a;
+      background: var(--xf-accent);
+      border-color: var(--xf-accent);
+    }
+
+    .xf-stage-grid {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .xf-spotlight {
+      position: relative;
+      min-height: 520px;
+      border-radius: 0;
+      overflow: hidden;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      background: #0a0d11;
+    }
+    .xf-compare {
+      position: absolute; inset: 0;
+      cursor: ew-resize;
+      touch-action: none;
+      user-select: none;
+    }
+    .xf-compare-after,
+    .xf-compare-before {
+      position: absolute; inset: 0;
+      background-size: cover;
+      background-position: center;
+    }
+    .xf-compare-before {
+      clip-path: inset(0 50% 0 0);
+    }
+    .xf-compare-handle {
+      position: absolute;
+      top: 0; bottom: 0; left: 50%;
+      width: 2px;
+      background: #fff;
+      transform: translateX(-50%);
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.35);
+    }
+    .xf-compare-handle::after {
+      content: "⟷";
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      background: #fff;
+      color: #111;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+    .xf-compare-labels {
+      position: absolute;
+      left: 16px; right: 16px; bottom: 16px;
+      display: flex; justify-content: space-between;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .xf-compare-labels span {
+      padding: 6px 10px;
+      background: rgba(0,0,0,0.55);
+      border: 1px solid rgba(255,255,255,0.15);
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .xf-detail {
+      padding: 8px 4px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .xf-detail-kicker {
+      color: var(--xf-accent);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .xf-detail h3 {
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      margin: 0;
+      letter-spacing: -0.03em;
+    }
+    .xf-detail blockquote {
+      margin: 0;
+      color: var(--xf-muted);
+      font-size: 1.05rem;
+      line-height: 1.65;
+      border-left: 2px solid rgba(74,222,128,0.55);
+      padding-left: 14px;
+    }
+    .xf-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 12px;
+    }
+    .xf-metric {
+      padding: 14px 0;
+      border-top: 1px solid var(--xf-line);
+    }
+    .xf-metric strong {
+      display: block;
+      font-size: 1.55rem;
+      color: var(--xf-accent);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .xf-metric span {
+      color: var(--xf-muted);
+      font-size: 0.78rem;
+    }
+    .xf-journey {
+      display: grid;
+      gap: 0;
+    }
+    .xf-journey-step {
+      display: grid;
+      grid-template-columns: 18px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 0;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      opacity: 0;
+      transform: translateX(12px);
+    }
+    .xf-journey-step.is-on {
+      opacity: 1;
+      transform: none;
+      transition: opacity .45s ease, transform .45s ease;
+    }
+    .xf-journey-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--xf-accent);
+      box-shadow: 0 0 0 4px rgba(74,222,128,0.15);
+    }
+    .xf-people {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 10px;
+      margin-top: auto;
+    }
+    .xf-person {
+      border: 1px solid transparent;
+      background: transparent;
+      padding: 0;
+      cursor: pointer;
+      text-align: left;
+      color: inherit;
+      font: inherit;
+    }
+    .xf-person img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      display: block;
+      filter: grayscale(0.35) brightness(0.85);
+      transition: filter .25s, transform .25s;
+    }
+    .xf-person strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 0.86rem;
+    }
+    .xf-person small {
+      color: var(--xf-muted);
+      font-size: 0.72rem;
+    }
+    .xf-person.active img,
+    .xf-person:hover img {
+      filter: none;
+      transform: translateY(-2px);
+    }
+    .xf-person.active {
+      border-color: transparent;
+    }
+    .xf-person.active strong { color: var(--xf-accent); }
+
+    /* VIDEO REEL */
+    .xf-videos {
+      padding: 80px 0;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .xf-videos-inner {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+    .xf-videos-head {
+      max-width: 560px;
+      margin-bottom: 28px;
+    }
+    .xf-videos-head h2 {
+      font-size: clamp(1.7rem, 3vw, 2.4rem);
+      margin: 8px 0;
+    }
+    .xf-videos-head p { color: var(--xf-muted); }
+    .xf-video-rail {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(280px, 32vw);
+      gap: 16px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scroll-snap-type: x mandatory;
+    }
+    .xf-video-item {
+      scroll-snap-align: start;
+      position: relative;
+      min-height: 360px;
+      overflow: hidden;
+      border: 0;
+      background: #000;
+      cursor: pointer;
+      color: #fff;
+      text-align: left;
+      font: inherit;
+      padding: 0;
+    }
+    .xf-video-item video,
+    .xf-video-item img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      transition: transform .5s ease;
+    }
+    .xf-video-item:hover video,
+    .xf-video-item:hover img { transform: scale(1.04); }
+    .xf-video-item .xf-video-shade {
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 35%, rgba(0,0,0,0.85));
+    }
+    .xf-video-item .xf-video-copy {
+      position: absolute; left: 16px; right: 16px; bottom: 16px;
+    }
+    .xf-video-item .xf-play {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 58px; height: 58px; border-radius: 50%;
+      display: grid; place-items: center;
+      background: rgba(255,255,255,0.92);
+      color: #111;
+      font-size: 1.1rem;
+    }
+
+    /* CTA */
+    .xf-cta {
+      padding: 90px 0;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.75)),
+        url("neha.png") center/cover no-repeat;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .xf-cta-inner {
+      width: min(800px, calc(100% - 40px));
+      margin: 0 auto;
+      text-align: left;
+    }
+    .xf-cta h2 {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      letter-spacing: -0.03em;
+      margin: 8px 0 12px;
+      max-width: 12ch;
+    }
+    .xf-cta p {
+      color: var(--xf-muted);
+      max-width: 36ch;
+      margin-bottom: 22px;
+    }
+
+    .xf-reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .xf-reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    @media (max-width: 960px) {
+      .xf-stage-grid { grid-template-columns: 1fr; }
+      .xf-spotlight { min-height: 420px; }
+      .xf-people { grid-template-columns: repeat(4, minmax(0,1fr)); }
+    }
+    @media (max-width: 640px) {
+      .xf-hero-inner { padding-top: 110px; }
+      .xf-metrics { grid-template-columns: 1fr; }
+      .xf-people { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .xf-video-rail { grid-auto-columns: 78vw; }
+    }
+  </style>
   <script src="app.js" defer></script>
 </head>
-<body>
+<body class="xf-page">
   <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
   <header class="site-header">
-  <div class="header-inner">
-    <div class="header-left">
+    <div class="header-inner">
+      <div class="header-left">
+        <a class="brand" href="index.html">
+          <span class="brand-mark"><img src="assets/fitness-gurukul-logo.png" alt="" /></span>
+          <span class="brand-text"><strong>Fitness</strong><span>Gurukul</span></span>
+        </a>
+      </div>
+      <nav class="desktop-nav">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="coaches.html">Coaches</a>
+        <a href="events.html">Events</a>
+        <a href="testimonials.html" class="active">Transformations</a>
+        <a href="tools.html">Tools</a>
+      </nav>
+      <div class="header-app-dropdown">
+        <button class="header-play-btn" type="button" aria-expanded="false" aria-haspopup="true" data-app-menu-btn>
+          <span>Get the App</span>
+        </button>
+        <div class="header-app-menu" data-app-menu hidden>
+          <a href="https://play.google.com/store/apps/details?id=com.fitnessgurukul.app" target="_blank" rel="noopener">Android — Google Play</a>
+          <a href="https://apps.apple.com/us/app/fitness-gurukul/id6771451272" target="_blank" rel="noopener">iOS — App Store</a>
+        </div>
+      </div>
+      <button class="menu-button" id="menuButton" aria-label="Open navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+  <nav class="mobile-nav" id="mobileNav">
+    <div class="mobile-nav-header">
       <a class="brand" href="index.html">
         <span class="brand-mark"><img src="assets/fitness-gurukul-logo.png" alt="" /></span>
         <span class="brand-text"><strong>Fitness</strong><span>Gurukul</span></span>
       </a>
+      <button class="mobile-nav-close" id="mobileNavClose">&times;</button>
     </div>
-    <nav class="desktop-nav">
-      <a href="index.html">Home</a>
-      <a href="services.html">Services</a>
-      <a href="coaches.html">Coaches</a>
-      <a href="events.html">Events</a>
-      <a href="testimonials.html">Testimonials</a>
-      <a href="tools.html">Tools</a>
-    </nav>
-        <div class="header-app-dropdown">
-      <button class="header-play-btn" type="button" aria-expanded="false" aria-haspopup="true" data-app-menu-btn>
-        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" aria-hidden="true"><path d="M4.5 3.5v17l14-8.5z"/></svg>
-        <span>Get the App</span>
-        <svg class="header-app-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-      </button>
-      <div class="header-app-menu" data-app-menu hidden>
-        <a href="https://play.google.com/store/apps/details?id=com.fitnessgurukul.app" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" aria-hidden="true"><path d="M17.6 9.48l1.84-3.18a.75.75 0 10-1.3-.75l-1.9 3.28A8.2 8.2 0 0012 8c-1.5 0-2.9.4-4.1.1L6.0 4.55a.75.75 0 10-1.3.75L6.54 9.5C4.4 11.05 3 13.4 3 16.1v.4h18v-.4c0-2.7-1.4-5.05-3.4-6.62zM7.2 17.5a1.1 1.1 0 110-2.2 1.1 1.1 0 010 2.2zm9.6 0a1.1 1.1 0 110-2.2 1.1 1.1 0 010 2.2z"/></svg>
-          <span>Android — Google Play</span>
-        </a>
-        <a href="https://apps.apple.com/us/app/fitness-gurukul/id6771451272" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" aria-hidden="true"><path d="M16.7 12.7c0-2.2 1.8-3.3 1.9-3.4-1-1.5-2.6-1.7-3.2-1.7-1.4-.1-2.6.8-3.3.8s-1.7-.8-2.9-.8c-1.5 0-2.8.9-3.6 2.2-1.5 2.6-.4 6.5 1.1 8.6.7 1 1.6 2.2 2.8 2.1 1.1 0 1.5-.7 2.9-.7s1.7.7 2.9.7 1.9-1 2.6-2c.8-1.1 1.1-2.2 1.1-2.3-.1 0-2.2-.8-2.3-3.5zM14.7 5.8c.6-.8 1.1-1.9.9-3-.9 0-2 .6-2.6 1.4-.6.7-1.1 1.8-.9 2.9 1 .1 2-.5 2.6-1.3z"/></svg>
-          <span>iOS — App Store</span>
-        </a>
-      </div>
-    </div>
-    <button class="menu-button" id="menuButton" aria-label="Open navigation" aria-expanded="false"><span></span><span></span><span></span></button>
-  </div>
-</header>
-<nav class="mobile-nav" id="mobileNav">
-  <div class="mobile-nav-header">
-    <a class="brand" href="index.html">
-      <span class="brand-mark"><img src="assets/fitness-gurukul-logo.png" alt="" /></span>
-      <span class="brand-text"><strong>Fitness</strong><span>Gurukul</span></span>
-    </a>
-    <button class="mobile-nav-close" id="mobileNavClose">&times;</button>
-  </div>
-  <a href="index.html">Home</a>
-  <a href="services.html">Services</a>
-  <a href="coaches.html">Coaches</a>
-  <a href="events.html">Events</a>
-    <a href="testimonials.html">Testimonials</a>
-  <a href="tools.html">Tools</a>
-  <div class="mobile-nav-ctas">
-    <a class="header-play-btn" href="https://play.google.com/store/apps/details?id=com.fitnessgurukul.app" target="_blank" rel="noopener">Android — Google Play</a>
-    <a class="header-play-btn" href="https://apps.apple.com/us/app/fitness-gurukul/id6771451272" target="_blank" rel="noopener">iOS — App Store</a>
-  </div>
-</nav>
+    <a href="index.html">Home</a>
+    <a href="services.html">Services</a>
+    <a href="coaches.html">Coaches</a>
+    <a href="events.html">Events</a>
+    <a href="testimonials.html" class="active">Transformations</a>
+    <a href="tools.html">Tools</a>
+  </nav>
 
   <main>
-    <section class="hero-fittr">
-      <div class="hero-fittr-bg">
-        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1800&q=80" alt="" />
-      </div>
-      <div class="hero-fittr-overlay"></div>
-      <div class="hero-fittr-content">
-        <span class="hero-fittr-badge">Success Stories</span>
-        <h1 class="hero-fittr-headline">Real <em>Transformations</em></h1>
-        <p class="hero-fittr-sub">Every number is a person. Every story is a life changed. Real results from real people who committed to their fitness journey.</p>
-        <div class="hero-actions">
-          <a class="primary-button" href="#storymap">Read Their Stories</a>
-          <a class="ghost-button" href="contact.html">Start Your Journey</a>
+    <section class="xf-hero">
+      <div class="xf-hero-media" aria-hidden="true"></div>
+      <div class="xf-hero-inner">
+        <p class="xf-brand">Fitness <span>Gurukul</span></p>
+        <h1>Bodies rewritten. Habits rebuilt.</h1>
+        <p>Scrub the stories. Watch the drop. Meet the people behind Hyderabad’s most honest transformations.</p>
+        <div class="xf-hero-actions">
+          <a class="primary-button" href="#xfStage">Explore stories</a>
+          <a class="ghost-button" href="book-consultation.html">Buy Now</a>
         </div>
-      </div>
-      <div class="hero-fittr-counters">
-        <div class="counter-item"><span class="counter-num" data-target="1000">0</span><span class="counter-label">Lives Changed</span></div>
-        <div class="counter-item"><span class="counter-num" data-target="15000">0</span><span class="counter-label">kg Lost</span></div>
-        <div class="counter-item"><span class="counter-num" data-target="13">0</span><span class="counter-label">Years Strong</span></div>
-        <div class="counter-item"><span class="counter-num" data-target="10">0</span><span class="counter-label">Expert Coaches+</span></div>
+        <div class="xf-scroll-hint">Drag the photo · switch people · play videos</div>
       </div>
     </section>
 
-    <style>
-      .ts-storymap {
-        padding: 44px 0 22px;
-      }
-      .ts-storymap-head {
-        max-width: 760px;
-        margin: 0 auto 24px;
-        text-align: center;
-      }
-      .ts-storymap-head p {
-        max-width: 620px;
-        margin: 10px auto 0;
-      }
-      .ts-storymap-track {
-        position: relative;
-        display: grid;
-        gap: 18px;
-      }
-      .ts-storymap-track::before {
-        content: "";
-        position: absolute;
-        left: 50%;
-        top: 0;
-        bottom: 0;
-        width: 2px;
-        transform: translateX(-1px);
-        background: linear-gradient(180deg, transparent, rgba(255,255,255,0.2), transparent);
-      }
-      .ts-storymap-card {
-        position: relative;
-        display: grid;
-        grid-template-columns: minmax(0, 0.9fr) minmax(280px, 0.7fr);
-        gap: 0;
-        align-items: stretch;
-        border: 1px solid var(--line);
-        border-radius: 22px;
-        overflow: hidden;
-        background: linear-gradient(180deg, rgba(247,251,255,0.06), rgba(247,251,255,0.02));
-      }
-      .ts-storymap-card:nth-child(even) {
-        grid-template-columns: minmax(280px, 0.7fr) minmax(0, 0.9fr);
-      }
-      .ts-storymap-card:nth-child(even) .ts-storymap-visual {
-        order: 2;
-      }
-      .ts-storymap-card:nth-child(even) .ts-storymap-body {
-        order: 1;
-      }
-      .ts-storymap-visual {
-        min-height: 280px;
-        position: relative;
-        cursor: pointer;
-      }
-      .ts-storymap-visual img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
-      .ts-storymap-play {
-        position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-        background: rgba(0,0,0,0.35); opacity: 0; transition: opacity 0.3s;
-      }
-      .ts-storymap-card:hover .ts-storymap-play { opacity: 1; }
-      .ts-storymap-play svg {
-        width: 56px; height: 56px; filter: drop-shadow(0 4px 20px rgba(0,0,0,0.6));
-      }
-      .ts-storymap-body {
-        padding: 26px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      }
-      .ts-storymap-kicker {
-        display: inline-flex;
-        align-self: flex-start;
-        margin-bottom: 12px;
-        padding: 5px 10px;
-        border-radius: 999px;
-        border: 1px solid rgba(255,255,255,0.14);
-        color: var(--white);
-        font-size: 0.72rem;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-      }
-      .ts-storymap-body h3 {
-        margin-bottom: 8px;
-        font-size: 1.35rem;
-      }
-      .ts-storymap-body p {
-        color: var(--soft);
-        line-height: 1.7;
-        margin-bottom: 14px;
-      }
-      .ts-storymap-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-      .ts-storymap-meta span {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 10px;
-        border-radius: 999px;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.08);
-        color: var(--muted);
-        font-size: 0.74rem;
-        font-weight: 600;
-      }
-      .ts-storymap-node {
-        position: absolute;
-        left: 50%;
-        top: 24px;
-        width: 14px;
-        height: 14px;
-        transform: translateX(-50%);
-        border-radius: 50%;
-        background: var(--white);
-        box-shadow: 0 0 0 6px rgba(255,255,255,0.08);
-      }
-      @media (max-width: 900px) {
-        .ts-storymap-track::before { left: 14px; }
-        .ts-storymap-node { left: 14px; top: 18px; }
-        .ts-storymap-card,
-        .ts-storymap-card:nth-child(even) {
-          grid-template-columns: 1fr;
-        }
-        .ts-storymap-card:nth-child(even) .ts-storymap-visual,
-        .ts-storymap-card:nth-child(even) .ts-storymap-body {
-          order: initial;
-        }
-        .ts-storymap-body { padding: 20px 18px 22px; }
-      }
-    </style>
-    <section class="ts-storymap" id="storymap">
-      <div class="page-shell">
-      <div class="ts-storymap-head">
-        <span class="ts-hero-badge">Success Map</span>
-        <h2>Four Stories, One Path</h2>
-        <p>A cleaner story map showing the real people behind the results, using the images you added.</p>
-      </div>
-      <div class="ts-storymap-track">
-        <article class="ts-storymap-card">
-          <span class="ts-storymap-node" aria-hidden="true"></span>
-          <div class="ts-storymap-visual"><img src="udit.png" alt="Udit" loading="lazy" /></div>
-          <div class="ts-storymap-body">
-            <span class="ts-storymap-kicker">01 Body Recomposition</span>
-            <h3>Udit</h3>
-            <p>From low confidence to a disciplined routine. The plan focused on structure, meal guidance, and steady body recomposition.</p>
-            <div class="ts-storymap-progress"><span style="width:84%"></span></div>
-            <div class="ts-storymap-meta"><span>88 kg to 74 kg</span><span>Planned training</span><span>Nutrition support</span></div>
-          </div>
-        </article>
-        <article class="ts-storymap-card" data-video="TESTIMONIALS/NEHA%20.mp4" onclick="openStoryVideo(this)">
-          <span class="ts-storymap-node" aria-hidden="true"></span>
-          <div class="ts-storymap-visual"><img src="neha.png" alt="Neha" loading="lazy" /><div class="ts-storymap-play"><svg viewBox="0 0 24 24" fill="white"><polygon points="8,5 19,12 8,19"/></svg></div></div>
-          <div class="ts-storymap-body">
-            <span class="ts-storymap-kicker">02 Weight Loss</span>
-            <h3>Neha</h3>
-            <p>A sustainable fat-loss journey built around practical meals, consistent coaching, and training that could actually be maintained.</p>
-            <div class="ts-storymap-progress"><span style="width:79%"></span></div>
-            <div class="ts-storymap-meta"><span>82 kg to 65 kg</span><span>Practical nutrition</span><span>Consistency first</span></div>
-          </div>
-        </article>
-        <article class="ts-storymap-card">
-          <span class="ts-storymap-node" aria-hidden="true"></span>
-          <div class="ts-storymap-visual"><img src="ramakrishna.png" alt="Ramakrishna" loading="lazy" /></div>
-          <div class="ts-storymap-body">
-            <span class="ts-storymap-kicker">03 Strength Return</span>
-            <h3>Ramakrishna</h3>
-            <p>Proof that progress does not age out. The plan balanced safe training, mobility, and a nutrition routine that could be followed long term.</p>
-            <div class="ts-storymap-progress"><span style="width:76%"></span></div>
-            <div class="ts-storymap-meta"><span>88 kg to 74 kg</span><span>Safe strength work</span><span>Mobility focus</span></div>
-          </div>
-        </article>
-        <article class="ts-storymap-card">
-          <span class="ts-storymap-node" aria-hidden="true"></span>
-          <div class="ts-storymap-visual"><img src="deepak.png" alt="Deepak" loading="lazy" /></div>
-          <div class="ts-storymap-body">
-            <span class="ts-storymap-kicker">04 Lifestyle Reset</span>
-            <h3>Deepak</h3>
-            <p>Low energy, bad habits, and zero rhythm turned into a structured routine with accountability and real progress.</p>
-            <div class="ts-storymap-progress"><span style="width:71%"></span></div>
-            <div class="ts-storymap-meta"><span>90 kg to 76 kg</span><span>Habit coaching</span><span>Accountability</span></div>
-          </div>
-        </article>
-      </div>
-      </div>
-    </section>
-
-    <section class="section-shell">
-      <div class="page-shell">
-      <div class="section-heading">
+    <section class="xf-stage" id="xfStage">
+      <div class="xf-stage-head xf-reveal">
         <div>
-          <span class="section-kicker">Hear From Our Community</span>
-          <h2>Video <span class="ts-glow">Testimonials</span></h2>
-          <p>Real clients sharing their transformations, struggles, and successes — in their own words.</p>
+          <span class="section-kicker">Interactive stories</span>
+          <h2>Pick a person. Scrub the change.</h2>
+        </div>
+        <div class="xf-filters" id="xfFilters">
+          <button type="button" data-filter="all" class="active">All</button>
+          <button type="button" data-filter="recomp">Recomposition</button>
+          <button type="button" data-filter="loss">Weight loss</button>
+          <button type="button" data-filter="strength">Strength</button>
         </div>
       </div>
-      <div class="ts-video-grid">
-        <div class="ts-video-card">
-          <video controls preload="metadata" poster="">
-            <source src="TESTIMONIALS/FINAL%20TESTIMONIAL.mp4" type="video/mp4" />
-          </video>
-          <div class="ts-video-body">
-            <strong>Journey to a Healthier Me</strong>
-            <p>A powerful weight-loss journey — from struggling with daily routines to completing a full lifestyle transformation with FG coaching.</p>
+
+      <div class="xf-stage-grid xf-reveal">
+        <div class="xf-spotlight" id="xfSpotlight">
+          <div class="xf-compare" id="xfCompare" aria-label="Before and after comparison">
+            <div class="xf-compare-after" id="xfAfter"></div>
+            <div class="xf-compare-before" id="xfBefore"></div>
+            <div class="xf-compare-handle" id="xfHandle"></div>
+            <div class="xf-compare-labels"><span>Start</span><span>Now</span></div>
           </div>
         </div>
-        <div class="ts-video-card">
-          <video controls preload="metadata" poster="">
-            <source src="TESTIMONIALS/TESTIMONAL%20FINAL.mp4" type="video/mp4" />
-          </video>
-          <div class="ts-video-body">
-            <strong>Strength &amp; Confidence</strong>
-            <p>How personalized training helped build not just muscle, but real self-belief and daily discipline that lasts.</p>
+
+        <div class="xf-detail">
+          <div>
+            <div class="xf-detail-kicker" id="xfCategory">Body recomposition</div>
+            <h3 id="xfName">Udit</h3>
+          </div>
+          <blockquote id="xfQuote">“The coaching gave me the discipline and structure I never had. Every session was planned, every meal was guided.”</blockquote>
+          <div class="xf-metrics">
+            <div class="xf-metric"><strong id="xfBeforeKg">88</strong><span>Start weight (kg)</span></div>
+            <div class="xf-metric"><strong id="xfAfterKg">74</strong><span>Current weight (kg)</span></div>
+            <div class="xf-metric"><strong id="xfLostKg">14</strong><span>Kilograms changed</span></div>
+          </div>
+          <div class="xf-journey" id="xfJourney"></div>
+          <div class="xf-people" id="xfPeople"></div>
+          <div class="xf-hero-actions">
+            <a class="primary-button" href="book-consultation.html">Start my plan</a>
+            <a class="ghost-button" href="https://wa.me/917207113310" target="_blank" rel="noopener">Have questions? Chat now</a>
           </div>
         </div>
-        <div class="ts-video-card">
-          <video controls preload="metadata" poster="">
-            <source src="TESTIMONIALS/TESTOMONIAL%20VID%201.mp4" type="video/mp4" />
-          </video>
-          <div class="ts-video-body">
-            <strong>From Zero to Fitness</strong>
-            <p>A beginner's story — no gym experience, no confidence, and how the right coach turned everything around.</p>
-          </div>
-        </div>
-      </div>
       </div>
     </section>
 
-    <section class="section-shell">
-      <div class="page-shell">
-      <div class="section-heading">
-        <div>
-          <span class="section-kicker">Instagram</span>
-          <h2>Follow <span class="ts-glow">@fitnessgurukulofficial</span></h2>
-          <p>Daily transformations, tips, and community moments. Follow us on Instagram for more success stories.</p>
+    <section class="xf-videos">
+      <div class="xf-videos-inner">
+        <div class="xf-videos-head xf-reveal">
+          <span class="section-kicker">On camera</span>
+          <h2>They said it themselves</h2>
+          <p>Swipe the reel. Tap to play full-screen client stories filmed at Fitness Gurukul.</p>
         </div>
-      </div>
-      <div class="footer-gallery-grid" style="margin-bottom:32px">
-        <div class="footer-gallery-item"><a href="https://www.instagram.com/p/DZoWDw4jyt6/" target="_blank" rel="noopener"><img src="insta posts/1.png" alt="Ride &amp; Pose 2025" loading="lazy" /><span class="footer-gallery-caption">Ride &amp; Pose 2025 – 21 Jun</span></a></div>
-        <div class="footer-gallery-item"><a href="https://www.instagram.com/p/DZYWAPVE8mD/" target="_blank" rel="noopener"><img src="insta posts/bicycle day.png" alt="World Bicycle Day" loading="lazy" /><span class="footer-gallery-caption">World Bicycle Day 2026</span></a></div>
-        <div class="footer-gallery-item"><a href="https://www.instagram.com/p/DUxmB6gklu8/" target="_blank" rel="noopener"><img src="insta posts/club run.png" alt="Club Run" loading="lazy" /><span class="footer-gallery-caption">17th Hyderabad Club Run</span></a></div>
-        <div class="footer-gallery-item"><a href="https://www.instagram.com/p/DZUHERdj5sR/" target="_blank" rel="noopener"><img src="insta posts/gut health.png" alt="Gut Health" loading="lazy" /><span class="footer-gallery-caption">Gut Health Tips</span></a></div>
-      </div>
-      <div style="text-align:center">
-        <a class="primary-button" href="https://www.instagram.com/fitnessgurukulofficial/" target="_blank" rel="noopener" style="justify-content:center">Follow on Instagram</a>
-      </div>
+        <div class="xf-video-rail xf-reveal" id="xfVideoRail">
+          <button class="xf-video-item" type="button" data-video="TESTIMONIALS/FINAL%20TESTIMONIAL.mp4">
+            <video muted loop playsinline preload="metadata" poster="neha.png">
+              <source src="TESTIMONIALS/FINAL%20TESTIMONIAL.mp4" type="video/mp4" />
+            </video>
+            <div class="xf-video-shade"></div>
+            <div class="xf-play">▶</div>
+            <div class="xf-video-copy"><strong>Journey to a healthier me</strong><div style="color:rgba(255,255,255,0.7);font-size:0.85rem;margin-top:4px">Lifestyle reset on camera</div></div>
+          </button>
+          <button class="xf-video-item" type="button" data-video="TESTIMONIALS/NEHA%20.mp4">
+            <video muted loop playsinline preload="metadata" poster="neha.png">
+              <source src="TESTIMONIALS/NEHA%20.mp4" type="video/mp4" />
+            </video>
+            <div class="xf-video-shade"></div>
+            <div class="xf-play">▶</div>
+            <div class="xf-video-copy"><strong>Neha’s fat-loss story</strong><div style="color:rgba(255,255,255,0.7);font-size:0.85rem;margin-top:4px">Practical meals, real consistency</div></div>
+          </button>
+          <button class="xf-video-item" type="button" data-video="TESTIMONIALS/TESTIMONAL%20FINAL.mp4">
+            <video muted loop playsinline preload="metadata" poster="udit.png">
+              <source src="TESTIMONIALS/TESTIMONAL%20FINAL.mp4" type="video/mp4" />
+            </video>
+            <div class="xf-video-shade"></div>
+            <div class="xf-play">▶</div>
+            <div class="xf-video-copy"><strong>Strength &amp; confidence</strong><div style="color:rgba(255,255,255,0.7);font-size:0.85rem;margin-top:4px">Discipline that stuck</div></div>
+          </button>
+          <button class="xf-video-item" type="button" data-video="TESTIMONIALS/TESTOMONIAL%20VID%201.mp4">
+            <video muted loop playsinline preload="metadata" poster="deepak.png">
+              <source src="TESTIMONIALS/TESTOMONIAL%20VID%201.mp4" type="video/mp4" />
+            </video>
+            <div class="xf-video-shade"></div>
+            <div class="xf-play">▶</div>
+            <div class="xf-video-copy"><strong>From zero to fitness</strong><div style="color:rgba(255,255,255,0.7);font-size:0.85rem;margin-top:4px">Beginner breakthrough</div></div>
+          </button>
+        </div>
       </div>
     </section>
 
-    <section class="ts-cta">
-      <div class="page-shell">
-      <div>
-        <h2>Start Your Transformation</h2>
-        <p>Your story could be next. Take the first step today.</p>
-      </div>
-      <a class="primary-button" href="contact.html">Begin Your Journey</a>
+    <section class="xf-cta">
+      <div class="xf-cta-inner xf-reveal">
+        <span class="section-kicker">Fitness Gurukul</span>
+        <h2>Your turn on the timeline</h2>
+        <p>1:1 coaching, Indian nutrition, and doorstep sessions in Hyderabad — built around the body you have today.</p>
+        <div class="xf-hero-actions">
+          <a class="primary-button" href="book-consultation.html">Buy Now</a>
+          <a class="ghost-button" href="https://wa.me/917207113310" target="_blank" rel="noopener">Have questions? Chat now</a>
+        </div>
       </div>
     </section>
   </main>
 
-  <section class="fg-app-section reveal" style="padding-bottom:0">
-    <div class="page-shell" style="text-align:center">
-      <h2 style="font-size:1.6rem;margin-bottom:6px">Download the <em>App</em></h2>
-      <p style="color:var(--muted);margin-bottom:24px">Track workouts, book sessions, and stay connected — right from your phone.</p>
-      <div class="fg-app-stores">
-        <a class="fg-app-store-link" href="https://play.google.com/store/apps/details?id=com.fitnessgurukul.app" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.5 3.5v17l14-8.5z"/></svg>
-          <span class="fg-store-label">
-            <small>GET IT ON</small>
-            Google Play
-          </span>
-        </a>
-        <a class="fg-app-store-link" href="https://apps.apple.com/us/app/fitness-gurukul/id6771451272" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="2" width="16" height="20" rx="3"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
-          <span class="fg-store-label">
-            <small>DOWNLOAD ON</small>
-            App Store
-          </span>
-        </a>
-      </div>
-      <div class="footer-news-social" style="justify-content:center;margin-top:28px;padding-top:28px;border-top:1px solid rgba(255,255,255,0.06)">
-        <a href="https://www.instagram.com/fitnessgurukulofficial/" target="_blank" rel="noopener" aria-label="Instagram">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-        </a>
-        <a href="https://www.facebook.com/fitnessgurukul7/" target="_blank" rel="noopener" aria-label="Facebook">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-        </a>
-        <a href="https://www.youtube.com/channel/UCLt2Qs1MeV_uf_xMJ7AaPlA" target="_blank" rel="noopener" aria-label="YouTube">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-        </a>
-      </div>
-    </div>
-  </section>
+  <script>
+    (function() {
+      var stories = [
+        {
+          id: "udit",
+          name: "Udit",
+          filter: "recomp",
+          category: "Body recomposition",
+          image: "udit.png",
+          quote: "The coaching gave me the discipline and structure I never had. Every session was planned, every meal was guided.",
+          before: 88,
+          after: 74,
+          journey: [
+            { month: "Start", value: "88 kg" },
+            { month: "Month 2", value: "83 kg" },
+            { month: "Month 4", value: "79 kg" },
+            { month: "Month 6", value: "76 kg" },
+            { month: "Month 8", value: "74 kg" }
+          ]
+        },
+        {
+          id: "neha",
+          name: "Neha",
+          filter: "loss",
+          category: "Weight loss",
+          image: "neha.png",
+          video: "TESTIMONIALS/NEHA%20.mp4",
+          quote: "I struggled for years. Personalized training and nutrition coaching changed everything — I finally enjoyed fitness.",
+          before: 82,
+          after: 65,
+          journey: [
+            { month: "Start", value: "82 kg" },
+            { month: "Month 2", value: "77 kg" },
+            { month: "Month 4", value: "72 kg" },
+            { month: "Month 6", value: "68 kg" },
+            { month: "Month 7", value: "65 kg" }
+          ]
+        },
+        {
+          id: "ramakrishna",
+          name: "Ramakrishna",
+          filter: "strength",
+          category: "Strength return",
+          image: "ramakrishna.png",
+          quote: "At my age I thought getting back in shape was impossible. The training was tough but always safe.",
+          before: 88,
+          after: 74,
+          journey: [
+            { month: "Start", value: "88 kg" },
+            { month: "Month 2", value: "84 kg" },
+            { month: "Month 4", value: "79 kg" },
+            { month: "Month 6", value: "74 kg" }
+          ]
+        },
+        {
+          id: "deepak",
+          name: "Deepak",
+          filter: "loss",
+          category: "Lifestyle reset",
+          image: "deepak.png",
+          quote: "Low energy and bad habits became a structured routine. Six months later I am stronger and more confident than ever.",
+          before: 90,
+          after: 76,
+          journey: [
+            { month: "Start", value: "90 kg" },
+            { month: "Month 2", value: "85 kg" },
+            { month: "Month 4", value: "80 kg" },
+            { month: "Month 6", value: "76 kg" }
+          ]
+        }
+      ];
 
-    <footer class="site-footer footer-news">
-    <div class="footer-news-inner">
-      <div class="footer-news-proof">
-        <div class="footer-news-proof-item"><strong>50+</strong><span>Events</span></div>
-        <div class="footer-news-proof-item"><strong>10K+</strong><span>Participants</span></div>
-        <div class="footer-news-proof-item"><strong>13</strong><span>Years</span></div>
-      </div>
-      <div class="footer-news-main">
-        <div class="footer-news-brand">
-          <a class="brand" href="index.html">
-            <img src="assets/fitness-gurukul-logo.png" alt="Fitness Gurukul" />
-            <span class="brand-text"><strong>Fitness</strong><span>Gurukul</span></span>
-          </a>
-          <p class="footer-news-tagline">Personal training, made personal. Hyderabad's trusted fitness coaching since 2013.</p>
-          <div class="footer-news-contact">
-            <a href="tel:+917207113310">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-              +91 72071 13310
-            </a>
-            <a href="mailto:contact@fitnessgurukul.co.in">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-              contact@fitnessgurukul.co.in
-            </a>
-            <span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              Manikonda, Hyderabad
-            </span>
-          </div>
-        </div>
-        <div class="footer-news-links">
-          <div class="footer-news-col">
-            <h4>Discover</h4>
-            <nav>
-              <a href="about.html">About Us</a>
-              <a href="coaches.html">Our Coaches</a>
-              <a href="testimonials.html">Testimonials</a>
-            </nav>
-          </div>
-          <div class="footer-news-col">
-            <h4>Tools</h4>
-            <nav>
-              <a href="tools.html">BMI Calculator</a>
-              <a href="tools.html">BMR Calculator</a>
-              <a href="tools.html">Body Fat Calculator</a>
-              <a href="tools.html">Macro Calculator</a>
-            </nav>
-          </div>
-          <div class="footer-news-col">
-            <h4>Support</h4>
-            <nav>
-              <a href="contact.html">Contact Us</a>
-              <a href="about.html">FAQ</a>
-              <a href="book-consultation.html">Book a Call</a>
-            </nav>
-          </div>
-        </div>
-      </div>
-      <div class="footer-news-bottom">
-        <p class="footer-news-copy">&copy; 2026 Fitness Gurukul. All rights reserved.</p>
-        <div class="footer-news-social">
-          <a href="https://www.instagram.com/fitnessgurukulofficial/" target="_blank" rel="noopener" aria-label="Instagram">
-            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-          </a>
-          <a href="https://www.facebook.com/fitnessgurukul7/" target="_blank" rel="noopener" aria-label="Facebook">
-            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-          </a>
-          <a href="https://www.youtube.com/channel/UCLt2Qs1MeV_uf_xMJ7AaPlA" target="_blank" rel="noopener" aria-label="YouTube">
-            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-          </a>
-        </div>
-      </div>
-    </div>
-  </footer>
+      var activeFilter = "all";
+      var activeId = "udit";
+      var comparePos = 50;
 
-  <!-- footer injected by JS -->
-<script>
-function openStoryVideo(el) {
-  var src = el.getAttribute('data-video');
-  if (!src) return;
-  var o = document.createElement('div');
-  o.id = 'storyVideoOverlay';
-  o.style.cssText = 'position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity 0.3s';
-  o.innerHTML = '<div style="position:relative;width:80vw;max-width:900px;max-height:90vh"><button onclick="closeStoryVideo()" style="position:absolute;top:-40px;right:0;background:none;border:none;color:#fff;font-size:1.6rem;cursor:pointer;padding:4px 12px">&#10005;</button><video controls autoplay style="width:100%;display:block;border-radius:12px;background:#000;max-height:80vh"><source src="'+src+'" type="video/mp4"></video></div>';
-  document.body.appendChild(o);
-  document.body.style.overflow = 'hidden';
-  requestAnimationFrame(function(){o.style.opacity='1'});
-  o.addEventListener('click',function(e){if(e.target===o)closeStoryVideo()});
-}
-function closeStoryVideo() {
-  var o = document.getElementById('storyVideoOverlay');
-  if (!o) return;
-  o.style.opacity = '0';
-  document.body.style.overflow = '';
-  setTimeout(function(){if(o.parentNode)o.parentNode.removeChild(o)},350);
-}
-</script>
+      var peopleEl = document.getElementById("xfPeople");
+      var journeyEl = document.getElementById("xfJourney");
+      var beforeEl = document.getElementById("xfBefore");
+      var afterEl = document.getElementById("xfAfter");
+      var handleEl = document.getElementById("xfHandle");
+      var compareEl = document.getElementById("xfCompare");
+
+      function filtered() {
+        return stories.filter(function(s) { return activeFilter === "all" || s.filter === activeFilter; });
+      }
+
+      function animateNumber(el, to) {
+        var start = Number(el.textContent) || 0;
+        var target = Number(to) || 0;
+        var t0 = performance.now();
+        function tick(now) {
+          var p = Math.min(1, (now - t0) / 700);
+          var eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = String(Math.round(start + (target - start) * eased));
+          if (p < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      }
+
+      function setCompare(pct) {
+        comparePos = Math.max(5, Math.min(95, pct));
+        beforeEl.style.clipPath = "inset(0 " + (100 - comparePos) + "% 0 0)";
+        handleEl.style.left = comparePos + "%";
+      }
+
+      function renderPeople() {
+        var list = filtered();
+        if (!list.some(function(s) { return s.id === activeId; })) activeId = list[0].id;
+        peopleEl.innerHTML = list.map(function(s) {
+          return '<button class="xf-person' + (s.id === activeId ? ' active' : '') + '" type="button" data-id="' + s.id + '">' +
+            '<img src="' + s.image + '" alt="' + s.name + '" />' +
+            '<strong>' + s.name + '</strong><small>' + s.category + '</small></button>';
+        }).join("");
+        peopleEl.querySelectorAll(".xf-person").forEach(function(btn) {
+          btn.addEventListener("click", function() {
+            activeId = btn.getAttribute("data-id");
+            renderStory(true);
+            renderPeople();
+          });
+        });
+      }
+
+      function renderStory(animate) {
+        var story = stories.find(function(s) { return s.id === activeId; }) || stories[0];
+        document.getElementById("xfCategory").textContent = story.category;
+        document.getElementById("xfName").textContent = story.name;
+        document.getElementById("xfQuote").textContent = "“" + story.quote + "”";
+        beforeEl.style.backgroundImage = 'url("' + story.image + '")';
+        afterEl.style.backgroundImage = 'url("' + story.image + '")';
+        // Visual trick: after side slightly brighter/contrast via filter on after layer
+        afterEl.style.filter = "contrast(1.08) saturate(1.05)";
+        beforeEl.style.filter = "grayscale(0.25) brightness(0.85)";
+
+        if (animate) {
+          animateNumber(document.getElementById("xfBeforeKg"), story.before);
+          animateNumber(document.getElementById("xfAfterKg"), story.after);
+          animateNumber(document.getElementById("xfLostKg"), story.before - story.after);
+        } else {
+          document.getElementById("xfBeforeKg").textContent = story.before;
+          document.getElementById("xfAfterKg").textContent = story.after;
+          document.getElementById("xfLostKg").textContent = story.before - story.after;
+        }
+
+        journeyEl.innerHTML = story.journey.map(function(j) {
+          return '<div class="xf-journey-step"><span class="xf-journey-dot"></span><span>' + j.month + '</span><strong>' + j.value + '</strong></div>';
+        }).join("");
+        Array.prototype.forEach.call(journeyEl.children, function(step, i) {
+          setTimeout(function() { step.classList.add("is-on"); }, 80 + i * 90);
+        });
+
+        // Auto scrub once for intrigue
+        if (animate) {
+          var start = comparePos;
+          var goal = 72;
+          var t0 = performance.now();
+          function sweep(now) {
+            var p = Math.min(1, (now - t0) / 900);
+            var eased = 1 - Math.pow(1 - p, 3);
+            setCompare(start + (goal - start) * eased);
+            if (p < 1) requestAnimationFrame(sweep);
+          }
+          requestAnimationFrame(sweep);
+        }
+      }
+
+      // Compare drag
+      var dragging = false;
+      function pointerPct(e) {
+        var rect = compareEl.getBoundingClientRect();
+        var x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+        return (x / rect.width) * 100;
+      }
+      function onMove(e) {
+        if (!dragging) return;
+        e.preventDefault();
+        setCompare(pointerPct(e));
+      }
+      function stopDrag() { dragging = false; }
+      compareEl.addEventListener("pointerdown", function(e) {
+        dragging = true;
+        compareEl.setPointerCapture(e.pointerId);
+        setCompare(pointerPct(e));
+      });
+      compareEl.addEventListener("pointermove", onMove);
+      compareEl.addEventListener("pointerup", stopDrag);
+      compareEl.addEventListener("pointercancel", stopDrag);
+
+      document.getElementById("xfFilters").addEventListener("click", function(e) {
+        var btn = e.target.closest("button[data-filter]");
+        if (!btn) return;
+        activeFilter = btn.getAttribute("data-filter");
+        Array.prototype.forEach.call(document.querySelectorAll("#xfFilters button"), function(b) {
+          b.classList.toggle("active", b === btn);
+        });
+        renderPeople();
+        renderStory(true);
+      });
+
+      // Video rail
+      document.querySelectorAll(".xf-video-item").forEach(function(item) {
+        var vid = item.querySelector("video");
+        if (vid) {
+          item.addEventListener("mouseenter", function() { vid.play().catch(function(){}); });
+          item.addEventListener("mouseleave", function() { vid.pause(); vid.currentTime = 0; });
+        }
+        item.addEventListener("click", function() {
+          var src = item.getAttribute("data-video");
+          if (!src) return;
+          var o = document.createElement("div");
+          o.style.cssText = "position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;padding:24px;";
+          o.innerHTML = '<div style="position:relative;width:min(900px,92vw)"><button type="button" style="position:absolute;top:-42px;right:0;background:none;border:none;color:#fff;font-size:1.6rem;cursor:pointer">×</button><video controls autoplay style="width:100%;border-radius:10px;background:#000;max-height:80vh"><source src="' + src + '" type="video/mp4"></video></div>';
+          document.body.appendChild(o);
+          document.body.style.overflow = "hidden";
+          function close() {
+            document.body.style.overflow = "";
+            if (o.parentNode) o.parentNode.removeChild(o);
+          }
+          o.querySelector("button").addEventListener("click", close);
+          o.addEventListener("click", function(ev) { if (ev.target === o) close(); });
+        });
+      });
+
+      // Reveals
+      if ("IntersectionObserver" in window) {
+        var io = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              io.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12 });
+        document.querySelectorAll(".xf-reveal").forEach(function(el) { io.observe(el); });
+      } else {
+        document.querySelectorAll(".xf-reveal").forEach(function(el) { el.classList.add("visible"); });
+      }
+
+      renderPeople();
+      setCompare(48);
+      renderStory(true);
+    })();
+  </script>
 </body>
 </html>

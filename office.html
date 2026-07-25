@@ -284,7 +284,7 @@
         const note = document.getElementById("infoNote");
         if (info.mode === "local-default" && info.localDefaultPassword) {
           hint.classList.remove("hidden");
-          hint.innerHTML = "Local mode detected. Unlocking with <code>" + esc(info.localDefaultPassword) + "</code>… Owner portal: <a href='/me' style='color:inherit'>/me</a>.";
+          hint.innerHTML = "Local mode detected. Unlocking with <code>" + esc(info.localDefaultPassword) + "</code>… Main backend file: <a href='backend.html' style='color:inherit'>backend.html</a>.";
           const input = document.getElementById("tokenInput");
           if (!input.value) input.value = info.localDefaultPassword;
           if (!getToken()) {

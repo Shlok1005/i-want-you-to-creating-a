@@ -863,12 +863,15 @@ class AppHandler(SimpleHTTPRequestHandler):
         path = urlparse(self.path).path
         # Two interfaces:
         # - User website: /, index.html, public pages
-        # - Owner portal: /me, /owner, /dashboard
-        if path in {"/me", "/owner", "/dashboard", "/leads"}:
-            self.path = "/dashboard.html"
+        # - Owner backend page in project root: backend.html
+        if path in {"/backend", "/me", "/owner", "/dashboard", "/leads", "/staff"}:
+            self.path = "/backend.html"
             path = self.path
-        elif path in {"/backend", "/office", "/admin", "/staff"}:
+        elif path == "/office":
             self.path = "/office.html"
+            path = self.path
+        elif path == "/admin":
+            self.path = "/admin.html"
             path = self.path
 
         if path.startswith("/api/"):
@@ -890,13 +893,13 @@ class AppHandler(SimpleHTTPRequestHandler):
                 return self.send_json({
                     "ok": True,
                     "backendUrl": "/backend",
-                    "dashboardUrl": "/me",
-                    "ownerUrl": "/me",
+                    "dashboardUrl": "/backend",
+                    "ownerUrl": "/backend",
                     "userUrl": "/",
                     "adminConfigured": bool(admin_token()),
                     "mode": mode,
                     "localDefaultPassword": LOCAL_DEFAULT_PASSWORD if mode == "local-default" else "",
-                    "openUrl": f"http://{host_hdr}/me",
+                    "openUrl": f"http://{host_hdr}/backend",
                     "hint": (
                         f"Local default password: {LOCAL_DEFAULT_PASSWORD}"
                         if mode == "local-default"
@@ -1109,11 +1112,11 @@ if __name__ == "__main__":
     print(" Fitness Gurukul")
     print("=" * 56)
     print(f" USER WEBSITE:  http://127.0.0.1:{port}/")
-    print(f" OWNER PORTAL:  http://127.0.0.1:{port}/me")
+    print(f" OWNER BACKEND: http://127.0.0.1:{port}/backend.html")
     print(f" FULL BACKEND:  http://127.0.0.1:{port}/backend")
     if cred_mode == "local-default":
         print(" Owner password (local default): fitnessgurukul")
-        print(" Tip: /me unlocks automatically on this computer.")
+        print(" Tip: open backend.html — unlocks automatically on this computer.")
     elif cred_mode == "generated":
         print(f" Owner password (generated): {admin_token()}")
         print(" Tip: add ADMIN_TOKEN to .env so it stays the same next restart.")
@@ -1125,7 +1128,7 @@ if __name__ == "__main__":
         except OSError:
             local_ip = "YOUR-LAPTOP-IP"
         print(f" LAN user site: http://{local_ip}:{port}/")
-        print(f" LAN owner portal: http://{local_ip}:{port}/me")
+        print(f" LAN owner backend: http://{local_ip}:{port}/backend.html")
     else:
         print(" Bound to localhost only. Set HOST=0.0.0.0 to share on Wi-Fi.")
     print("=" * 56)

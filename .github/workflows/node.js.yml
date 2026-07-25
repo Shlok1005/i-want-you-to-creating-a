@@ -40,9 +40,7 @@ jobs:
         curl -sf http://127.0.0.1:8000/api/backend-info | grep -q '"ownerUrl"'
         code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/backend)
         test "$code" = "200"
-        code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/me)
-        test "$code" = "200"
-        curl -sf http://127.0.0.1:8000/me | grep -q 'Owner interface'
+        curl -sf http://127.0.0.1:8000/backend.html | grep -q 'Main backend'
         # User website main nav should not include owner dashboard
         if curl -sf http://127.0.0.1:8000/ | grep -q 'href="dashboard.html">Dashboard'; then
           echo "Public homepage still exposes Dashboard in nav" >&2

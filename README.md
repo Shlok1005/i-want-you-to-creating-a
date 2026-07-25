@@ -7,7 +7,7 @@ Multi-page Fitness Gurukul website with a responsive frontend, **Python** backen
 - Frontend: HTML pages at the repo root (`index.html`, `services.html`, …) plus `styles.css` and `app.js`
 - Backend: dependency-free Python HTTP API in `server.py` (port **8000**)
 - Database: SQLite file created automatically as `fitness_gurukul.sqlite3` (gitignored)
-- Two interfaces: user website (`/`) and owner portal (`/me`) — plus full backend at `/backend`
+- Two interfaces: user website (`/`) and owner portal (`/backend.html` / `backend.html`) — plus full backend at `/backend`
 
 The old Node/Express server is deprecated. Use Python only.
 
@@ -73,7 +73,7 @@ Public pages only: home, services, coaches, booking forms. No owner tools in the
 **2) Owner portal** (you):
 
 ```text
-http://127.0.0.1:8000/me
+http://127.0.0.1:8000/backend.html
 ```
 
 Your private DB dashboard for leads. On your computer it usually unlocks automatically.
@@ -83,7 +83,7 @@ Full advanced tools: `/backend` (aliases: `/office`, `/admin`, `/staff`)
 
 Local defaults:
 - If you copy `.env.example`, password is `fitnessgurukul`
-- If no password is set and the server is on localhost, it also defaults to `fitnessgurukul` and auto-unlocks `/me`
+- If no password is set and the server is on localhost, it also defaults to `fitnessgurukul` and auto-unlocks `/backend.html` / `backend.html`
 
 The public footer keeps a small **Owner login** link; it is not in the customer navigation.
 
@@ -120,7 +120,7 @@ PORT=8000
 - `testimonials.html` — client stories
 - `tools.html` — fitness calculators
 - `contact.html` / `book-consultation.html` — lead forms
-- `dashboard.html` via `/me` — owner portal (your DB interface)
+- `dashboard.html` via `/backend.html` / `backend.html` — owner portal (your DB interface)
 - `office.html` via `/backend` — full advanced backend tools
 - `owner-data.html` — optional protected SQLite viewer
 
