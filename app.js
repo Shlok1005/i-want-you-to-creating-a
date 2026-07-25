@@ -1826,19 +1826,34 @@ function openBookModal(coachName) {
 
 async function submitFormPayload(payload, formEl) {
   var body = Object.assign({ form_type: payload.form_type || "consultation" }, payload || {});
+  var remote = getApiBase();
+  var endpoint = apiUrl("/api/submit");
   try {
-    var res = await fetch(apiUrl("/api/submit"), {
+    var res = await fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
     var data = {};
     try { data = await res.json(); } catch (err) { data = {}; }
-    if (res.ok && (data.ok || data.success)) return data;
+    if (res.ok && (data.ok || data.success)) {
+      data.savedToBackend = true;
+      data.apiEndpoint = endpoint;
+      return data;
+    }
     if (res.status === 404 || res.status >= 500) throw new Error("backend-unreachable");
     throw new Error(data.error || "Submit failed");
   } catch (err) {
+    // When a cloud API is configured, never divert leads elsewhere —
+    // they must land in the owner SQLite backend.
+    if (remote) {
+      throw new Error(
+        "Could not save to your backend API (" + remote + "). " +
+        "Check that the Render/Railway/Fly service is awake, then try again."
+      );
+    }
     if (!formEl) throw err;
+    // Local/dev only emergency fallback when no cloud API is configured.
     var fd = new FormData(formEl);
     Object.keys(body).forEach(function(key) {
       if (!fd.has(key) && body[key] != null) fd.append(key, body[key]);
@@ -1850,7 +1865,7 @@ async function submitFormPayload(payload, formEl) {
     });
     var fallbackData = {};
     try { fallbackData = await fallback.json(); } catch (e2) { fallbackData = {}; }
-    if (fallback.ok || fallbackData.ok || fallbackData.success) return { ok: true };
+    if (fallback.ok || fallbackData.ok || fallbackData.success) return { ok: true, savedToBackend: false };
     throw err;
   }
 }
@@ -1868,9 +1883,12 @@ function bindFormSubmit(form, statusEl, successMessage) {
       status.style.color = "rgba(255,255,255,0.6)";
     }
     submitFormPayload(payload, form)
-      .then(function() {
+      .then(function(result) {
         if (status) {
-          status.textContent = successMessage || "\u2705 Thank you! We\u2019ll be in touch shortly.";
+          var saved = result && result.savedToBackend;
+          status.textContent = successMessage || (saved
+            ? "\u2705 Saved to owner backend. We\u2019ll be in touch shortly."
+            : "\u2705 Thank you! We\u2019ll be in touch shortly.");
           status.style.color = "#4ade80";
         }
         var coachValue = form.querySelector('input[name="coach"]');

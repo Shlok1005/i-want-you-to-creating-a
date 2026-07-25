@@ -160,11 +160,18 @@ window.FG_API_BASE = "https://fitness-gurukul-api.onrender.com";
 
 Leave it as `""` only when the site and API are on the same origin (local `server.py`).
 
+**This one setting is what keeps leads in your backend:**
+- Website forms → `POST {FG_API_BASE}/api/submit` → SQLite on the cloud API
+- Challenge joins → `POST {FG_API_BASE}/api/challenge-join` → same SQLite
+- Owner page `backend.html` → `GET {FG_API_BASE}/api/admin-data` → same SQLite
+
+So Hostinger only hosts the pages; the cloud API owns the database.
+
 ### C) Redeploy Hostinger
 
 Pull/upload the latest `main` (includes `config.js`) and make sure your edited API URL is live.
 
-Then forms, quiz, live stats, chat, and `backend.html` keep working with your laptop off.
+Then forms, quiz, live stats, chat, and `backend.html` keep working with your laptop off. Open `https://yoursite.com/backend.html` and unlock with the same `ADMIN_TOKEN` from Render/Railway/Fly — new leads appear there.
 
 **Notes**
 - Free Render apps may sleep after idle; first request can take ~30s to wake.

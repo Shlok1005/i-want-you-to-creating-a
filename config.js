@@ -1,12 +1,19 @@
 /**
  * Fitness Gurukul — API endpoint config
  *
- * Hostinger (static site) + cloud API (Render / Railway / Fly.io):
- *   1. Deploy server.py to Render/Railway/Fly
- *   2. Paste the public HTTPS URL below
- *   3. Re-upload/redeploy this config.js with your Hostinger site
+ * IMPORTANT: This URL is where ALL form leads are saved, and where
+ * backend.html reads them from. Website on Hostinger + API in the cloud
+ * share the same database through this setting.
  *
- * Leave empty ("") for same-origin / local python server.py.
+ * Steps:
+ *   1. Deploy server.py to Render / Railway / Fly.io
+ *   2. Paste the public HTTPS URL below (no trailing slash)
+ *   3. Redeploy/upload this file to Hostinger
+ *
+ * Example:
+ *   window.FG_API_BASE = "https://fitness-gurukul-api.onrender.com";
+ *
+ * Leave "" only for local same-origin python server.py.
  */
 window.FG_API_BASE = window.FG_API_BASE || "";
 

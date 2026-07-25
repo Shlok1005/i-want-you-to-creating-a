@@ -295,7 +295,10 @@
         rows = json.submissions || [];
         renderStats();
         renderTable();
-        qs("syncNote").textContent = "Owner DB sync · " + rows.length + " leads · updated " + new Date().toLocaleTimeString("en-IN");
+        var apiBase = (window.FG_API_BASE || "").replace(/\/$/, "") || window.location.origin;
+        qs("syncNote").textContent =
+          "Owner DB sync · " + rows.length + " leads · " +
+          apiBase + " · updated " + new Date().toLocaleTimeString("en-IN");
       }
 
       function filteredRows() {
@@ -407,11 +410,23 @@
       qs("statusFilter").addEventListener("change", renderTable);
 
       async function bootOwner() {
+        var apiBase = (window.FG_API_BASE || "").replace(/\/$/, "");
+        var hint = qs("localHint");
+        if (apiBase) {
+          hint.classList.remove("hidden");
+          hint.innerHTML = "Leads from the website save into this cloud API:<br><code>" + esc(apiBase) + "</code><br>Use the same <code>ADMIN_TOKEN</code> you set on Render/Railway/Fly.";
+        } else if (!/^(localhost|127\.0\.0\.1)$/i.test(location.hostname)) {
+          hint.classList.remove("hidden");
+          hint.style.background = "rgba(251,191,36,0.08)";
+          hint.style.borderColor = "rgba(251,191,36,0.28)";
+          hint.style.color = "#fde68a";
+          hint.innerHTML = "No cloud API URL set. Edit <code>config.js</code> and set <code>window.FG_API_BASE</code> to your Render/Railway/Fly URL so website leads appear here.";
+        }
         var info = null;
         try { info = await fetch((window.fgApiUrl?window.fgApiUrl("/api/backend-info"):"/api/backend-info")).then(function(r) { return r.json(); }); } catch (e) {}
         if (info && info.mode === "local-default" && info.localDefaultPassword) {
-          qs("localHint").classList.remove("hidden");
-          qs("localHint").innerHTML = "This is your computer — opening backend.html with <code>" + esc(info.localDefaultPassword) + "</code>…";
+          hint.classList.remove("hidden");
+          hint.innerHTML = "This is your computer — opening backend.html with <code>" + esc(info.localDefaultPassword) + "</code>…";
           qs("tokenInput").value = info.localDefaultPassword;
           await unlock(info.localDefaultPassword);
           return;
