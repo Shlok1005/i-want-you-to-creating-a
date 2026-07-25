@@ -1716,6 +1716,7 @@ function injectBookModal() {
         '<p class="book-modal-coach-name" id="bookModalCoachName"></p>' +
       '</div>' +
       '<form class="book-modal-frm" id="bookModalForm">' +
+        '<input type="hidden" name="form_type" value="consultation" />' +
         '<input type="hidden" name="coach" id="bookModalCoachInput" />' +
         '<div class="book-frm-row">' +
           '<label>Your Name<input name="name" autocomplete="name" required placeholder="e.g. Rahul Sharma" /></label>' +
@@ -1825,50 +1826,95 @@ function openBookModal(coachName) {
   document.body.style.overflow = "hidden";
 }
 
+function buildWhatsAppLeadUrl(payload) {
+  if (typeof window !== "undefined" && typeof window.fgWhatsAppLeadUrl === "function") {
+    return window.fgWhatsAppLeadUrl(payload);
+  }
+  return "https://wa.me/917207113310";
+}
+
+function submitEndpointCandidates() {
+  if (typeof window !== "undefined" && typeof window.fgApiCandidates === "function") {
+    return window.fgApiCandidates("/api/submit");
+  }
+  var list = [apiUrl("/api/submit")];
+  if (!getApiBase()) list.push("/api/submit.php");
+  return list;
+}
+
+function rememberPendingLead(body) {
+  try {
+    var key = "fg_pending_leads";
+    var pending = JSON.parse(localStorage.getItem(key) || "[]");
+    if (!Array.isArray(pending)) pending = [];
+    pending.unshift(Object.assign({ savedAt: Date.now() }, body));
+    localStorage.setItem(key, JSON.stringify(pending.slice(0, 40)));
+  } catch (e) {}
+}
+
+async function postJsonCandidate(url, body) {
+  var res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify(body),
+  });
+  var data = {};
+  try { data = await res.json(); } catch (err) { data = {}; }
+  return { res: res, data: data, url: url };
+}
+
 async function submitFormPayload(payload, formEl) {
   var body = Object.assign({ form_type: payload.form_type || "consultation" }, payload || {});
+  // Corporate forms use contact_name; normalize for APIs that expect name.
+  if (!body.name && body.contact_name) body.name = body.contact_name;
   var remote = getApiBase();
-  var endpoint = apiUrl("/api/submit");
-  try {
-    var res = await fetch(endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    var data = {};
-    try { data = await res.json(); } catch (err) { data = {}; }
-    if (res.ok && (data.ok || data.success)) {
-      data.savedToBackend = true;
-      data.apiEndpoint = endpoint;
-      return data;
+  var candidates = submitEndpointCandidates();
+  var lastError = null;
+  var validationError = null;
+
+  for (var i = 0; i < candidates.length; i++) {
+    var endpoint = candidates[i];
+    try {
+      var result = await postJsonCandidate(endpoint, body);
+      if (result.res.ok && (result.data.ok || result.data.success)) {
+        result.data.savedToBackend = true;
+        result.data.apiEndpoint = endpoint;
+        return result.data;
+      }
+      if (result.res.status === 400 && result.data && result.data.error) {
+        validationError = new Error(result.data.error + (result.data.fields ? (" (" + result.data.fields.join(", ") + ")") : ""));
+        // Validation failed on a live API — don't keep hopping endpoints.
+        if (result.res.headers.get("content-type") && String(result.res.headers.get("content-type")).indexOf("json") !== -1) {
+          throw validationError;
+        }
+      }
+      lastError = new Error(result.data.error || ("Submit failed (" + result.res.status + ")"));
+    } catch (err) {
+      if (err === validationError) throw err;
+      lastError = err;
     }
-    if (res.status === 404 || res.status >= 500) throw new Error("backend-unreachable");
-    throw new Error(data.error || "Submit failed");
-  } catch (err) {
-    // When a cloud API is configured, never divert leads elsewhere —
-    // they must land in the owner SQLite backend.
-    if (remote) {
-      throw new Error(
-        "Could not save to your backend API (" + remote + "). " +
-        "Check that the Render/Railway/Fly service is awake, then try again."
-      );
-    }
-    if (!formEl) throw err;
-    // Local/dev only emergency fallback when no cloud API is configured.
-    var fd = new FormData(formEl);
-    Object.keys(body).forEach(function(key) {
-      if (!fd.has(key) && body[key] != null) fd.append(key, body[key]);
-    });
-    var fallback = await fetch("https://formspree.io/f/mgejdqzj", {
-      method: "POST",
-      body: fd,
-      headers: { Accept: "application/json" },
-    });
-    var fallbackData = {};
-    try { fallbackData = await fallback.json(); } catch (e2) { fallbackData = {}; }
-    if (fallback.ok || fallbackData.ok || fallbackData.success) return { ok: true, savedToBackend: false };
-    throw err;
   }
+
+  // Guaranteed customer path: never leave the visitor with a dead form.
+  var waUrl = buildWhatsAppLeadUrl(body);
+  rememberPendingLead(body);
+  if (remote) {
+    return {
+      ok: true,
+      savedToBackend: false,
+      whatsappFallback: true,
+      whatsappUrl: waUrl,
+      warning: "Cloud API unreachable (" + remote + "). Send this lead on WhatsApp so we do not lose it.",
+    };
+  }
+  return {
+    ok: true,
+    savedToBackend: false,
+    whatsappFallback: true,
+    whatsappUrl: waUrl,
+    warning: "Could not reach the website database. Send this lead on WhatsApp so our team still gets it.",
+    cause: lastError ? String(lastError.message || lastError) : "",
+  };
 }
 
 function bindFormSubmit(form, statusEl, successMessage) {
@@ -1879,6 +1925,8 @@ function bindFormSubmit(form, statusEl, successMessage) {
     e.stopImmediatePropagation();
     var status = statusEl || form.querySelector(".form-status, .book-frm-status, .cp-consult-status, .coach-frm-status, .mg-corp-form-status, #leadStatus, #bookFormStatus, #corpFormStatus, #consultPageStatus");
     var payload = Object.fromEntries(new FormData(form).entries());
+    var submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
     if (status) {
       status.textContent = "Sending\u2026";
       status.style.color = "rgba(255,255,255,0.6)";
@@ -1886,22 +1934,39 @@ function bindFormSubmit(form, statusEl, successMessage) {
     submitFormPayload(payload, form)
       .then(function(result) {
         if (status) {
-          var saved = result && result.savedToBackend;
-          status.textContent = successMessage || (saved
-            ? "\u2705 Saved to owner backend. We\u2019ll be in touch shortly."
-            : "\u2705 Thank you! We\u2019ll be in touch shortly.");
-          status.style.color = "#4ade80";
+          if (result && result.whatsappFallback && result.whatsappUrl) {
+            status.innerHTML =
+              "\u26a0\ufe0f " + (result.warning || "Could not save to the database.") +
+              ' <a href="' + result.whatsappUrl + '" target="_blank" rel="noopener" style="color:#4ade80;text-decoration:underline">Send on WhatsApp instead</a>';
+            status.style.color = "#fbbf24";
+            try { window.open(result.whatsappUrl, "_blank", "noopener"); } catch (err) {}
+          } else {
+            var saved = result && result.savedToBackend;
+            status.textContent = successMessage || (saved
+              ? "\u2705 Saved. We\u2019ll be in touch shortly."
+              : "\u2705 Thank you! We\u2019ll be in touch shortly.");
+            status.style.color = "#4ade80";
+          }
         }
         var coachValue = form.querySelector('input[name="coach"]');
         var keptCoach = coachValue ? coachValue.value : "";
-        form.reset();
-        if (coachValue && keptCoach) coachValue.value = keptCoach;
+        if (!(result && result.whatsappFallback)) {
+          form.reset();
+          if (coachValue && keptCoach) coachValue.value = keptCoach;
+        }
       })
-      .catch(function() {
+      .catch(function(err) {
         if (status) {
-          status.textContent = "\u26a0\ufe0f Something went wrong. Please try again.";
+          var wa = buildWhatsAppLeadUrl(payload);
+          status.innerHTML =
+            "\u26a0\ufe0f Something went wrong. Please try again or " +
+            '<a href="' + wa + '" target="_blank" rel="noopener" style="color:#4ade80;text-decoration:underline">message us on WhatsApp</a>.' +
+            (err && err.message ? " <span style='opacity:.7'>(" + safe(err.message) + ")</span>" : "");
           status.style.color = "#dc3545";
         }
+      })
+      .finally(function() {
+        if (submitBtn) submitBtn.disabled = false;
       });
   });
 }
@@ -1953,19 +2018,30 @@ function wireCoachPopups() {
       status.style.color = "rgba(255,255,255,0.6)";
     }
     submitFormPayload(payload, frm)
-      .then(function() {
+      .then(function(result) {
         if (status) {
-          status.textContent = "\u2705 Thank you! We\u2019ll be in touch shortly.";
-          status.style.color = "#4ade80";
+          if (result && result.whatsappFallback && result.whatsappUrl) {
+            status.innerHTML =
+              "\u26a0\ufe0f Could not save to database. " +
+              '<a href="' + result.whatsappUrl + '" target="_blank" rel="noopener" style="color:#4ade80;text-decoration:underline">Send on WhatsApp</a>';
+            status.style.color = "#fbbf24";
+            try { window.open(result.whatsappUrl, "_blank", "noopener"); } catch (err) {}
+          } else {
+            status.textContent = "\u2705 Thank you! We\u2019ll be in touch shortly.";
+            status.style.color = "#4ade80";
+            var coachInput = frm.querySelector('input[name="coach"]');
+            var kept = coachInput ? coachInput.value : "";
+            frm.reset();
+            if (coachInput && kept) coachInput.value = kept;
+          }
         }
-        var coachInput = frm.querySelector('input[name="coach"]');
-        var kept = coachInput ? coachInput.value : "";
-        frm.reset();
-        if (coachInput && kept) coachInput.value = kept;
       })
-      .catch(function() {
+      .catch(function(err) {
         if (status) {
-          status.textContent = "\u26a0\ufe0f Something went wrong. Please try again.";
+          var wa = buildWhatsAppLeadUrl(payload);
+          status.innerHTML =
+            "\u26a0\ufe0f Something went wrong. Please try again or " +
+            '<a href="' + wa + '" target="_blank" rel="noopener" style="color:#4ade80;text-decoration:underline">message us on WhatsApp</a>.';
           status.style.color = "#dc3545";
         }
       });

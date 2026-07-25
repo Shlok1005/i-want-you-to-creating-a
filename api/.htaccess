@@ -1,0 +1,5 @@
+# Allow PHP API endpoints on Hostinger shared hosting.
+Options -Indexes
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+</IfModule>

@@ -110,11 +110,23 @@ PORT=8000
 - Without `OPENAI_API_KEY`, the chat widget answers from local website facts.
 - Change `ADMIN_TOKEN` (or `ADMIN_PASSWORD`) before sharing the server beyond your machine.
 
+## Deploy: Hostinger forms (works without Render)
+
+Hostinger shared hosting can save leads with the PHP endpoints in `/api/`:
+
+- Forms POST → `/api/submit.php` → `api/data/submissions.json`
+- Challenge joins → `/api/challenge-join.php`
+- Owner page → `/api/admin-data.php` (password from `api/config.php`, default `fitnessgurukul`)
+
+Keep `config.js` as `window.FG_API_BASE = ""` for this mode. Change the password in `api/config.php` after first login.
+
+If PHP is unavailable, forms fall back to a prefilled WhatsApp message so leads are never silently lost.
+
 ## Deploy: Hostinger site + always-on API (Render / Railway / Fly)
 
-Your laptop does **not** need to stay on. Recommended setup:
+Optional upgrade if you want SQLite + AI chat on a cloud API:
 
-1. **Website files** on Hostinger (static HTML/CSS/JS)
+1. **Website files** on Hostinger (HTML/CSS/JS + `/api/*.php`)
 2. **Python API** (`server.py`) on Render, Railway, or Fly.io (always online)
 
 ### A) Deploy the API (pick one)

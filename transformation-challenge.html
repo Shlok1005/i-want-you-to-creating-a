@@ -1000,22 +1000,42 @@
           var status = $("tcJoinStatus");
           status.textContent = "Saving to database…";
           var payload = Object.fromEntries(new FormData($("tcJoinForm")).entries());
-          try {
-            var res = await fetch((window.fgApiUrl ? window.fgApiUrl("/api/challenge-join") : "/api/challenge-join"), {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(payload)
-            });
-            var data = await res.json();
-            if (!res.ok || !data.ok) throw new Error("join failed");
-            status.textContent = data.message || "You are in.";
-            if (data.stats && data.stats.totalJoined != null) {
-              animateCount($("tcJoined"), data.stats.totalJoined);
-            }
-            loadChallenges();
-            loadLive();
-          } catch (err) {
-            status.textContent = "Could not join right now. Check your details and try again.";
+          var candidates = (window.fgApiCandidates
+            ? window.fgApiCandidates("/api/challenge-join")
+            : [(window.fgApiUrl ? window.fgApiUrl("/api/challenge-join") : "/api/challenge-join"), "/api/challenge-join.php"]);
+          var saved = false;
+          for (var i = 0; i < candidates.length; i++) {
+            try {
+              var res = await fetch(candidates[i], {
+                method: "POST",
+                headers: { "Content-Type": "application/json", Accept: "application/json" },
+                body: JSON.stringify(payload)
+              });
+              var data = await res.json().catch(function () { return {}; });
+              if (!res.ok || !data.ok) continue;
+              status.textContent = data.message || "You are in.";
+              if (data.stats && data.stats.totalJoined != null) {
+                animateCount($("tcJoined"), data.stats.totalJoined);
+              }
+              loadChallenges();
+              loadLive();
+              saved = true;
+              break;
+            } catch (err) {}
+          }
+          if (!saved) {
+            var waPayload = {
+              form_type: "challenge-join",
+              name: payload.name,
+              phone: payload.phone,
+              email: payload.email,
+              program: payload.challengeId || "Transformation Challenge",
+              goal: "transformation",
+              message: "Challenge join request"
+            };
+            var wa = window.fgWhatsAppLeadUrl ? window.fgWhatsAppLeadUrl(waPayload) : "https://wa.me/917207113310";
+            status.innerHTML = 'Could not save online. <a href="' + wa + '" target="_blank" rel="noopener" style="color:#4ade80;text-decoration:underline">Send join request on WhatsApp</a>';
+            try { window.open(wa, "_blank", "noopener"); } catch (err2) {}
           }
         });
 
