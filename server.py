@@ -1176,8 +1176,12 @@ class AppHandler(SimpleHTTPRequestHandler):
                     calculations = conn.execute("SELECT * FROM calculator_results ORDER BY created_at DESC LIMIT 100").fetchall()
                     chat_messages = conn.execute("SELECT * FROM chat_messages ORDER BY created_at DESC LIMIT 100").fetchall()
                     submissions = conn.execute("SELECT * FROM submissions ORDER BY created_at DESC LIMIT 300").fetchall()
+                    submission_count = conn.execute("SELECT COUNT(*) AS c FROM submissions").fetchone()["c"]
                 return self.send_json({
                     "ok": True,
+                    "database": str(DB_PATH.name),
+                    "submissionCount": submission_count,
+                    "viewer": "backend.html",
                     "leads": [dict(r) for r in leads],
                     "checkins": [dict(r) for r in checkins],
                     "newsletter": [dict(r) for r in newsletter],

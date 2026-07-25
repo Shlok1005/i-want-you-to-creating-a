@@ -131,8 +131,8 @@
   <main class="wrap">
     <div class="split">
       <section class="card">
-        <h1>Two interfaces</h1>
-        <p class="muted">This is your main backend page in the project folder (<code>backend.html</code>). Customers use the public website to browse and submit forms. Their data lands here in SQLite.</p>
+        <h1>Your database lives here</h1>
+        <p class="muted"><code>backend.html</code> is the owner view of the live SQLite database. Every booking, contact, challenge join, and event RSVP from the website is saved by the API and shown in the table below.</p>
         <div class="iface" style="margin-top:16px">
           <a href="/">
             <div>
@@ -181,7 +181,7 @@
         <div class="stat"><span>Total leads</span><strong id="statTotal">0</strong></div>
         <div class="stat"><span>New</span><strong id="statNew">0</strong></div>
         <div class="stat"><span>Last 24h</span><strong id="statToday">0</strong></div>
-        <div class="stat"><span>Corporate</span><strong id="statCorp">0</strong></div>
+        <div class="stat"><span>Challenges</span><strong id="statChallenge">0</strong></div>
       </div>
 
       <section class="card">
@@ -189,14 +189,23 @@
           <div>
             <h2>Live leads from the database</h2>
             <p class="muted" id="syncNote">Waiting for database…</p>
+            <p class="muted" id="dbSourceNote" style="margin-top:6px"></p>
           </div>
           <div class="top-actions">
             <button type="button" id="refreshBtn">Refresh</button>
+            <button type="button" id="testLeadBtn" class="primary">Add test lead</button>
             <button type="button" id="exportBtn">Export CSV</button>
           </div>
         </div>
         <div class="toolbar">
           <input id="searchInput" type="search" placeholder="Search name, phone, email, goal…" />
+          <select id="typeFilter">
+            <option value="all">All form types</option>
+            <option value="consultation">Consultation / booking</option>
+            <option value="challenge-join">Challenge joins</option>
+            <option value="event_rsvp">Event RSVP</option>
+            <option value="corporate_event">Corporate events</option>
+          </select>
           <select id="statusFilter">
             <option value="all">All statuses</option>
             <option value="new">New</option>
@@ -219,7 +228,7 @@
             </thead>
             <tbody id="tableBody"></tbody>
           </table>
-          <div class="muted hidden" id="emptyState" style="padding:36px;text-align:center">No leads yet. Submit a form on the user website and it will appear here.</div>
+          <div class="muted hidden" id="emptyState" style="padding:36px;text-align:center">No leads yet. Submit a booking/contact/challenge form on the website, or click <strong>Add test lead</strong> — it will appear in this table from the same database.</div>
         </div>
       </section>
     </div>
@@ -296,16 +305,35 @@
         renderStats();
         renderTable();
         var apiBase = (window.FG_API_BASE || "").replace(/\/$/, "") || window.location.origin;
+        var total = json.submissionCount != null ? json.submissionCount : rows.length;
         qs("syncNote").textContent =
-          "Owner DB sync · " + rows.length + " leads · " +
-          apiBase + " · updated " + new Date().toLocaleTimeString("en-IN");
+          "Owner DB sync · " + total + " leads in SQLite · updated " +
+          new Date().toLocaleTimeString("en-IN");
+        var src = qs("dbSourceNote");
+        if (src) {
+          src.innerHTML =
+            "Database: <code>" + esc(json.database || "fitness_gurukul.sqlite3") + "</code> via <code>" + esc(apiBase) + "</code><br>" +
+            "Website forms write here. <code>backend.html</code> reads the same records.";
+        }
+      }
+
+      function typeLabel(formType) {
+        var map = {
+          consultation: "Consultation",
+          "challenge-join": "Challenge",
+          event_rsvp: "Event RSVP",
+          corporate_event: "Corporate"
+        };
+        return map[formType] || (formType || "Lead");
       }
 
       function filteredRows() {
         var q = qs("searchInput").value.trim().toLowerCase();
         var status = qs("statusFilter").value;
+        var type = qs("typeFilter") ? qs("typeFilter").value : "all";
         return rows.filter(function(row) {
           if (status !== "all" && (row.status || "new") !== status) return false;
+          if (type !== "all" && (row.form_type || "consultation") !== type) return false;
           if (!q) return true;
           return JSON.stringify(row).toLowerCase().indexOf(q) !== -1;
         });
@@ -316,7 +344,9 @@
         qs("statTotal").textContent = rows.length;
         qs("statNew").textContent = rows.filter(function(r) { return (r.status || "new") === "new"; }).length;
         qs("statToday").textContent = rows.filter(function(r) { return (r.created_at || 0) >= now - 86400; }).length;
-        qs("statCorp").textContent = rows.filter(function(r) { return r.form_type === "corporate_event"; }).length;
+        qs("statChallenge").textContent = rows.filter(function(r) {
+          return r.form_type === "challenge-join" || r.form_type === "event_rsvp";
+        }).length;
       }
 
       function renderTable() {
@@ -329,10 +359,11 @@
           var details = isCorp
             ? esc(r.company || "—") + "<div class='meta'>" + esc(r.event_type || "") + " · " + esc(r.attendees || "") + "</div>"
             : esc(r.program || "—") + "<div class='meta'>Goal: " + esc(r.goal || "—") + "</div>";
+          if (r.message) details += "<div class='meta'>" + esc(r.message) + "</div>";
           var phone = String(r.phone || "").replace(/[^\d+]/g, "");
           var wa = phone.replace(/^\+/, "");
           return "<tr>" +
-            "<td><div class='name'>" + esc(r.name) + "</div><span class='badge'>" + esc(isCorp ? "Corporate" : "Consultation") + "</span></td>" +
+            "<td><div class='name'>" + esc(r.name) + "</div><span class='badge'>" + esc(typeLabel(r.form_type)) + "</span></td>" +
             "<td><a href='tel:" + esc(phone) + "' style='color:inherit'>" + esc(r.phone || "—") + "</a><div class='meta'>" + esc(r.email || "—") + "</div>" +
               (wa ? "<div class='meta'><a href='https://wa.me/" + esc(wa) + "' target='_blank' rel='noopener' style='color:#4ade80'>WhatsApp</a></div>" : "") +
             "</td>" +
@@ -356,6 +387,35 @@
         body.querySelectorAll("button[data-delete]").forEach(function(btn) {
           btn.addEventListener("click", function() { deleteRow(btn.getAttribute("data-delete")); });
         });
+      }
+
+      async function addTestLead() {
+        var endpoint = (window.fgApiUrl ? window.fgApiUrl("/api/submit") : "/api/submit");
+        qs("syncNote").textContent = "Writing test lead into database…";
+        try {
+          var res = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              form_type: "consultation",
+              name: "Test Lead (backend.html)",
+              phone: "9999999999",
+              email: "test@fitnessgurukul.local",
+              program: "Backend DB Test",
+              goal: "Verify leads appear in backend.html",
+              message: "Created from Add test lead button on backend.html"
+            })
+          });
+          var json = await res.json().catch(function() { return {}; });
+          if (!res.ok || !(json.ok || json.success)) {
+            throw new Error(json.error || "Could not write test lead");
+          }
+          await loadData(false);
+          qs("syncNote").textContent =
+            "Test lead saved into the same database this page reads. ID: " + (json.id || "ok");
+        } catch (err) {
+          alert(err.message || "Test lead failed. Check config.js FG_API_BASE and that the API is online.");
+        }
       }
 
       async function updateStatus(id, status) {
@@ -404,10 +464,12 @@
       qs("unlockBtn").addEventListener("click", function() { unlock(); });
       qs("tokenInput").addEventListener("keydown", function(e) { if (e.key === "Enter") unlock(); });
       qs("refreshBtn").addEventListener("click", function() { loadData(false); });
+      if (qs("testLeadBtn")) qs("testLeadBtn").addEventListener("click", addTestLead);
       qs("exportBtn").addEventListener("click", exportCSV);
       qs("signOutBtn").addEventListener("click", clearToken);
       qs("searchInput").addEventListener("input", renderTable);
       qs("statusFilter").addEventListener("change", renderTable);
+      if (qs("typeFilter")) qs("typeFilter").addEventListener("change", renderTable);
 
       async function bootOwner() {
         var apiBase = (window.FG_API_BASE || "").replace(/\/$/, "");
