@@ -1,69 +1,18 @@
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
-from urllib.parse import urlparse, unquote
+from urllib.parse import urlparse
 from urllib import request as urlrequest
-import hmac
 import json
 import os
 import re
-import secrets
 import socket
 import sqlite3
-import threading
 import time
-import uuid
 
 ROOT = Path(__file__).parent.resolve()
 PUBLIC = ROOT
+DB_PATH = ROOT / "fitness_gurukul.sqlite3"
 DB_SCHEMA_READY = False
-MAX_JSON_BYTES = 64 * 1024
-RATE_LIMIT_WINDOW = 60
-RATE_LIMITS = {
-    "/api/chat": 20,
-    "/api/submit": 30,
-    "/api/leads": 30,
-    "/api/calculations": 40,
-    "/api/match": 40,
-    "/api/quiz": 40,
-    "/api/challenge-join": 20,
-}
-_rate_lock = threading.Lock()
-_rate_buckets = {}
-
-
-def resolve_db_path():
-    """Allow cloud hosts to persist SQLite under DATA_DIR when available."""
-    data_dir = (os.environ.get("DATA_DIR") or "").strip()
-    if data_dir:
-        path = Path(data_dir)
-        path.mkdir(parents=True, exist_ok=True)
-        return path / "fitness_gurukul.sqlite3"
-    return ROOT / "fitness_gurukul.sqlite3"
-
-
-BLOCKED_STATIC_PREFIXES = (
-    "/.env",
-    "/.git",
-    "/data/",
-    "/node_modules/",
-    "/__pycache__/",
-)
-BLOCKED_STATIC_SUFFIXES = (
-    ".sqlite3",
-    ".pyc",
-    ".py",
-    ".bak",
-    ".env",
-)
-BLOCKED_STATIC_NAMES = {
-    "/server.py",
-    "/server.js",
-    "/package.json",
-    "/package-lock.json",
-    "/.gitignore",
-    "/.gitattributes",
-    "/.env.example",
-}
 
 def load_env_file():
     env_path = ROOT / ".env"
@@ -80,20 +29,11 @@ def load_env_file():
             os.environ[key] = value
 
 load_env_file()
-DB_PATH = resolve_db_path()
 
-
-def cors_origin_for(handler):
-    """Allow Hostinger static site to call this API on Render/Railway/Fly."""
-    configured = (os.environ.get("CORS_ORIGINS") or "*").strip()
-    request_origin = (handler.headers.get("Origin") or "").strip()
-    if not configured or configured == "*":
-        return request_origin or "*"
-    allowed = [part.strip() for part in configured.split(",") if part.strip()]
-    if request_origin and request_origin in allowed:
-        return request_origin
-    return allowed[0] if allowed else "*"
-
+OLLAMA_BASE_URL = (os.environ.get("OLLAMA_BASE_URL", "http://127.0.0.1:11434") or "http://127.0.0.1:11434").rstrip("/")
+OLLAMA_MODEL = (os.environ.get("OLLAMA_MODEL", "llama3.2") or "llama3.2").strip()
+CHAT_PROVIDER = (os.environ.get("CHAT_PROVIDER", "auto") or "auto").strip().lower()
+_ollama_cache = {"checked_at": 0, "available": False, "model": OLLAMA_MODEL}
 
 CONTACT = {
     "phone": "08042781491",
@@ -136,13 +76,16 @@ COACHES = [
     {"name": "Chandan Mondal", "role": "Bodybuilding & Fitness Coach", "slug": "chandan-mondal", "category": "fitness", "bio": "Bodybuilding & Fitness Coach", "focus": ["Bodybuilding", "Fitness", "Strength"]},
     {"name": "Aditya", "role": "Yoga Instructor & Fitness Coach", "slug": "aditya", "category": "yoga", "bio": "Yoga Instructor & Fitness Coach", "focus": ["Yoga", "Fitness", "Body toning"]},
     {"name": "Nitu Arya", "role": "Yoga Instructor", "slug": "nitu-arya", "category": "yoga", "bio": "Yoga Instructor", "focus": ["Yoga", "Flexibility", "General fitness"]},
+    {"name": "Rahul Bisht", "role": "Yoga Instructor", "slug": "rahul-bisht", "category": "yoga", "bio": "Yoga Instructor", "focus": ["Yoga", "Mobility", "General fitness"]},
     {"name": "Deepesh Kumar", "role": "Fitness Trainer", "slug": "deepesh-kumar", "category": "fitness", "bio": "Fitness Trainer", "focus": ["Fitness training", "Strength", "Weight loss"]},
     {"name": "S Jeetender", "role": "Fitness Trainer", "slug": "s-jeetender", "category": "fitness", "bio": "Fitness Trainer", "focus": ["Fitness training", "Daily exercise", "Strength"]},
     {"name": "Rahul Dawar", "role": "Fitness Trainer", "slug": "rahul-dawar", "category": "fitness", "bio": "Fitness Trainer", "focus": ["Fitness training", "Strength", "Health routine"]},
+    {"name": "Rahul Singh Pawar", "role": "Yoga Instructor", "slug": "rahul-singh-pawar", "category": "yoga", "bio": "Yoga Instructor", "focus": ["Yoga", "Flexibility", "Stress relief"]},
     {"name": "Ravi Pal", "role": "Fitness Trainer & Injury Rehabilitation Coach", "slug": "ravi-pal", "category": "rehab", "bio": "Fitness Trainer & Injury Rehabilitation Coach", "focus": ["Fitness training", "Injury rehabilitation", "Recovery"]},
     {"name": "Subedhar Yadav", "role": "Fitness Trainer (Special Children)", "slug": "subedhar-yadav", "category": "special", "bio": "Fitness Trainer (Special Children)", "focus": ["Special children", "Fitness", "Mobility"]},
     {"name": "Sanjeev", "role": "Fitness Trainer", "slug": "sanjeev", "category": "fitness", "bio": "Fitness Trainer", "focus": ["Fitness training", "Strength", "Daily exercise"]},
     {"name": "Nandlal", "role": "Fitness Trainer", "slug": "nandlal", "category": "fitness", "bio": "Fitness Trainer", "focus": ["Fitness training", "Strength", "Weight loss"]},
+    {"name": "Prasenjit Ghosh", "role": "Mudgar & Hybrid Training Specialist", "slug": "prasenjit-ghosh", "category": "hybrid", "bio": "Mudgar & Hybrid Training Specialist", "focus": ["Mudgar", "Hybrid training", "Strength"]},
     {"name": "Vinay Ojha", "role": "Fitness Trainer", "slug": "vinay-ojha", "category": "fitness", "bio": "Fitness Trainer", "focus": ["Fitness training", "Strength", "General fitness"]},
     {"name": "Ankit Singh Chauhan", "role": "Fitness & Calisthenics Trainer", "slug": "ankit-singh-chauhan", "category": "fitness", "bio": "Fitness & Calisthenics Trainer", "focus": ["Fitness", "Calisthenics", "Strength"]},
     {"name": "Suresh Yadav", "role": "Fitness Trainer (Special Children)", "slug": "suresh-yadav", "category": "special", "bio": "Fitness Trainer (Special Children)", "focus": ["Special children", "Fitness", "Mobility"]},
@@ -172,379 +115,15 @@ CHAT_SUGGESTIONS = [
     "Which coach is best for yoga?",
 ]
 
-COACH_MEDIA = {
-    "aditya-gururani": {"highlight": "Breathwork Expert", "color": "cyan", "image": "assets/coaches/aditya-gururani.jpg"},
-    "b-yashwanth": {"highlight": "Sports Specialist", "color": "blue", "image": "assets/coaches/b-yashwanth.jpg"},
-    "kritika-chauhan": {"highlight": "Flexibility Coach", "color": "cyan", "image": "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0302-69538f34664ae75da3c69fce.jpg"},
-    "shivajeet-kanaujiya": {"highlight": "Strength Builder", "color": "red", "image": "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0300-69538ef2474cc000b54586c5.jpg"},
-    "anand-yadav": {"highlight": "Kids Fitness Expert", "color": "blue", "image": "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0297-69538d52664ae75da3c69fc1.jpg"},
-    "chandan-mondal": {"highlight": "Bodybuilding Coach", "color": "red", "image": "assets/coaches/chandan-mondal.jpg"},
-    "aditya": {"highlight": "Mind-Body Coach", "color": "cyan", "image": "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0298-69538dd1474cc000b54586be.jpg"},
-    "nitu-arya": {"highlight": "Holistic Yoga", "color": "cyan", "image": "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0295-69538d35474cc000b54586b7.jpg"},
-    "deepesh-kumar": {"highlight": "Weight Loss Specialist", "color": "red", "image": "assets/coaches/deepesh-kumar.jpg"},
-    "s-jeetender": {"highlight": "Daily Fitness Pro", "color": "red", "image": "assets/coaches/s-jeetender.jpg"},
-    "rahul-dawar": {"highlight": "Health & Strength", "color": "red", "image": "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0291-69538ccf8c7b7b2c6178b6e1.jpg"},
-    "ravi-pal": {"highlight": "Injury Recovery", "color": "blue", "image": "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0289-69538c800222ba9c3d831802.jpg"},
-    "subedhar-yadav": {"highlight": "Special Needs Coach", "color": "blue", "image": "assets/coaches/subedhar-yadav.jpg"},
-    "sanjeev": {"highlight": "Strength Trainer", "color": "red", "image": "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/274dba00-8541-4bfc-8666-e0b5433b3781-69538a190222ba9c3d8317f4.jpg"},
-    "nandlal": {"highlight": "Transformation Coach", "color": "red", "image": "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/04ea7dfe-a988-4a17-97cb-8dc44240cb59-695389c4474cc000b54586a8.jpg"},
-    "vinay-ojha": {"highlight": "All-Round Fitness", "color": "red", "image": "assets/coaches/vinay-ojha.jpg"},
-    "ankit-singh-chauhan": {"highlight": "Calisthenics Expert", "color": "red", "image": "assets/coaches/ankit-singh-chauhan.jpg"},
-    "suresh-yadav": {"highlight": "Special Needs Expert", "color": "blue", "image": "assets/coaches/suresh-yadav.jpg"},
-    "parul-danu": {"highlight": "Yoga & Wellness", "color": "cyan", "image": "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/parul-695209395c5bdcd270817773.jpeg"},
-    "raju": {"highlight": "Fitness Guide", "color": "red", "image": "assets/coaches/raju.jpg"},
-    "vishal-choudhary": {"highlight": "Personal Training Pro", "color": "red", "image": "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/vishal-69520b6a5c5bdcd270817783.jpeg"},
-}
-
-GOAL_MATCHES = {
-    "weight-loss": {
-        "goal": "weight-loss",
-        "title": "Fat Loss & Body Recomposition",
-        "summary": "Blend strength work with Indian nutrition coaching so fat loss stays sustainable.",
-        "plan": "Fitness Gurukul Prime",
-        "planCategory": "prime",
-        "coachCategories": ["fitness", "yoga"],
-        "cta": "book-consultation.html",
-        "challengeId": "fat-burn-30",
-    },
-    "strength": {
-        "goal": "strength",
-        "title": "Strength & Muscle Building",
-        "summary": "Progressive personal training with form coaching and weekly accountability.",
-        "plan": "Fitness Gurukul Signature",
-        "planCategory": "signature",
-        "coachCategories": ["fitness"],
-        "cta": "book-consultation.html",
-        "challengeId": "strength-30",
-    },
-    "yoga": {
-        "goal": "yoga",
-        "title": "Yoga, Breathwork & Stress Relief",
-        "summary": "Mobility, breath, and nervous-system reset with certified yoga instructors.",
-        "plan": "Yogic Wellness",
-        "planCategory": "recovery",
-        "coachCategories": ["yoga"],
-        "cta": "coaches.html",
-        "challengeId": "mobility-21",
-    },
-    "running": {
-        "goal": "running",
-        "title": "Running & Endurance",
-        "summary": "Periodized run plans plus strength support for race day performance.",
-        "plan": "Fitness Gurukul Endurance",
-        "planCategory": "endurance",
-        "coachCategories": ["fitness", "sports"],
-        "cta": "services.html",
-        "challengeId": "run-start-28",
-    },
-    "kids": {
-        "goal": "kids",
-        "title": "Kids Athletics & Confidence",
-        "summary": "Age-appropriate movement, sports skills, and fun fitness for children.",
-        "plan": "Kids Programs",
-        "planCategory": "training",
-        "coachCategories": ["kids", "special"],
-        "cta": "coaches.html",
-        "challengeId": "strength-30",
-    },
-    "rehab": {
-        "goal": "rehab",
-        "title": "Injury Rehab & Return to Train",
-        "summary": "Guided recovery programming to rebuild strength safely after setbacks.",
-        "plan": "Personal Training",
-        "planCategory": "training",
-        "coachCategories": ["rehab", "fitness"],
-        "cta": "book-consultation.html",
-        "challengeId": "mobility-21",
-    },
-}
-
-CHALLENGES = [
-    {
-        "id": "fat-burn-30",
-        "name": "30-Day Fat Burn Challenge",
-        "tag": "Fat loss",
-        "days": 30,
-        "level": "All levels",
-        "sessionsPerWeek": 4,
-        "focus": ["HIIT finishers", "Strength circuits", "Indian nutrition check-ins"],
-        "outcome": "Drop stubborn fat while keeping energy for work and family.",
-        "image": "https://images.unsplash.com/photo-1549476464-37392f717541?w=1400&q=80&auto=format&fit=crop",
-        "milestones": ["Week 1: habit lock-in", "Week 2: pace up", "Week 3: body recomposition", "Week 4: finish strong"],
-        "planCategory": "prime",
-        "goal": "weight-loss",
-    },
-    {
-        "id": "strength-30",
-        "name": "30-Day Strength Challenge",
-        "tag": "Strength",
-        "days": 30,
-        "level": "Beginner to intermediate",
-        "sessionsPerWeek": 3,
-        "focus": ["Compound lifts", "Progressive overload", "Form coaching"],
-        "outcome": "Build measurable strength with safe weekly progressions.",
-        "image": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1400&q=80&auto=format&fit=crop",
-        "milestones": ["Week 1: movement quality", "Week 2: load up", "Week 3: volume push", "Week 4: PR week"],
-        "planCategory": "signature",
-        "goal": "strength",
-    },
-    {
-        "id": "mobility-21",
-        "name": "21-Day Mobility Reset",
-        "tag": "Yoga & recovery",
-        "days": 21,
-        "level": "All levels",
-        "sessionsPerWeek": 5,
-        "focus": ["Breathwork", "Hip & spine mobility", "Stress reset"],
-        "outcome": "Move freer, sleep better, and reduce desk-day stiffness.",
-        "image": "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=1400&q=80&auto=format&fit=crop",
-        "milestones": ["Week 1: breath baseline", "Week 2: joint freedom", "Week 3: calm strength"],
-        "planCategory": "recovery",
-        "goal": "yoga",
-    },
-    {
-        "id": "run-start-28",
-        "name": "28-Day Run Starter",
-        "tag": "Endurance",
-        "days": 28,
-        "level": "Beginner",
-        "sessionsPerWeek": 3,
-        "focus": ["Walk-run intervals", "Easy aerobic base", "Runner strength"],
-        "outcome": "Go from couch to consistent 5K-ready pacing.",
-        "image": "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=1400&q=80&auto=format&fit=crop",
-        "milestones": ["Week 1: start easy", "Week 2: longer intervals", "Week 3: steady runs", "Week 4: 5K prep"],
-        "planCategory": "endurance",
-        "goal": "running",
-    },
-    {
-        "id": "hyrox-21",
-        "name": "21-Day Hyrox Spark",
-        "tag": "Functional racing",
-        "days": 21,
-        "level": "Intermediate",
-        "sessionsPerWeek": 4,
-        "focus": ["Compromised running", "Grip & engine", "Station skills"],
-        "outcome": "Build race-day stamina for Hyrox-style efforts.",
-        "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1400&q=80&auto=format&fit=crop",
-        "milestones": ["Week 1: engine base", "Week 2: station power", "Week 3: race simulation"],
-        "planCategory": "forge",
-        "goal": "strength",
-    },
-]
-
-def enriched_coaches():
-    out = []
-    for coach in COACHES:
-        row = dict(coach)
-        media = COACH_MEDIA.get(coach.get("slug"), {})
-        row["highlight"] = media.get("highlight") or row.get("highlight") or "Coach"
-        row["color"] = media.get("color") or row.get("color") or "cyan"
-        row["image"] = media.get("image") or row.get("image") or ""
-        out.append(row)
-    return out
-
-def challenge_join_count():
-    try:
-        with get_connection() as conn:
-            row = conn.execute(
-                "SELECT COUNT(*) AS c FROM submissions WHERE form_type = 'challenge-join'"
-            ).fetchone()
-            return int(row["c"] if row else 0)
-    except Exception:
-        return 0
-
-
-def challenges_payload():
-    joins = challenge_join_count()
-    # Seeded baseline so the page feels alive even before real joins land.
-    seeded = 48 + (int(time.time()) // 3600) % 7
-    challenges = []
-    for idx, item in enumerate(CHALLENGES):
-        row = dict(item)
-        row["joined"] = seeded + joins + (idx * 3)
-        challenges.append(row)
-    return {
-        "ok": True,
-        "challenges": challenges,
-        "totalJoined": seeded + joins,
-        "activeChallenges": len(CHALLENGES),
-        "updatedAt": int(time.time()),
-    }
-
-
-def find_challenge(challenge_id):
-    challenge_id = clip(str(challenge_id or ""), 64)
-    for item in CHALLENGES:
-        if item.get("id") == challenge_id:
-            return item
-    return None
-
-
-def live_payload():
-    base_clients = 1000
-    base_events = 50
-    coaches = len(COACHES)
-    try:
-        with get_connection() as conn:
-            leads = conn.execute("SELECT COUNT(*) AS c FROM submissions").fetchone()["c"]
-            calcs = conn.execute("SELECT COUNT(*) AS c FROM calculator_results").fetchone()["c"]
-            chats = conn.execute("SELECT COUNT(*) AS c FROM chat_messages WHERE role = 'user'").fetchone()["c"]
-            today = conn.execute(
-                "SELECT COUNT(*) AS c FROM submissions WHERE created_at >= ?",
-                (int(time.time()) - 24 * 60 * 60,),
-            ).fetchone()["c"]
-            challenge_joins = conn.execute(
-                "SELECT COUNT(*) AS c FROM submissions WHERE form_type = 'challenge-join'"
-            ).fetchone()["c"]
-    except Exception:
-        leads = calcs = chats = today = challenge_joins = 0
-    pulse = [
-        "A Hyderabad member just booked a free consultation",
-        "Coach match completed for yoga & mobility",
-        "Macro calculator used for Indian meal planning",
-        "Doorstep training inquiry from Gachibowli",
-        "Running plan comparison opened on Services",
-        "Someone just joined the 30-Day Fat Burn Challenge",
-        "Plan quiz completed — Signature coaching recommended",
-    ]
-    # Rotate pulse by minute so the site feels alive without fake realtime sockets.
-    idx = int(time.time() // 45) % len(pulse)
-    return {
-        "ok": True,
-        "clientsTransformed": base_clients + max(leads, 0),
-        "years": 13,
-        "events": base_events,
-        "coaches": coaches,
-        "specialties": 7,
-        "inquiriesToday": today,
-        "toolUses": calcs,
-        "chatSessions": chats,
-        "challengeJoins": 48 + max(challenge_joins, 0),
-        "activeNow": 3 + ((int(time.time()) // 30) % 9),
-        "pulse": pulse[idx],
-        "updatedAt": int(time.time()),
-    }
-
-def match_goal(payload):
-    goal = clip(str(payload.get("goal", "")).lower().replace(" ", "-"), 40)
-    experience = clip(str(payload.get("experience", "beginner")).lower(), 40)
-    preference = clip(str(payload.get("preference", "in-person")).lower(), 40)
-    match = GOAL_MATCHES.get(goal) or GOAL_MATCHES["weight-loss"]
-    coaches = [
-        c for c in enriched_coaches()
-        if c.get("category") in match["coachCategories"]
-    ][:3]
-    plan = next((p for p in PLANS if p.get("category") == match.get("planCategory")), None)
-    if not plan:
-        plan = next((s for s in SERVICES if s.get("name") == match.get("plan")), SERVICES[0])
-    challenge = find_challenge(match.get("challengeId")) or CHALLENGES[0]
-    tip = {
-        "beginner": "Start with a free consultation and a gentle 2-week ramp-up.",
-        "intermediate": "Expect progressive overload with weekly check-ins.",
-        "advanced": "We will bias intensity, recovery, and race or physique peaking.",
-    }.get(experience, "Start with a free consultation.")
-    mode = "Doorstep or studio sessions available in Hyderabad." if preference in {"in-person", "doorstep", "home"} else "Virtual coaching with app check-ins works great for your schedule."
-    return {
-        "ok": True,
-        "match": match,
-        "plan": plan,
-        "challenge": challenge,
-        "coaches": coaches,
-        "tip": tip,
-        "mode": mode,
-        "score": 92 if goal in GOAL_MATCHES else 78,
-    }
-
-
-def quiz_recommend(payload):
-    """Quick quiz → plan + challenge recommendation for the Transformation Challenge page."""
-    goal = clip(str(payload.get("goal", "")).lower().replace(" ", "-"), 40)
-    experience = clip(str(payload.get("experience", payload.get("level", "beginner"))).lower(), 40)
-    preference = clip(str(payload.get("preference", payload.get("location", "in-person"))).lower(), 40)
-    time_budget = clip(str(payload.get("time", payload.get("days", "30"))).lower(), 40)
-
-    # Map quiz shortcuts to goal keys.
-    aliases = {
-        "fat-loss": "weight-loss",
-        "lose-weight": "weight-loss",
-        "recomp": "weight-loss",
-        "muscle": "strength",
-        "build-muscle": "strength",
-        "flexibility": "yoga",
-        "stress": "yoga",
-        "mobility": "yoga",
-        "endurance": "running",
-        "run": "running",
-        "5k": "running",
-        "hyrox": "strength",
-        "injury": "rehab",
-        "recovery": "rehab",
-    }
-    goal = aliases.get(goal, goal)
-    base = match_goal({
-        "goal": goal,
-        "experience": experience,
-        "preference": preference,
-    })
-    challenge = base.get("challenge") or CHALLENGES[0]
-
-    # Prefer shorter challenges when the quiz says time is tight.
-    if time_budget in {"busy", "15", "21", "short"}:
-        short = next((c for c in CHALLENGES if c.get("days", 30) <= 21 and c.get("goal") == challenge.get("goal")), None)
-        if short:
-            challenge = short
-            plan = next((p for p in PLANS if p.get("category") == short.get("planCategory")), base.get("plan"))
-            base["plan"] = plan
-    elif time_budget in {"race", "hyrox", "functional"}:
-        hyrox = find_challenge("hyrox-21")
-        if hyrox:
-            challenge = hyrox
-            plan = next((p for p in PLANS if p.get("category") == "forge"), base.get("plan"))
-            base["plan"] = plan
-
-    reasons = [
-        f"Goal focus: {base['match'].get('title', goal)}",
-        f"Training mode: {'in-person / doorstep' if preference in {'in-person', 'doorstep', 'home', 'studio'} else 'virtual'}",
-        f"Challenge length: {challenge.get('days')} days · {challenge.get('sessionsPerWeek')} sessions/week",
-    ]
-    return {
-        "ok": True,
-        "score": base.get("score", 90),
-        "match": base.get("match"),
-        "plan": base.get("plan"),
-        "challenge": challenge,
-        "coaches": base.get("coaches", []),
-        "tip": base.get("tip"),
-        "mode": base.get("mode"),
-        "reasons": reasons,
-        "nextStep": "book-consultation.html",
-    }
-
-
 def content_payload():
-    coaches = enriched_coaches()
-    challenge_data = challenges_payload()
     return {
-        "heroHeadline": "Train Smarter. Live Stronger.",
-        "heroSubhead": "1:1 personal training in Hyderabad — Indian nutrition and doorstep coaching built around your body and schedule.",
         "services": SERVICES,
         "plans": PLANS,
-        "coaches": coaches,
+        "coaches": COACHES,
         "testimonials": TESTIMONIALS,
-        "challenges": challenge_data.get("challenges", []),
         "updates": UPDATES,
         "serviceAreas": SERVICE_AREAS,
         "contact": CONTACT,
-        "goals": list(GOAL_MATCHES.values()),
-        "stats": {
-            "clients": 1000,
-            "years": 13,
-            "events": 50,
-            "coaches": len(coaches),
-            "specialties": len({c.get("category") for c in coaches}),
-            "challengeJoins": challenge_data.get("totalJoined", 0),
-        },
-        "live": live_payload(),
     }
 
 def get_connection():
@@ -562,183 +141,8 @@ def init_db():
         conn.execute("CREATE TABLE IF NOT EXISTS ai_scans (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, focus TEXT NOT NULL, summary TEXT NOT NULL, coach_route TEXT NOT NULL, camera_used INTEGER NOT NULL DEFAULT 0, created_at INTEGER NOT NULL)")
         conn.execute("CREATE TABLE IF NOT EXISTS calculator_results (id INTEGER PRIMARY KEY AUTOINCREMENT, calculator TEXT NOT NULL, title TEXT NOT NULL, result TEXT NOT NULL, unit TEXT, rating TEXT, created_at INTEGER NOT NULL)")
         conn.execute("CREATE TABLE IF NOT EXISTS chat_messages (id INTEGER PRIMARY KEY AUTOINCREMENT, session_id TEXT NOT NULL, role TEXT NOT NULL, content TEXT NOT NULL, source TEXT NOT NULL DEFAULT 'local', created_at INTEGER NOT NULL)")
-        conn.execute(
-            """CREATE TABLE IF NOT EXISTS submissions (
-                id TEXT PRIMARY KEY,
-                form_type TEXT NOT NULL DEFAULT 'consultation',
-                name TEXT NOT NULL,
-                phone TEXT NOT NULL,
-                email TEXT,
-                program TEXT,
-                goal TEXT,
-                message TEXT,
-                coach TEXT,
-                company TEXT,
-                event_type TEXT,
-                attendees TEXT,
-                preferred_date TEXT,
-                budget TEXT,
-                location TEXT,
-                status TEXT NOT NULL DEFAULT 'new',
-                created_at INTEGER NOT NULL
-            )"""
-        )
-        # Backward-compatible migration for older DBs.
-        cols = {row["name"] for row in conn.execute("PRAGMA table_info(submissions)").fetchall()}
-        if "status" not in cols:
-            conn.execute("ALTER TABLE submissions ADD COLUMN status TEXT NOT NULL DEFAULT 'new'")
         conn.commit()
     DB_SCHEMA_READY = True
-
-
-LOCAL_DEFAULT_PASSWORD = "fitnessgurukul"
-ADMIN_CRED_MODE = "unconfigured"  # configured | local-default | generated
-
-def admin_token():
-    """Primary staff password. ADMIN_PASSWORD is accepted as a friendly alias."""
-    return (
-        os.environ.get("ADMIN_TOKEN", "").strip()
-        or os.environ.get("ADMIN_PASSWORD", "").strip()
-    )
-
-def ensure_admin_credentials(host="127.0.0.1"):
-    """
-    Make local backend access easy: on localhost, default to a memorable
-    password when none is configured. On LAN/public binds, generate a strong token.
-    Returns one of: "configured", "local-default", "generated".
-    """
-    global ADMIN_CRED_MODE
-    if admin_token():
-        ADMIN_CRED_MODE = "configured"
-        return ADMIN_CRED_MODE
-    if host in {"127.0.0.1", "localhost", "::1"}:
-        os.environ["ADMIN_TOKEN"] = LOCAL_DEFAULT_PASSWORD
-        ADMIN_CRED_MODE = "local-default"
-        return ADMIN_CRED_MODE
-    generated = secrets.token_urlsafe(24)
-    os.environ["ADMIN_TOKEN"] = generated
-    ADMIN_CRED_MODE = "generated"
-    return ADMIN_CRED_MODE
-
-
-def clip(value, max_len=500):
-    text = str(value or "").strip()
-    return text[:max_len]
-
-
-def client_ip(handler):
-    return handler.client_address[0] if handler.client_address else "unknown"
-
-
-def check_rate_limit(handler, path):
-    limit = RATE_LIMITS.get(path)
-    if not limit:
-        return True
-    key = (client_ip(handler), path)
-    now = time.time()
-    with _rate_lock:
-        bucket = [ts for ts in _rate_buckets.get(key, []) if now - ts < RATE_LIMIT_WINDOW]
-        if len(bucket) >= limit:
-            _rate_buckets[key] = bucket
-            return False
-        bucket.append(now)
-        _rate_buckets[key] = bucket
-    return True
-
-
-def is_blocked_static(path):
-    decoded = unquote(path).lower()
-    if decoded in BLOCKED_STATIC_NAMES or decoded.rstrip("/") in BLOCKED_STATIC_NAMES:
-        return True
-    if any(decoded.startswith(prefix) for prefix in BLOCKED_STATIC_PREFIXES):
-        return True
-    if any(decoded.endswith(suffix) for suffix in BLOCKED_STATIC_SUFFIXES):
-        return True
-    return False
-
-
-def require_admin(handler):
-    token = admin_token()
-    if not token:
-        handler.send_json({"error": "Admin access is disabled. Set ADMIN_TOKEN in .env."}, 503)
-        return False
-    provided = (
-        handler.headers.get("X-Admin-Token")
-        or handler.headers.get("X-Admin-Password")
-        or ""
-    ).strip()
-    auth = (handler.headers.get("Authorization") or "").strip()
-    if not provided and auth.lower().startswith("bearer "):
-        provided = auth[7:].strip()
-    if not provided or not hmac.compare_digest(provided, token):
-        handler.send_json({"error": "Unauthorized. Use the staff password from .env (ADMIN_TOKEN)."}, 401)
-        return False
-    return True
-
-
-def row_to_submission(row):
-    item = dict(row)
-    item["timestamp"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(item.get("created_at") or 0))
-    item["status"] = item.get("status") or "new"
-    return item
-
-
-def save_submission(payload):
-    form_type = clip(payload.get("form_type") or "consultation", 64)
-    name = clip(payload.get("name") or payload.get("contact_name"), 120)
-    phone = clip(payload.get("phone"), 40)
-    email = clip(payload.get("email"), 160)
-    program = clip(payload.get("program"), 120)
-    goal = clip(payload.get("goal"), 200)
-    message = clip(payload.get("message"), 2000)
-    coach = clip(payload.get("coach"), 120)
-    company = clip(payload.get("company"), 160)
-    event_type = clip(payload.get("event_type"), 120)
-    attendees = clip(payload.get("attendees"), 80)
-    preferred_date = clip(payload.get("preferred_date"), 80)
-    budget = clip(payload.get("budget"), 80)
-    location = clip(payload.get("location"), 160)
-
-    if form_type == "corporate_event":
-        missing = [field for field, value in [
-            ("company", company), ("contact_name", name), ("email", email),
-            ("phone", phone), ("event_type", event_type), ("attendees", attendees),
-        ] if not value]
-        if missing:
-            return None, missing
-    else:
-        missing = [field for field, value in [
-            ("name", name), ("phone", phone), ("program", program), ("goal", goal),
-        ] if not value]
-        if missing:
-            return None, missing
-
-    submission_id = uuid.uuid4().hex
-    created_at = int(time.time())
-    with get_connection() as conn:
-        conn.execute(
-            """INSERT INTO submissions (
-                id, form_type, name, phone, email, program, goal, message, coach,
-                company, event_type, attendees, preferred_date, budget, location, status, created_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-            (
-                submission_id, form_type, name, phone, email, program, goal, message, coach,
-                company, event_type, attendees, preferred_date, budget, location, "new", created_at,
-            ),
-        )
-        # Keep legacy leads table in sync for the owner-data viewer.
-        if form_type != "corporate_event":
-            conn.execute(
-                "INSERT INTO leads (name, phone, goal, program, message, created_at) VALUES (?, ?, ?, ?, ?, ?)",
-                (name, phone, goal or event_type or "consultation", program or event_type or "general", message, created_at),
-            )
-        else:
-            conn.execute(
-                "INSERT INTO leads (name, phone, goal, program, message, created_at) VALUES (?, ?, ?, ?, ?, ?)",
-                (name, phone, event_type or "corporate_event", company or "corporate", message or f"{attendees} attendees", created_at),
-            )
-        conn.commit()
-    return submission_id, None
 
 def build_chat_system_prompt():
     plan_lines = []
@@ -985,6 +389,76 @@ def extract_openai_text(body):
                 parts.append(text)
     return normalize_chat_text(" ".join(parts))
 
+def call_ollama_chat(message, history=None):
+    status = get_ollama_status()
+    if not status["available"]:
+        return None
+    messages = [{"role": "system", "content": build_chat_system_prompt()}]
+    for item in (history or [])[-8:]:
+        role = str(item.get("role", "")).strip()
+        content = normalize_chat_text(item.get("content", ""))
+        if role in {"user", "assistant"} and content:
+            messages.append({"role": role, "content": content})
+    messages.append({"role": "user", "content": normalize_chat_text(message)})
+    payload = json.dumps({
+        "model": status["model"],
+        "stream": False,
+        "messages": messages,
+        "options": {"temperature": 0.35, "num_predict": 450},
+    }).encode("utf-8")
+    req = urlrequest.Request(
+        f"{OLLAMA_BASE_URL}/api/chat",
+        data=payload,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urlrequest.urlopen(req, timeout=60) as res:
+            body = json.loads(res.read().decode("utf-8"))
+        content = ((body.get("message") or {}).get("content") or "")
+        return normalize_chat_text(content) or None
+    except Exception as exc:
+        print("Ollama chat error:", exc)
+        _ollama_cache["checked_at"] = 0
+        _ollama_cache["available"] = False
+        return None
+
+def get_ollama_status(force=False):
+    now = time.time()
+    if not force and now - _ollama_cache["checked_at"] < 15:
+        return _ollama_cache
+    try:
+        req = urlrequest.Request(f"{OLLAMA_BASE_URL}/api/tags", method="GET")
+        with urlrequest.urlopen(req, timeout=2.5) as res:
+            body = json.loads(res.read().decode("utf-8"))
+        names = [str(item.get("name") or item.get("model") or "") for item in (body.get("models") or [])]
+        preferred = next((name for name in names if name == OLLAMA_MODEL or name.startswith(f"{OLLAMA_MODEL}:")), None)
+        _ollama_cache.update({
+            "checked_at": now,
+            "available": bool(names),
+            "model": preferred or (names[0] if names else OLLAMA_MODEL),
+        })
+    except Exception:
+        _ollama_cache.update({"checked_at": now, "available": False, "model": OLLAMA_MODEL})
+    return _ollama_cache
+
+def resolve_chat_engine():
+    ollama = get_ollama_status()
+    allow_openai = CHAT_PROVIDER == "openai" or os.environ.get("CHAT_ALLOW_OPENAI", "").strip().lower() == "true"
+
+    if CHAT_PROVIDER == "local":
+        return {"aiEnabled": False, "engine": "local", "model": "fitness-gurukul-local", "free": True}
+    if CHAT_PROVIDER in {"ollama", "auto"} and ollama["available"]:
+        return {"aiEnabled": True, "engine": "ollama", "model": ollama["model"], "free": True}
+    if allow_openai and os.environ.get("OPENAI_API_KEY", "").strip():
+        return {
+            "aiEnabled": True,
+            "engine": "openai",
+            "model": os.environ.get("OPENAI_MODEL", "gpt-5.6").strip() or "gpt-5.6",
+            "free": False,
+        }
+    return {"aiEnabled": False, "engine": "local", "model": "fitness-gurukul-local", "free": True}
+
 def call_openai_chat(message, history=None):
     api_key = os.environ.get("OPENAI_API_KEY", "").strip()
     if not api_key:
@@ -1021,9 +495,15 @@ def call_openai_chat(message, history=None):
         return None
 
 def generate_chat_reply(message, history=None):
-    ai_reply = call_openai_chat(message, history)
-    if ai_reply:
-        return ai_reply, "openai"
+    engine = resolve_chat_engine()
+    if engine["engine"] == "ollama":
+        ollama_reply = call_ollama_chat(message, history)
+        if ollama_reply:
+            return ollama_reply, "ollama"
+    if engine["engine"] == "openai":
+        ai_reply = call_openai_chat(message, history)
+        if ai_reply:
+            return ai_reply, "openai"
     return generate_local_chat_reply(message, history), "local"
 
 def save_chat_exchange(session_id, user_message, assistant_message, source):
@@ -1051,27 +531,9 @@ class AppHandler(SimpleHTTPRequestHandler):
     def log_message(self, format, *args):
         print("%s - %s" % (self.address_string(), format % args))
 
-    def apply_cors_headers(self):
-        origin = cors_origin_for(self)
-        self.send_header("Access-Control-Allow-Origin", origin)
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
-        self.send_header(
-            "Access-Control-Allow-Headers",
-            "Content-Type, X-Admin-Token, Authorization",
-        )
-        self.send_header("Access-Control-Max-Age", "86400")
-        if origin != "*":
-            self.send_header("Vary", "Origin")
-
     def end_headers(self):
         self.send_header("Cache-Control", "no-store")
-        self.apply_cors_headers()
         super().end_headers()
-
-    def do_OPTIONS(self):
-        # Browser preflight for Hostinger site → cloud API.
-        self.send_response(204)
-        self.end_headers()
 
     def send_json(self, payload, status=200):
         body = json.dumps(payload).encode("utf-8")
@@ -1082,278 +544,72 @@ class AppHandler(SimpleHTTPRequestHandler):
         self.wfile.write(body)
 
     def read_json(self):
-        try:
-            length = int(self.headers.get("Content-Length", "0"))
-        except ValueError:
-            raise ValueError("Invalid Content-Length")
-        if length < 0:
-            raise ValueError("Invalid Content-Length")
-        if length > MAX_JSON_BYTES:
-            raise ValueError("Payload too large")
+        length = int(self.headers.get("Content-Length", "0"))
         if length == 0:
             return {}
-        raw = self.rfile.read(length)
-        return json.loads(raw.decode("utf-8"))
+        return json.loads(self.rfile.read(length).decode("utf-8"))
 
     def do_GET(self):
         ensure_database()
         path = urlparse(self.path).path
-        # Two interfaces:
-        # - User website: /, index.html, public pages
-        # - Owner backend page in project root: backend.html
-        if path in {"/backend", "/me", "/owner", "/dashboard", "/leads", "/staff"}:
-            self.path = "/backend.html"
-            path = self.path
-        elif path == "/office":
-            self.path = "/office.html"
-            path = self.path
-        elif path == "/admin":
-            self.path = "/admin.html"
-            path = self.path
-        elif path in {"/challenge", "/challenges", "/transformation-challenge", "/workouts"}:
-            self.path = "/transformation-challenge.html"
-            path = self.path
-
-        if path.startswith("/api/"):
-            if path == "/api/health":
-                return self.send_json({
-                    "ok": True,
-                    "engine": "python",
-                    "databaseExists": DB_PATH.exists(),
-                    "adminConfigured": bool(admin_token()),
-                    "backendUrl": "/backend",
-                    "aiEnabled": bool(os.environ.get("OPENAI_API_KEY", "").strip()),
-                    "cors": (os.environ.get("CORS_ORIGINS") or "*"),
-                    "cloudReady": True,
-                })
-            if path == "/api/backend-info":
-                # Non-sensitive helper so the login screen can guide staff.
-                host_hdr = (self.headers.get("Host") or f"127.0.0.1:{os.environ.get('PORT', '8000')}").strip()
-                mode = ADMIN_CRED_MODE if ADMIN_CRED_MODE != "unconfigured" else (
-                    "configured" if admin_token() else "unconfigured"
-                )
-                return self.send_json({
-                    "ok": True,
-                    "backendUrl": "/backend",
-                    "dashboardUrl": "/backend",
-                    "ownerUrl": "/backend",
-                    "userUrl": "/",
-                    "adminConfigured": bool(admin_token()),
-                    "mode": mode,
-                    "localDefaultPassword": LOCAL_DEFAULT_PASSWORD if mode == "local-default" else "",
-                    "openUrl": f"http://{host_hdr}/backend",
-                    "hint": (
-                        f"Local default password: {LOCAL_DEFAULT_PASSWORD}"
-                        if mode == "local-default"
-                        else "Enter the staff password from your .env file (ADMIN_TOKEN or ADMIN_PASSWORD)."
-                    ),
-                })
-            if path == "/api/content":
-                return self.send_json(content_payload())
-            if path == "/api/live":
-                return self.send_json(live_payload())
-            if path == "/api/challenges":
-                return self.send_json(challenges_payload())
-            if path == "/api/goals":
-                return self.send_json({"ok": True, "goals": list(GOAL_MATCHES.values())})
-            if path == "/api/chat/status":
-                has_openai = bool(os.environ.get("OPENAI_API_KEY", "").strip())
-                return self.send_json({
-                    "ok": True,
-                    "aiEnabled": has_openai,
-                    "engine": "openai" if has_openai else "local",
-                    "model": os.environ.get("OPENAI_MODEL", "gpt-5.6").strip() or "gpt-5.6",
-                    "suggestions": CHAT_SUGGESTIONS,
-                })
-            if path == "/api/admin-data":
-                if not require_admin(self):
-                    return
-                with get_connection() as conn:
-                    leads = conn.execute("SELECT * FROM leads ORDER BY created_at DESC LIMIT 100").fetchall()
-                    checkins = conn.execute("SELECT * FROM checkins ORDER BY created_at DESC LIMIT 100").fetchall()
-                    newsletter = conn.execute("SELECT * FROM newsletter ORDER BY created_at DESC LIMIT 100").fetchall()
-                    ai_scans = conn.execute("SELECT * FROM ai_scans ORDER BY created_at DESC LIMIT 100").fetchall()
-                    calculations = conn.execute("SELECT * FROM calculator_results ORDER BY created_at DESC LIMIT 100").fetchall()
-                    chat_messages = conn.execute("SELECT * FROM chat_messages ORDER BY created_at DESC LIMIT 100").fetchall()
-                    submissions = conn.execute("SELECT * FROM submissions ORDER BY created_at DESC LIMIT 300").fetchall()
-                    submission_count = conn.execute("SELECT COUNT(*) AS c FROM submissions").fetchone()["c"]
-                return self.send_json({
-                    "ok": True,
-                    "database": str(DB_PATH.name),
-                    "submissionCount": submission_count,
-                    "viewer": "backend.html",
-                    "leads": [dict(r) for r in leads],
-                    "checkins": [dict(r) for r in checkins],
-                    "newsletter": [dict(r) for r in newsletter],
-                    "ai_scans": [dict(r) for r in ai_scans],
-                    "calculations": [dict(r) for r in calculations],
-                    "chat_messages": [dict(r) for r in chat_messages],
-                    "submissions": [row_to_submission(r) for r in submissions],
-                })
-            if path == "/api/submissions":
-                if not require_admin(self):
-                    return
-                with get_connection() as conn:
-                    rows = conn.execute("SELECT * FROM submissions ORDER BY created_at DESC LIMIT 300").fetchall()
-                data = [row_to_submission(r) for r in rows]
-                return self.send_json({"ok": True, "count": len(data), "data": data})
-            if path == "/api/office-stats":
-                if not require_admin(self):
-                    return
-                with get_connection() as conn:
-                    total = conn.execute("SELECT COUNT(*) AS c FROM submissions").fetchone()["c"]
-                    today = conn.execute(
-                        "SELECT COUNT(*) AS c FROM submissions WHERE created_at >= ?",
-                        (int(time.time()) - 24 * 60 * 60,),
-                    ).fetchone()["c"]
-                    new_count = conn.execute(
-                        "SELECT COUNT(*) AS c FROM submissions WHERE COALESCE(status, 'new') = 'new'"
-                    ).fetchone()["c"]
-                    corp = conn.execute(
-                        "SELECT COUNT(*) AS c FROM submissions WHERE form_type = 'corporate_event'"
-                    ).fetchone()["c"]
-                    calcs = conn.execute("SELECT COUNT(*) AS c FROM calculator_results").fetchone()["c"]
-                return self.send_json({
-                    "ok": True,
-                    "total": total,
-                    "today": today,
-                    "new": new_count,
-                    "corporate": corp,
-                    "calculations": calcs,
-                })
+        if path.endswith(".sqlite3"):
             return self.send_json({"error": "Not found"}, 404)
-
-        if is_blocked_static(path):
-            return self.send_json({"error": "Not found"}, 404)
+        if path == "/api/health":
+            with get_connection() as conn:
+                tables = conn.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name").fetchall()
+            return self.send_json({"ok": True, "database": str(DB_PATH), "databaseExists": DB_PATH.exists(), "tables": [row["name"] for row in tables]})
+        if path == "/api/content":
+            return self.send_json(content_payload())
+        if path == "/api/chat/status":
+            chat = resolve_chat_engine()
+            return self.send_json({
+                "ok": True,
+                "aiEnabled": chat["aiEnabled"],
+                "engine": chat["engine"],
+                "model": chat["model"],
+                "free": chat["free"],
+                "suggestions": CHAT_SUGGESTIONS,
+            })
+        if path == "/api/admin-data":
+            with get_connection() as conn:
+                leads = conn.execute("SELECT * FROM leads ORDER BY created_at DESC LIMIT 50").fetchall()
+                checkins = conn.execute("SELECT * FROM checkins ORDER BY created_at DESC LIMIT 50").fetchall()
+                newsletter = conn.execute("SELECT * FROM newsletter ORDER BY created_at DESC LIMIT 50").fetchall()
+                ai_scans = conn.execute("SELECT * FROM ai_scans ORDER BY created_at DESC LIMIT 50").fetchall()
+                calculations = conn.execute("SELECT * FROM calculator_results ORDER BY created_at DESC LIMIT 50").fetchall()
+                chat_messages = conn.execute("SELECT * FROM chat_messages ORDER BY created_at DESC LIMIT 50").fetchall()
+            return self.send_json({"leads": [dict(r) for r in leads], "checkins": [dict(r) for r in checkins], "newsletter": [dict(r) for r in newsletter], "ai_scans": [dict(r) for r in ai_scans], "calculations": [dict(r) for r in calculations], "chat_messages": [dict(r) for r in chat_messages]})
         if not (PUBLIC / path.lstrip("/")).exists() and path != "/":
             self.path = "/index.html"
         return super().do_GET()
-
-    def do_PATCH(self):
-        ensure_database()
-        path = urlparse(self.path).path
-        if path.startswith("/api/submissions/") and path.endswith("/status"):
-            if not require_admin(self):
-                return
-            try:
-                payload = self.read_json()
-            except (ValueError, json.JSONDecodeError):
-                return self.send_json({"error": "Invalid JSON"}, 400)
-            submission_id = clip(unquote(path[len("/api/submissions/"):-len("/status")]), 64)
-            status = clip(payload.get("status"), 32).lower()
-            if status not in {"new", "contacted", "qualified", "closed"}:
-                return self.send_json({"error": "Invalid status"}, 400)
-            with get_connection() as conn:
-                cur = conn.execute(
-                    "UPDATE submissions SET status = ? WHERE id = ?",
-                    (status, submission_id),
-                )
-                conn.commit()
-                if cur.rowcount < 1:
-                    return self.send_json({"error": "Not found"}, 404)
-            return self.send_json({"ok": True, "id": submission_id, "status": status})
-        return self.send_json({"error": "Not found"}, 404)
-
-    def do_DELETE(self):
-        ensure_database()
-        path = urlparse(self.path).path
-        if path.startswith("/api/submissions/"):
-            if not require_admin(self):
-                return
-            submission_id = clip(unquote(path.split("/api/submissions/", 1)[1]), 64)
-            if not submission_id or "/" in submission_id:
-                return self.send_json({"error": "Not found"}, 404)
-            with get_connection() as conn:
-                cur = conn.execute("DELETE FROM submissions WHERE id = ?", (submission_id,))
-                conn.commit()
-                if cur.rowcount < 1:
-                    return self.send_json({"error": "Not found"}, 404)
-            return self.send_json({"ok": True})
-        return self.send_json({"error": "Not found"}, 404)
 
     def do_POST(self):
         ensure_database()
         path = urlparse(self.path).path
         try:
             payload = self.read_json()
-        except ValueError as exc:
-            status = 413 if "too large" in str(exc).lower() else 400
-            return self.send_json({"error": str(exc)}, status)
         except json.JSONDecodeError:
             return self.send_json({"error": "Invalid JSON"}, 400)
-
-        if path in RATE_LIMITS and not check_rate_limit(self, path):
-            return self.send_json({"error": "Too many requests. Please wait a minute."}, 429)
-
-        if path in {"/api/submit", "/api/leads"}:
-            if path == "/api/leads" and not payload.get("form_type"):
-                payload = {
-                    "form_type": "consultation",
-                    "name": payload.get("name"),
-                    "phone": payload.get("phone"),
-                    "goal": payload.get("goal"),
-                    "program": payload.get("program"),
-                    "message": payload.get("message"),
-                    "email": payload.get("email"),
-                    "coach": payload.get("coach"),
-                }
-            submission_id, missing = save_submission(payload)
+        if path == "/api/leads":
+            required = ["name", "phone", "goal", "program"]
+            missing = [f for f in required if not str(payload.get(f, "")).strip()]
             if missing:
-                return self.send_json({"ok": False, "error": "Missing required fields", "fields": missing}, 400)
-            return self.send_json({"ok": True, "id": submission_id, "message": "Saved."}, 201)
-
+                return self.send_json({"error": "Missing required fields", "fields": missing}, 400)
+            with get_connection() as conn:
+                conn.execute("INSERT INTO leads (name, phone, goal, program, message, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+                    (str(payload["name"]).strip(), str(payload["phone"]).strip(), str(payload["goal"]).strip(), str(payload["program"]).strip(), str(payload.get("message", "")).strip(), int(time.time())))
+                conn.commit()
+            return self.send_json({"ok": True, "message": "Saved."}, 201)
         if path == "/api/calculations":
             required = ["calculator", "title", "result"]
             missing = [f for f in required if not str(payload.get(f, "")).strip()]
             if missing:
                 return self.send_json({"error": "Missing required fields", "fields": missing}, 400)
             with get_connection() as conn:
-                conn.execute(
-                    "INSERT INTO calculator_results (calculator, title, result, unit, rating, created_at) VALUES (?, ?, ?, ?, ?, ?)",
-                    (
-                        clip(payload["calculator"], 80),
-                        clip(payload["title"], 160),
-                        clip(payload["result"], 160),
-                        clip(payload.get("unit", ""), 40),
-                        clip(payload.get("rating", ""), 80),
-                        int(time.time()),
-                    ),
-                )
+                conn.execute("INSERT INTO calculator_results (calculator, title, result, unit, rating, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+                    (str(payload["calculator"]).strip(), str(payload["title"]).strip(), str(payload["result"]).strip(), str(payload.get("unit", "")).strip(), str(payload.get("rating", "")).strip(), int(time.time())))
                 conn.commit()
             return self.send_json({"ok": True, "message": "Saved."}, 201)
-
-        if path == "/api/match":
-            return self.send_json(match_goal(payload))
-
-        if path == "/api/quiz":
-            return self.send_json(quiz_recommend(payload))
-
-        if path == "/api/challenge-join":
-            challenge = find_challenge(payload.get("challengeId") or payload.get("challenge"))
-            name = clip(payload.get("name", ""), 80)
-            phone = clip(payload.get("phone", ""), 40)
-            email = clip(payload.get("email", ""), 120)
-            join_payload = {
-                "form_type": "challenge-join",
-                "name": name,
-                "phone": phone,
-                "email": email,
-                "program": (challenge or {}).get("name", "Transformation Challenge"),
-                "goal": (challenge or {}).get("goal") or clip(payload.get("goal", "transformation"), 80) or "transformation",
-                "message": clip(payload.get("message", "Joined from transformation-challenge page"), 500),
-                "coach": "",
-            }
-            submission_id, missing = save_submission(join_payload)
-            if missing:
-                return self.send_json({"ok": False, "error": "Missing fields", "missing": missing}, 400)
-            return self.send_json({
-                "ok": True,
-                "message": "You are in. A coach will reach out soon.",
-                "challenge": challenge,
-                "id": submission_id,
-                "stats": challenges_payload(),
-            }, 201)
-
         if path == "/api/chat":
             message = normalize_chat_text(payload.get("message", ""))
             if not message:
@@ -1361,9 +617,7 @@ class AppHandler(SimpleHTTPRequestHandler):
             if len(message) > 2000:
                 return self.send_json({"error": "Message is too long"}, 400)
             history = payload.get("history") if isinstance(payload.get("history"), list) else []
-            # Cap client-controlled history to limit cost/prompt injection surface.
-            history = history[-6:]
-            session_id = clip(payload.get("sessionId", ""), 80) or "anonymous"
+            session_id = normalize_chat_text(payload.get("sessionId", "")) or "anonymous"
             reply, source = generate_chat_reply(message, history)
             try:
                 save_chat_exchange(session_id, message, reply, source)
@@ -1373,43 +627,21 @@ class AppHandler(SimpleHTTPRequestHandler):
                 "ok": True,
                 "reply": reply,
                 "source": source,
-                "aiEnabled": source == "openai",
+                "aiEnabled": source in {"openai", "ollama"},
+                "free": source != "openai",
                 "suggestions": CHAT_SUGGESTIONS,
             })
         return self.send_json({"error": "Not found"}, 404)
 
 if __name__ == "__main__":
     init_db()
-    # Cloud platforms (Render/Railway/Fly) inject PORT. Bind publicly there.
+    host = "0.0.0.0"
     port = int(os.environ.get("PORT", "8000"))
-    default_host = "0.0.0.0" if os.environ.get("PORT") else "127.0.0.1"
-    host = (os.environ.get("HOST") or default_host).strip() or default_host
-    cred_mode = ensure_admin_credentials(host)
+    try:
+        local_ip = socket.gethostbyname(socket.gethostname())
+    except OSError:
+        local_ip = "YOUR-LAPTOP-IP"
     server = ThreadingHTTPServer((host, port), AppHandler)
-    print("")
-    print("=" * 56)
-    print(" Fitness Gurukul API")
-    print("=" * 56)
-    print(f" Listening: {host}:{port}")
-    print(f" Health:    /api/health")
-    print(f" Website:   http://127.0.0.1:{port}/")
-    print(f" Backend:   http://127.0.0.1:{port}/backend.html")
-    print(f" Database:  {DB_PATH}")
-    print(f" CORS:      {os.environ.get('CORS_ORIGINS', '*')}")
-    if cred_mode == "local-default":
-        print(" Owner password (local default): fitnessgurukul")
-        print(" Tip: open backend.html — unlocks automatically on this computer.")
-    elif cred_mode == "generated":
-        print(f" Owner password (generated): {admin_token()}")
-        print(" Tip: set ADMIN_TOKEN in the host dashboard so it stays stable.")
-    else:
-        print(" Owner password: loaded from env (ADMIN_TOKEN / ADMIN_PASSWORD)")
-    if host in {"0.0.0.0", "::"}:
-        try:
-            local_ip = socket.gethostbyname(socket.gethostname())
-        except OSError:
-            local_ip = "YOUR-LAPTOP-IP"
-        print(f" LAN site: http://{local_ip}:{port}/")
-    print("=" * 56)
-    print("")
+    print(f"Fitness Gurukul running at http://127.0.0.1:{port}")
+    print(f"Share on Wi-Fi: http://{local_ip}:{port}")
     server.serve_forever()

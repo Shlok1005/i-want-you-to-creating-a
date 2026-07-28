@@ -2,13 +2,23 @@
 node_modules/
 __pycache__/
 *.pyc
-*.sqlite3
-*.sqlite3-*
-data/submissions.json
-data/*.json
-!data/.gitkeep
-api/data/*.json
-!api/data/.gitkeep
-!api/data/.htaccess
-*.bak
-.DS_Store
+
+# Heavy source media kept outside the deploy bundle.
+GALLERY/
+TESTIMONIALS/
+coaches content/
+services/VIDEOS/
+INDEX/SERVICES/
+INDEX/story map/
+new  ind/
+
+# Legacy large plan graphics; optimized copies live in assets/plans/.
+services/fg core.png
+services/fg endurance.png
+services/fg hyrox.png
+services/fg prime.png
+services/fg signature.png
+
+# Superseded source PNGs; compressed deploy copies are .jpg.
+assets/ai-fitness-hero.png
+assets/ai-community-event.png

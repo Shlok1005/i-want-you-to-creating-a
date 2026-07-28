@@ -1,3 +1,1 @@
-# Git LFS disabled for this repo.
-# GitHub LFS budget was exceeded, which broke Netlify/Render clones.
-# Site media used in production lives under assets/ as normal git files.
+# No LFS - deploy directly

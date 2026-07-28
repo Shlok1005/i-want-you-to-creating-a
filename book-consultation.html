@@ -3,108 +3,190 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Book Consultation | Fitness Gurukul</title>
-  <meta name="description" content="Book a Fitness Gurukul consultation in Hyderabad. Tell us your goal and we will match you with the right coach." />
+  <title>Book a Free Consultation | Fitness Gurukul</title>
   <link rel="stylesheet" href="styles.css" />
-  <script src="config.js"></script>
   <script src="app.js" defer></script>
   <style>
-    .consult-page { min-height: calc(100vh - 140px); display: grid; place-items: center; padding: 40px 20px 60px; }
-    .consult-page-card { width: min(720px, 100%); background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 32px; }
-    .consult-page-card h1 { margin: 12px 0 8px; font-size: 1.8rem; }
-    .consult-page-card > p { color: rgba(255,255,255,0.65); margin-bottom: 22px; }
-    .consult-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .consult-page-card label { display: grid; gap: 6px; margin-bottom: 14px; font-size: 0.82rem; color: rgba(255,255,255,0.7); }
-    .consult-page-card input, .consult-page-card select, .consult-page-card textarea {
-      width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.12);
-      background: #111; color: #fff; font: inherit;
+    .consult-page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 20px 60px;
     }
-    .consult-page-trust { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 18px; color: rgba(255,255,255,0.55); font-size: 0.78rem; }
-    .consult-page-trust span { display: inline-flex; align-items: center; gap: 6px; }
-    .consult-live-trust { display: flex; gap: 16px; flex-wrap: wrap; margin: 0 0 18px; }
-    .consult-live-trust strong { display: block; font-size: 1.2rem; color: #b8f23d; }
-    .consult-live-trust span { color: rgba(255,255,255,0.55); font-size: 0.75rem; }
-    @media (max-width: 640px) { .consult-row { grid-template-columns: 1fr; } }
+    .consult-page-card {
+      width: 100%;
+      max-width: 580px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 40px 36px;
+      position: relative;
+    }
+    .consult-page-card::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 24px;
+      border: 1px solid transparent;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent 50%, rgba(255,255,255,0.15)) border-box;
+      -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+    .consult-page-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      color: rgba(255,255,255,0.6);
+    }
+    .consult-page-card h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #fff;
+      margin: 0 0 6px;
+    }
+    .consult-page-card > p {
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.5;
+      margin: 0 0 28px;
+    }
+    .consult-page-card label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .consult-page-card input,
+    .consult-page-card select,
+    .consult-page-card textarea {
+      width: 100%;
+      padding: 11px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      color: #fff;
+      font-size: 0.88rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+      box-sizing: border-box;
+      margin-bottom: 16px;
+    }
+    .consult-page-card input:focus,
+    .consult-page-card select:focus,
+    .consult-page-card textarea:focus {
+      border-color: rgba(255,255,255,0.3);
+    }
+    .consult-page-card select option {
+      background: #222;
+      color: #fff;
+    }
+    .consult-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .consult-page-card .primary-button {
+      width: 100%;
+      justify-content: center;
+      margin-top: 4px;
+    }
+    .consult-page-card .form-status {
+      font-size: 0.82rem;
+      margin: 10px 0 0;
+      color: rgba(255,255,255,0.6);
+    }
+    .consult-page-trust {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+    .consult-page-trust span {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.35);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .consult-page-trust svg {
+      color: rgba(255,255,255,0.3);
+    }
+    @media (max-width: 600px) {
+      .consult-page-card { padding: 28px 20px; }
+      .consult-row { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
-<header class="site-header">
-  <div class="header-inner">
-    <div class="header-left">
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a class="brand" href="index.html">
+          <span class="brand-mark"><img src="assets/fitness-gurukul-logo.png" alt="" /></span>
+          <span class="brand-text"><strong>Fitness</strong><span>Gurukul</span></span>
+        </a>
+      </div>
+      <nav class="desktop-nav">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="coaches.html">Coaches</a>
+        <a href="events.html">Events</a>
+        <a href="testimonials.html">Testimonials</a>
+        <a href="tools.html">Tools</a>
+      <a href="transformation-challenge.html">Challenge</a>
+      </nav>
+      <button class="menu-button" id="menuButton" aria-label="Open navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+  <nav class="mobile-nav" id="mobileNav">
+    <div class="mobile-nav-header">
       <a class="brand" href="index.html">
-        <span class="brand-mark"><img src="assets/fitness-gurukul-logo.jpg" alt="" /></span>
+        <span class="brand-mark"><img src="assets/fitness-gurukul-logo.png" alt="" /></span>
         <span class="brand-text"><strong>Fitness</strong><span>Gurukul</span></span>
       </a>
+      <button class="mobile-nav-close" id="mobileNavClose">&times;</button>
     </div>
-    <nav class="desktop-nav">
-      <a href="index.html">Home</a>
-      <a href="services.html">Services</a>
-      <a href="coaches.html">Coaches</a>
-      <a href="events.html">Events</a>
-      <a href="testimonials.html">Transformations</a>
+    <a href="index.html">Home</a>
+    <a href="services.html">Services</a>
+    <a href="coaches.html">Coaches</a>
+    <a href="events.html">Events</a>
+    <a href="testimonials.html">Testimonials</a>
+    <a href="tools.html">Tools</a>
       <a href="transformation-challenge.html">Challenge</a>
-      <a href="tools.html">Tools</a>
-    </nav>
-    <div class="header-app-dropdown">
-      <button class="header-play-btn" type="button" aria-expanded="false" aria-haspopup="true" data-app-menu-btn>
-        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" aria-hidden="true"><path d="M4.5 3.5v17l14-8.5z"/></svg>
-        <span>Get the App</span>
-        <svg class="header-app-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-      </button>
-      <div class="header-app-menu" data-app-menu hidden>
-        <a href="https://play.google.com/store/apps/details?id=com.fitnessgurukul.app" target="_blank" rel="noopener"><span>Android — Google Play</span></a>
-        <a href="https://apps.apple.com/us/app/fitness-gurukul/id6771451272" target="_blank" rel="noopener"><span>iOS — App Store</span></a>
-      </div>
-    </div>
-    <button class="menu-button" id="menuButton" aria-label="Open navigation" aria-expanded="false"><span></span><span></span><span></span></button>
-  </div>
-</header>
-<nav class="mobile-nav" id="mobileNav">
-  <div class="mobile-nav-header">
-    <a class="brand" href="index.html">
-      <span class="brand-mark"><img src="assets/fitness-gurukul-logo.jpg" alt="" /></span>
-      <span class="brand-text"><strong>Fitness</strong><span>Gurukul</span></span>
-    </a>
-    <button class="mobile-nav-close" id="mobileNavClose">&times;</button>
-  </div>
-  <a href="index.html">Home</a>
-  <a href="services.html">Services</a>
-  <a href="coaches.html">Coaches</a>
-  <a href="events.html">Events</a>
-  <a href="testimonials.html">Transformations</a>
-  <a href="transformation-challenge.html">Challenge</a>
-  <a href="tools.html">Tools</a>
-  <div class="mobile-nav-ctas">
-    <a class="header-play-btn" href="https://play.google.com/store/apps/details?id=com.fitnessgurukul.app" target="_blank" rel="noopener">Android — Google Play</a>
-    <a class="header-play-btn" href="https://apps.apple.com/us/app/fitness-gurukul/id6771451272" target="_blank" rel="noopener">iOS — App Store</a>
-  </div>
-</nav>
+  </nav>
+
   <main class="consult-page">
     <div class="consult-page-card">
       <div class="consult-page-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       </div>
-      <h1>Buy Now / Book Consultation</h1>
-      <p>Tell us about yourself and we'll craft a plan for you. Prefills from the quiz or challenge matcher when you arrive with a link.</p>
-
-      <div class="consult-live-trust">
-        <div><strong data-live="inquiriesToday" data-live-raw>0</strong><span>Inquiries today</span></div>
-        <div><strong data-live="coaches" data-live-raw>0</strong><span>Coaches ready</span></div>
-        <div><strong data-live="challengeJoins" data-live-raw>0</strong><span>Challenge joins</span></div>
-      </div>
-
-      <div class="consult-match-preview goal-match-result" id="consultMatchPreview" hidden></div>
-
+      <h1>Book a Free Consultation</h1>
+      <p>Tell us about yourself and we'll craft a plan for you. No commitment — just a conversation about your goals.</p>
       <form id="consultPageForm">
-        <input type="hidden" name="form_type" value="consultation" />
-        <input type="hidden" name="coach" id="consultCoachField" value="" />
         <div class="consult-row">
           <label>Your name<input name="name" autocomplete="name" required placeholder="e.g. Rahul Sharma" /></label>
           <label>Phone<input name="phone" type="tel" autocomplete="tel" required placeholder="+91 98765 43210" /></label>
         </div>
         <div class="consult-row">
           <label>Email<input name="email" type="email" autocomplete="email" placeholder="you@example.com" /></label>
-          <label>Program<select name="program" required data-hydrate="plans">
+          <label>Program<select name="program" required>
             <option value="">Select</option>
             <option>Strength Training</option>
             <option>Running</option>
@@ -122,12 +204,71 @@
         <p class="form-status" id="consultPageStatus" role="status"></p>
       </form>
       <div class="consult-page-trust">
-        <span>Free — no commitment</span>
-        <span>Response within 24 hours</span>
-        <span>Saved to office database</span>
-        <a href="transformation-challenge.html#tcQuiz">Prefer the challenge quiz?</a>
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
+          Free — no commitment
+        </span>
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
+          Response within 24 hours
+        </span>
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
+          1,000+ transformations
+        </span>
       </div>
     </div>
   </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a class="brand" href="index.html">
+          <img src="assets/fitness-gurukul-logo.png" alt="" />
+          <span class="brand-text"><strong>Fitness</strong><span>Gurukul</span></span>
+        </a>
+        <p>+917207113310 | contact@fitnessgurukul.co.in | Manikonda, Hyderabad</p>
+      </div>
+      <div class="footer-links">
+        <a href="services.html">Services</a>
+        <a href="coaches.html">Coaches</a>
+        <a href="events.html">Events</a>
+        <a href="testimonials.html">Testimonials</a>
+        <a href="tools.html">Tools</a>
+      <a href="transformation-challenge.html">Challenge</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var form = document.getElementById("consultPageForm");
+      var status = document.getElementById("consultPageStatus");
+      if (!form) return;
+      form.addEventListener("submit", function(e) {
+        e.preventDefault();
+        var payload = Object.fromEntries(new FormData(form).entries());
+        status.textContent = "Sending\u2026";
+        status.style.color = "rgba(255,255,255,0.6)";
+        var apiBase = "";
+        var fetchOpts = { method: "POST", body: JSON.stringify(payload), headers: { "Content-Type": "application/json" } };
+        fetch(apiBase || "/api/submit", fetchOpts)
+          .then(function(r) { return r.json(); })
+          .then(function(d) {
+            if (d.ok || d.success) {
+              status.textContent = "\u2705 Thank you! We\u2019ll be in touch shortly.";
+              status.style.color = "#4ade80";
+              form.reset();
+            } else {
+              throw new Error(d.error || "Submit failed");
+            }
+          })
+          .catch(function() {
+            status.textContent = "\u26a0\ufe0f Something went wrong. Please try again.";
+            status.style.color = "#dc3545";
+          });
+      });
+    });
+  </script>
 </body>
 </html>

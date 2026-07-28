@@ -1,4 +1,7 @@
-name: CI
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Node.js CI
 
 on:
   push:
@@ -7,52 +10,22 @@ on:
     branches: [ "main" ]
 
 jobs:
-  backend:
+  build:
+
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python
-      uses: actions/setup-python@v5
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
       with:
-        python-version: "3.12"
-    - name: Compile server
-      run: python3 -m py_compile server.py
-    - name: Smoke test health endpoint
-      run: |
-        ADMIN_TOKEN=ci-test-token python3 server.py &
-        pid=$!
-        trap 'kill $pid' EXIT
-        for i in $(seq 1 30); do
-          if curl -sf http://127.0.0.1:8000/api/health >/tmp/fg-health.json; then
-            break
-          fi
-          sleep 0.2
-        done
-        grep -q '"ok": true' /tmp/fg-health.json
-        # Dynamic public content APIs
-        curl -sf http://127.0.0.1:8000/api/content | grep -q '"coaches"'
-        curl -sf http://127.0.0.1:8000/api/live | grep -q '"pulse"'
-        curl -sf -X POST http://127.0.0.1:8000/api/match \
-          -H 'Content-Type: application/json' \
-          -d '{"goal":"yoga","experience":"beginner","preference":"in-person"}' \
-          | grep -q '"ok": true'
-        # Owner portal + backend entry points
-        curl -sf http://127.0.0.1:8000/api/backend-info | grep -q '"ownerUrl"'
-        code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/backend)
-        test "$code" = "200"
-        curl -sf http://127.0.0.1:8000/backend.html | grep -q 'Main backend'
-        # User website main nav should not include owner dashboard
-        if curl -sf http://127.0.0.1:8000/ | grep -q 'href="dashboard.html">Dashboard'; then
-          echo "Public homepage still exposes Dashboard in nav" >&2
-          exit 1
-        fi
-        # Admin data must require a token
-        code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/api/admin-data)
-        test "$code" = "401"
-        # Valid token succeeds
-        curl -sf -H "X-Admin-Token: ci-test-token" http://127.0.0.1:8000/api/submissions | grep -q '"ok": true'
-        # Sensitive files must not be served
-        code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/server.py)
-        test "$code" = "404"
-        code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/.env.example)
-        test "$code" = "404"
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run build --if-present
+    - run: npm test

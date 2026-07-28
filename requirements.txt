@@ -1,2 +1,0 @@
-# Fitness Gurukul API uses Python stdlib only — no app packages required.
-# This file exists so cloud hosts detect a Python service.

@@ -1,253 +1,127 @@
-# Fitness Gurukul Website
+# Fitness Gurukul Full-Stack Website
 
-Multi-page Fitness Gurukul website with a responsive frontend, **Python** backend, and SQLite database.
+Multi-page Fitness Gurukul website with a responsive frontend, Python backend, and SQLite database.
 
-## Stack
+## What is included
 
-- Frontend: HTML pages at the repo root (`index.html`, `services.html`, …) plus `styles.css` and `app.js`
-- Backend: dependency-free Python HTTP API in `server.py` (port **8000**)
-- Database: SQLite file created automatically as `fitness_gurukul.sqlite3` (gitignored)
-- Two interfaces: user website (`/`) and owner portal (`/backend.html` / `backend.html`) — plus full backend at `/backend`
+- Frontend: detailed pages in `public/`
+- Backend: dependency-free Python HTTP API in `server.py`
+- Database: SQLite file created automatically as `fitness_gurukul.sqlite3`
+- Dashboard: view user-entered leads, progress check-ins, and newsletter entries
+- Download: packaged project ZIP at `public/fitness-gurukul-fullstack.zip`
 
-The old Node/Express server is deprecated. Use Python only.
+## Pages
+
+- `index.html` - logo-led home, guide, featured services, story, events, testimonials
+- `programs.html` - detailed services, filters, comparison table, packages
+- `events.html` - corporate marathon, cycling, active day, and planning flow
+- `community.html` - community runs, cycling crews, wellness challenges, and transformation paths
+- `coaches.html` - coaches, specialties, standards, testimonials, updates
+- `tools.html` - BMI, goal recommendation, check-ins, storage mode status
+- `contact.html` - consultation form, contact cards, areas, FAQ, newsletter
+- `owner-data.html` - direct owner-only data viewer, not linked in the client navigation
+
+## Brand system
+
+The UI uses the uploaded Fitness Gurukul logo colors only:
+
+- Black/dark background
+- Logo cyan and blue
+- Fitness red
+- White/ice text surfaces
+
+The fonts are Montserrat for headings/buttons and Inter for body/UI text.
 
 ## Run locally
 
-### Windows (PowerShell)
-
-`python3` often fails on Windows (Microsoft Store stub). Use one of these instead:
-
-```powershell
-copy .env.example .env
-py server.py
-```
-
-or:
-
-```powershell
+```bash
 python server.py
 ```
 
-or double-click / run:
-
-```powershell
-.\start.bat
-```
-
-If Windows says **Python was not found** / opens the Store:
-
-1. Install Python from https://www.python.org/downloads/
-2. During setup, check **Add python.exe to PATH**
-3. Open a **new** PowerShell window
-4. Optional: Settings → Apps → Advanced app settings → App execution aliases → turn **OFF** `python.exe` and `python3.exe`
-
-### macOS / Linux
-
-```bash
-cp .env.example .env
-python3 server.py
-```
-
-### Any OS via npm
-
-```bash
-npm start
-```
-
-Open the website:
+Open:
 
 ```text
 http://127.0.0.1:8000
 ```
 
-### Two interfaces
-
-**1) User website** (customers):
+To collect form data from another laptop on the same Wi-Fi, share your main laptop's network link:
 
 ```text
-http://127.0.0.1:8000/
+http://YOUR-LAPTOP-IP:8000/contact.html
 ```
 
-Public pages only: home, services, coaches, booking forms. No owner tools in the main menu.
+Do not share `127.0.0.1` with another device. On another laptop, `127.0.0.1` points back to that other laptop.
 
-**2) Owner portal** (you):
+## Where user data appears
+
+Run the backend, submit a form, then open:
 
 ```text
-http://127.0.0.1:8000/backend.html
+http://127.0.0.1:8000/owner-data.html
 ```
 
-Your private DB dashboard for leads. On your computer it usually unlocks automatically.
+The raw JSON is available at:
 
-Aliases for the owner portal: `/owner`, `/dashboard`  
-Full advanced tools: `/backend` (aliases: `/office`, `/admin`, `/staff`)
+```text
+http://127.0.0.1:8000/api/admin-data
+```
 
-Local defaults:
-- If you copy `.env.example`, password is `fitnessgurukul`
-- If no password is set and the server is on localhost, it also defaults to `fitnessgurukul` and auto-unlocks `/backend.html` / `backend.html`
+Static hosting cannot run Python or SQLite, so static forms save demo records in the browser only.
 
-The public footer keeps a small **Owner login** link; it is not in the customer navigation.
+## AI chatbot (free by default)
 
-By default the server binds to `127.0.0.1`. To share on the same Wi-Fi:
+The chat widget works **without any paid API**.
+
+### Option A — Free FAQ assistant (zero setup)
+
+Just run the server. The bot answers from Fitness Gurukul plan/coach facts.
 
 ```bash
-HOST=0.0.0.0 python3 server.py
+npm start
+# or: python server.py
 ```
 
-Then open `http://YOUR-LAPTOP-IP:8000/backend` on another device. Backend APIs still require the staff password.
+### Option B — Free real AI with Ollama (recommended)
 
-## Environment
+1. Install [Ollama](https://ollama.com)
+2. Pull a small model:
 
-Copy `.env.example` to `.env`:
+```bash
+ollama pull llama3.2
+```
+
+3. Restart the site server. It auto-detects Ollama at `http://127.0.0.1:11434`.
+
+Optional `.env`:
 
 ```text
-OPENAI_API_KEY=
+OLLAMA_BASE_URL=http://127.0.0.1:11434
+OLLAMA_MODEL=llama3.2
+```
+
+### Option C — Paid OpenAI (opt-in only)
+
+OpenAI is **not** used by default, even if a key exists. To enable it:
+
+```text
+CHAT_PROVIDER=openai
+OPENAI_API_KEY=sk-your-key
 OPENAI_MODEL=gpt-5.6
-ADMIN_TOKEN=fitnessgurukul
-HOST=127.0.0.1
-PORT=8000
 ```
 
-- Without `OPENAI_API_KEY`, the chat widget answers from local website facts.
-- Change `ADMIN_TOKEN` (or `ADMIN_PASSWORD`) before sharing the server beyond your machine.
+Or keep `CHAT_PROVIDER=auto` and set `CHAT_ALLOW_OPENAI=true`.
 
-## One-click cloud API (Render)
-
-Deploy the Python API from this repo (free tier, no credit card):
-
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/saikrishnacoder/i-want-you-to-creating-a)
-
-After deploy:
-1. Copy the service URL (`https://….onrender.com`)
-2. Set it in `config.js`: `window.FG_API_BASE = "https://….onrender.com";`
-3. Push/redeploy Hostinger
-4. Run `./scripts/verify-api.sh https://….onrender.com`
-5. Open `/backend.html` with password `fitnessgurukul` (or your `ADMIN_TOKEN`)
-
-## Deploy: Hostinger forms (works without Render)
-
-Hostinger shared hosting can save leads with the PHP endpoints in `/api/`:
-
-- Forms POST → `/api/submit.php` → `api/data/submissions.json`
-- Challenge joins → `/api/challenge-join.php`
-- Owner page → `/api/admin-data.php` (password from `api/config.php`, default `fitnessgurukul`)
-
-Keep `config.js` as `window.FG_API_BASE = ""` for this mode. Change the password in `api/config.php` after first login.
-
-If PHP is unavailable, forms fall back to a prefilled WhatsApp message so leads are never silently lost.
-
-## Deploy: Hostinger site + always-on API (Render / Railway / Fly)
-
-Optional upgrade if you want SQLite + AI chat on a cloud API:
-
-1. **Website files** on Hostinger (HTML/CSS/JS + `/api/*.php`)
-2. **Python API** (`server.py`) on Render, Railway, or Fly.io (always online)
-
-### A) Deploy the API (pick one)
-
-**Render (easiest)**
-1. Go to [https://render.com](https://render.com) → New → Blueprint / Web Service
-2. Connect this GitHub repo (`main`)
-3. Runtime: Python · Start command: `python server.py`
-4. Set env vars:
-   - `HOST=0.0.0.0`
-   - `ADMIN_TOKEN=` (choose a strong password)
-   - `CORS_ORIGINS=*` (or your Hostinger domain)
-5. Deploy → copy the URL, e.g. `https://fitness-gurukul-api.onrender.com`
-
-**Railway**
-1. [https://railway.app](https://railway.app) → New Project → Deploy from GitHub
-2. Start command: `python server.py`
-3. Add the same env vars as above
-4. Generate a public domain and copy it
-
-**Fly.io**
-```bash
-fly launch
-fly secrets set ADMIN_TOKEN=your-strong-password CORS_ORIGINS=*
-fly deploy
-```
-
-Health check: open `https://YOUR-API-URL/api/health` — should return `{"ok": true, ...}`.
-
-### B) Point the Hostinger website at the API
-
-Edit `config.js` on Hostinger (or in Git then redeploy):
-
-```js
-window.FG_API_BASE = "https://YOUR-API-URL";
-```
-
-Example:
-
-```js
-window.FG_API_BASE = "https://fitness-gurukul-api.onrender.com";
-```
-
-Leave it as `""` only when the site and API are on the same origin (local `server.py`).
-
-**This one setting is what keeps leads in your backend:**
-- Website forms → `POST {FG_API_BASE}/api/submit` → SQLite on the cloud API
-- Challenge joins → `POST {FG_API_BASE}/api/challenge-join` → same SQLite
-- Owner page `backend.html` → `GET {FG_API_BASE}/api/admin-data` → same SQLite
-
-So Hostinger only hosts the pages; the cloud API owns the database.
-
-### C) Redeploy Hostinger
-
-Pull/upload the latest `main` (includes `config.js`) and make sure your edited API URL is live.
-
-Then forms, quiz, live stats, chat, and `backend.html` keep working with your laptop off. Open `https://yoursite.com/backend.html` and unlock with the same `ADMIN_TOKEN` from Render/Railway/Fly — new leads appear there.
-
-**Notes**
-- Free Render apps may sleep after idle; first request can take ~30s to wake.
-- SQLite on free tiers is usually ephemeral (resets on redeploy). For permanent leads, use a paid disk/volume or export regularly from the owner backend.
-
-## Pages
-
-- `index.html` — home
-- `about.html` — brand story
-- `services.html` — plans and services
-- `coaches.html` — coach directory
-- `events.html` — corporate and community events
-- `testimonials.html` — client stories
-- `tools.html` — fitness calculators
-- `contact.html` / `book-consultation.html` — lead forms
-- `dashboard.html` via `/backend.html` / `backend.html` — owner portal (your DB interface)
-- `office.html` via `/backend` — full advanced backend tools
-- `owner-data.html` — optional protected SQLite viewer
+Priority with `CHAT_PROVIDER=auto`: **Ollama → local FAQ** (OpenAI only when opted in).
 
 ## API endpoints
 
-Public:
-
 - `GET /api/health`
-- `GET /api/content` — plans, enriched coaches (images/highlights), testimonials, live snapshot
-- `GET /api/live` — rotating studio pulse + DB-backed inquiry/tool counters
-- `GET /api/goals` — goal matcher catalog
-- `POST /api/match` — interactive goal → plan/coach recommendation
+- `GET /api/content`
 - `GET /api/chat/status`
 - `POST /api/chat`
-- `POST /api/submit` — consultation and corporate event forms
-- `POST /api/leads` — alias that stores into the same submissions/leads tables
-- `POST /api/calculations`
-
-The public pages are API-driven: coach grids, home minds carousel, live stats, and the goal matcher hydrate from these endpoints (with local fallbacks if the API is offline).
-
-Protected (header `X-Admin-Token: <ADMIN_TOKEN>`):
-
+- `POST /api/leads`
+- `GET /api/leads`
+- `POST /api/newsletter`
+- `POST /api/checkins`
+- `GET /api/stats`
 - `GET /api/admin-data`
-- `GET /api/submissions`
-- `GET /api/office-stats`
-- `PATCH /api/submissions/:id/status` — `new` | `contacted` | `qualified` | `closed`
-- `DELETE /api/submissions/:id`
-
-Backend UI (`/backend` → `office.html`) reads the live SQLite database and lets staff search leads, update status, export CSV, and delete records.
-
-Sensitive paths (`.env`, `*.sqlite3`, `data/`, `server.py`, etc.) are not served as static files.
-
-## Security notes
-
-- Do not commit `.env`, `*.sqlite3`, or `data/*.json`
-- Never share `/backend` or `owner-data.html` without the staff password
-- Prefer localhost bind unless you intentionally need LAN access
-- Change the default local password before exposing the server on Wi‑Fi

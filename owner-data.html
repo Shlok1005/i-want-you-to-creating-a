@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Owner Data Viewer | Fitness Gurukul</title>
     <link rel="stylesheet" href="styles.css" />
-    <script src="config.js"></script>
-  <script src="app.js" defer></script>
+    <script src="app.js" defer></script>
   </head>
   <body>
     <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
@@ -14,7 +13,7 @@
   <div class="header-inner">
     <div class="header-left">
       <a class="brand" href="index.html">
-        <span class="brand-mark"><img src="assets/fitness-gurukul-logo.jpg" alt="" /></span>
+        <span class="brand-mark"><img src="assets/fitness-gurukul-logo.png" alt="" /></span>
         <span class="brand-text"><strong>Fitness</strong><span>Gurukul</span></span>
       </a>
     </div>
@@ -24,27 +23,17 @@
       <a href="coaches.html">Coaches</a>
 
       <a href="events.html">Events</a>
-      <a href="testimonials.html">Transformations</a>
+      <a href="testimonials.html">Testimonials</a>
       <a href="tools.html">Tools</a>
+      <a href="transformation-challenge.html">Challenge</a>
     </nav>
-    <div class="header-app-dropdown">
-      <button class="header-play-btn" type="button" aria-expanded="false" aria-haspopup="true" data-app-menu-btn>
-        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" aria-hidden="true"><path d="M4.5 3.5v17l14-8.5z"/></svg>
-        <span>Get the App</span>
-        <svg class="header-app-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-      </button>
-      <div class="header-app-menu" data-app-menu hidden>
-        <a href="https://play.google.com/store/apps/details?id=com.fitnessgurukul.app" target="_blank" rel="noopener"><span>Android — Google Play</span></a>
-        <a href="https://apps.apple.com/us/app/fitness-gurukul/id6771451272" target="_blank" rel="noopener"><span>iOS — App Store</span></a>
-      </div>
-    </div>
     <button class="menu-button" id="menuButton" aria-label="Open navigation" aria-expanded="false"><span></span><span></span><span></span></button>
   </div>
 </header>
 <nav class="mobile-nav" id="mobileNav">
   <div class="mobile-nav-header">
     <a class="brand" href="index.html">
-      <span class="brand-mark"><img src="assets/fitness-gurukul-logo.jpg" alt="" /></span>
+      <span class="brand-mark"><img src="assets/fitness-gurukul-logo.png" alt="" /></span>
       <span class="brand-text"><strong>Fitness</strong><span>Gurukul</span></span>
     </a>
     <button class="mobile-nav-close" id="mobileNavClose">&times;</button>
@@ -54,23 +43,20 @@
   <a href="coaches.html">Coaches</a>
 
   <a href="events.html">Events</a>
-    <a href="testimonials.html">Transformations</a>
+    <a href="testimonials.html">Testimonials</a>
   <a href="tools.html">Tools</a>
-  <div class="mobile-nav-ctas">
-    <a class="header-play-btn" href="https://play.google.com/store/apps/details?id=com.fitnessgurukul.app" target="_blank" rel="noopener">Android — Google Play</a>
-    <a class="header-play-btn" href="https://apps.apple.com/us/app/fitness-gurukul/id6771451272" target="_blank" rel="noopener">iOS — App Store</a>
-  </div>
-</nav>
+      <a href="transformation-challenge.html">Challenge</a>
+  </nav>
 
     <main>
       <section class="page-hero">
         <p class="eyebrow">Owner data viewer</p>
         <h1>Private working page for submitted website data.</h1>
         <p>
-          This file is intentionally not linked in the client navigation. Use it with the Python
-          backend and your <code>ADMIN_TOKEN</code> to view consultation leads, check-ins, AI scans, and newsletter entries.
+          This file is intentionally not linked in the client navigation. Use it directly while
+          running the local Python backend to view consultation leads, check-ins, AI scans, and newsletter entries.
         </p>
-        <div class="client-hidden-note">Direct owner URL: http://127.0.0.1:8000/owner-data.html — token required</div>
+        <div class="client-hidden-note">Direct owner URL: http://127.0.0.1:8000/owner-data.html</div>
       </section>
 
       <section class="guide-section">
@@ -101,8 +87,7 @@
         </div>
         <div class="admin-note" id="adminNote">Loading data source...</div>
         <div class="admin-tabs" id="adminTabs">
-          <button type="button" class="active" data-admin-tab="submissions">Form submissions</button>
-          <button type="button" data-admin-tab="leads">Consultation leads</button>
+          <button type="button" class="active" data-admin-tab="leads">Consultation leads</button>
           <button type="button" data-admin-tab="checkins">Progress check-ins</button>
           <button type="button" data-admin-tab="ai_scans">AI scans</button>
           <button type="button" data-admin-tab="newsletter">Newsletter</button>
@@ -131,7 +116,7 @@
           <article class="guide-card"><span>02</span><h3>Call or message</h3><p>Use the submitted phone number to confirm timing, location, goal urgency, and whether the client needs doorstep service.</p></article>
           <article class="guide-card"><span>03</span><h3>Assign the route</h3><p>Match the person to personal training, nutrition, yoga, swimming, online coaching, corporate event, or community challenge.</p></article>
           <article class="guide-card"><span>04</span><h3>Track check-ins and scans</h3><p>Use check-in entries and AI scan notes to see mood, stamina, weight, and posture route before changing intensity or nutrition targets.</p></article>
-          <article class="guide-card"><span>05</span><h3>Use raw JSON</h3><p>Call /api/admin-data with the X-Admin-Token header when you need the same records in a raw format.</p></article>
+          <article class="guide-card"><span>05</span><h3>Use raw JSON</h3><p>Open /api/admin-data when you need the same records in a raw format for copying into another system.</p></article>
           <article class="guide-card"><span>06</span><h3>Keep client nav clean</h3><p>This owner viewer is intentionally direct-only so visitors stay focused on programs, community, tools, and contact.</p></article>
         </div>
         </div>
@@ -170,7 +155,7 @@
       <div class="footer-news-main">
         <div class="footer-news-brand">
           <a class="brand" href="index.html">
-            <img src="assets/fitness-gurukul-logo.jpg" alt="Fitness Gurukul" />
+            <img src="assets/fitness-gurukul-logo.png" alt="Fitness Gurukul" />
             <span class="brand-text"><strong>Fitness</strong><span>Gurukul</span></span>
           </a>
           <p class="footer-news-tagline">Personal training, made personal. Hyderabad's trusted fitness coaching since 2013.</p>
@@ -195,7 +180,7 @@
             <nav>
               <a href="about.html">About Us</a>
               <a href="coaches.html">Our Coaches</a>
-              <a href="testimonials.html">Transformations</a>
+              <a href="testimonials.html">Testimonials</a>
             </nav>
           </div>
           <div class="footer-news-col">

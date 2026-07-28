@@ -111,13 +111,16 @@ const realData = {
     { name: "Anand Yadav", role: "Children's Athletics Coach", slug: "anand-yadav", category: "kids", bio: "Children's Athletics Coach", focus: ["Children's athletics", "Kids fitness", "Sports"], highlight: "Kids Fitness Expert", color: "blue", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0297-69538d52664ae75da3c69fc1.jpg" },
     { name: "Aditya", role: "Yoga Instructor & Fitness Coach", slug: "aditya", category: "yoga", bio: "Yoga Instructor & Fitness Coach", focus: ["Yoga", "Fitness", "Body toning"], highlight: "Mind-Body Coach", color: "cyan", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0298-69538dd1474cc000b54586be.jpg" },
     { name: "Nitu Arya", role: "Yoga Instructor", slug: "nitu-arya", category: "yoga", bio: "Yoga Instructor", focus: ["Yoga", "Flexibility", "General fitness"], highlight: "Holistic Yoga", color: "cyan", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0295-69538d35474cc000b54586b7.jpg" },
+    { name: "Rahul Bisht", role: "Yoga Instructor", slug: "rahul-bisht", category: "yoga", bio: "Yoga Instructor", focus: ["Yoga", "Mobility", "General fitness"], highlight: "Mobility Master", color: "cyan", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0294-69538d19474cc000b54586b4.jpg" },
     { name: "Deepesh Kumar", role: "Fitness Trainer", slug: "deepesh-kumar", category: "fitness", bio: "Fitness Trainer", focus: ["Fitness training", "Strength", "Weight loss"], highlight: "Weight Loss Specialist", color: "red", image: "assets/coaches/deepesh-kumar.jpg" },
     { name: "S Jeetender", role: "Fitness Trainer", slug: "s-jeetender", category: "fitness", bio: "Fitness Trainer", focus: ["Fitness training", "Daily exercise", "Strength"], highlight: "Daily Fitness Pro", color: "red", image: "assets/coaches/s-jeetender.jpg" },
     { name: "Rahul Dawar", role: "Fitness Trainer", slug: "rahul-dawar", category: "fitness", bio: "Fitness Trainer", focus: ["Fitness training", "Strength", "Health routine"], highlight: "Health & Strength", color: "red", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0291-69538ccf8c7b7b2c6178b6e1.jpg" },
+    { name: "Rahul Singh Pawar", role: "Yoga Instructor", slug: "rahul-singh-pawar", category: "yoga", bio: "Yoga Instructor", focus: ["Yoga", "Flexibility", "Stress relief"], highlight: "Stress Relief Expert", color: "cyan", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0290-69538cb65c5bdcd270817b1f.jpg" },
     { name: "Ravi Pal", role: "Fitness Trainer & Injury Rehabilitation Coach", slug: "ravi-pal", category: "rehab", bio: "Fitness Trainer & Injury Rehabilitation Coach", focus: ["Fitness training", "Injury rehabilitation", "Recovery"], highlight: "Injury Recovery", color: "blue", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0289-69538c800222ba9c3d831802.jpg" },
     
     { name: "Sanjeev", role: "Fitness Trainer", slug: "sanjeev", category: "fitness", bio: "Fitness Trainer", focus: ["Fitness training", "Strength", "Daily exercise"], highlight: "Strength Trainer", color: "red", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/274dba00-8541-4bfc-8666-e0b5433b3781-69538a190222ba9c3d8317f4.jpg" },
     { name: "Nandlal", role: "Fitness Trainer", slug: "nandlal", category: "fitness", bio: "Fitness Trainer", focus: ["Fitness training", "Strength", "Weight loss"], highlight: "Transformation Coach", color: "red", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/04ea7dfe-a988-4a17-97cb-8dc44240cb59-695389c4474cc000b54586a8.jpg" },
+    { name: "Prasenjit Ghosh", role: "Mudgar & Hybrid Training Specialist", slug: "prasenjit-ghosh", category: "hybrid", bio: "Mudgar & Hybrid Training Specialist", focus: ["Mudgar", "Hybrid training", "Strength"], highlight: "Hybrid Training", color: "cyan", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/db612d80-360a-4c76-9a18-0e97da5d1dc9-69538988474cc000b54586a5.jpg" },
     { name: "Vinay Ojha", role: "Fitness Trainer", slug: "vinay-ojha", category: "fitness", bio: "Fitness Trainer", focus: ["Fitness training", "Strength", "General fitness"], highlight: "All-Round Fitness", color: "red", image: "assets/coaches/vinay-ojha.jpg" },
     { name: "Ankit Singh Chauhan", role: "Fitness & Calisthenics Trainer", slug: "ankit-singh-chauhan", category: "fitness", bio: "Fitness & Calisthenics Trainer", focus: ["Fitness", "Calisthenics", "Strength"], highlight: "Calisthenics Expert", color: "red", image: "assets/coaches/ankit-singh-chauhan.jpg" },
     { name: "Suresh Yadav", role: "Fitness Trainer (Special Children)", slug: "suresh-yadav", category: "special", bio: "Fitness Trainer (Special Children)", focus: ["Special children", "Fitness", "Mobility"], highlight: "Special Needs Expert", color: "blue", image: "assets/coaches/suresh-yadav.jpg" },
@@ -282,9 +285,9 @@ const realData = {
     {n:"Athletic Conditioning: Speed, Agility & Power",c:"Athletic",l:"Intermediate",d:"8 weeks"},
   ],
   updates: [
-    { title: "Online Personal Trainer in Hyderabad — Flexible Coaching for Modern Lifestyles", date: "2026-02-17", summary: "Flexible coaching with check-ins, workouts, and nutrition support for modern schedules." },
-    { title: "Certified Personal Trainer in Hyderabad — Qualified Guidance You Can Trust", date: "2026-02-14", summary: "Qualified programming helps clients train safely, recover better, and build repeatable habits." },
-    { title: "Best Dietician for Weight Loss in Hyderabad — Practical Nutrition for Real Change", date: "2026-02-14", summary: "Food choices, portions, and routine design for sustainable weight management." },
+    { title: "Online Personal Trainer in Hyderabad � Flexible Coaching for Modern Lifestyles", date: "2026-02-17", summary: "Flexible coaching with check-ins, workouts, and nutrition support for modern schedules." },
+    { title: "Certified Personal Trainer in Hyderabad � Qualified Guidance You Can Trust", date: "2026-02-14", summary: "Qualified programming helps clients train safely, recover better, and build repeatable habits." },
+    { title: "Best Dietician for Weight Loss in Hyderabad � Practical Nutrition for Real Change", date: "2026-02-14", summary: "Food choices, portions, and routine design for sustainable weight management." },
   ],
   serviceAreas: ["Manikonda", "Lakshmi Nagar Colony", "Gachibowli", "Kokapet", "Narsingi", "Financial District", "HITEC City", "Madhapur", "Puppalaguda", "Shaikpet", "Jubilee Hills"],
   contact: {
@@ -299,7 +302,7 @@ const realData = {
 /* A focused, original workout library with a practical Indian nutrition note per plan. */
 const curatedWorkouts = [
   {n:"Foundation Strength",c:"Strength",l:"Beginner",d:"8 weeks",summary:"Three full-body sessions that teach the big lifts and build dependable strength.",diet:"Three balanced meals: protein at every meal, rice or roti around training, vegetables twice daily, and steady water intake."},
-  {n:"Build Muscle: Upper / Lower",c:"Hypertrophy",l:"Intermediate",d:"8 weeks",summary:"Four weekly sessions with progressive volume for balanced muscle growth.",diet:"Use a modest calorie surplus with protein in 3—4 meals. Add fruit, curd, paneer, eggs, dal, chicken, rice or roti based on preference."},
+  {n:"Build Muscle: Upper / Lower",c:"Hypertrophy",l:"Intermediate",d:"8 weeks",summary:"Four weekly sessions with progressive volume for balanced muscle growth.",diet:"Use a modest calorie surplus with protein in 3�4 meals. Add fruit, curd, paneer, eggs, dal, chicken, rice or roti based on preference."},
   {n:"Fat Loss & Conditioning",c:"Fat Loss",l:"All Levels",d:"6 weeks",summary:"Strength training plus focused conditioning to preserve muscle while improving fitness.",diet:"Build plates around lean protein, vegetables, dal, fruit, and measured rice or roti portions. Avoid crash dieting; progress comes from consistency."},
   {n:"Home Dumbbell Full Body",c:"Home",l:"Beginner",d:"6 weeks",summary:"Simple home sessions using a pair of dumbbells and clear weekly progression.",diet:"Keep it simple: protein at breakfast, lunch, and dinner; a fruit or curd snack; and enough carbs to support training without skipping meals."},
   {n:"Quick HIIT Express",c:"HIIT",l:"Intermediate",d:"4 weeks",summary:"Short interval sessions for days when you want intensity without a long workout.",diet:"Have a light carb-and-protein snack before hard sessions if needed, then recover with a complete meal and extra fluids afterward."},
@@ -307,7 +310,7 @@ const curatedWorkouts = [
   {n:"Bodyweight Anywhere",c:"Bodyweight",l:"All Levels",d:"6 weeks",summary:"A no-equipment plan for strength, work capacity, and consistency anywhere.",diet:"A balanced everyday approach works best: dal, eggs, dairy, chicken or paneer for protein; seasonal vegetables, fruit, and whole grains for fuel."},
   {n:"Runner's Strength Base",c:"Hybrid",l:"Intermediate",d:"8 weeks",summary:"Run-supportive strength sessions to build resilient legs, trunk, and conditioning.",diet:"Increase carbs on longer run days, keep protein consistent, and use simple recovery foods such as curd rice, fruit, milk, eggs, dal, or chicken."},
   {n:"Glutes & Lower Body",c:"Lower Body",l:"All Levels",d:"6 weeks",summary:"Squat, hinge, lunge, and carry patterns to strengthen legs and glutes.",diet:"Support lower-body volume with enough total food: protein every meal, carb portions near training, and iron-rich foods such as greens, legumes, and meat if you eat it."},
-  {n:"Push / Pull / Legs",c:"Split",l:"Intermediate",d:"8 weeks",summary:"A clear three-day split with enough volume and recovery for steady progress.",diet:"For performance, distribute protein across 3—4 meals and include a carb-rich meal before or after training. Adjust portions to your goal."},
+  {n:"Push / Pull / Legs",c:"Split",l:"Intermediate",d:"8 weeks",summary:"A clear three-day split with enough volume and recovery for steady progress.",diet:"For performance, distribute protein across 3�4 meals and include a carb-rich meal before or after training. Adjust portions to your goal."},
   {n:"Functional Fitness Starter",c:"Functional",l:"Beginner",d:"6 weeks",summary:"Practical strength, carries, conditioning, and movement confidence for daily life.",diet:"Choose repeatable meals over perfection: a protein source, vegetables, and a carb source at main meals; hydrate before and after sessions."},
   {n:"Desk Worker Posture & Strength",c:"Corrective",l:"All Levels",d:"6 weeks",summary:"Posture-friendly strength and mobility for stiff hips, shoulders, and long workdays.",diet:"Keep energy stable with regular meals and protein-rich snacks. Pair the plan with daily walking, water, and sufficient sleep for better recovery."}
 ];
@@ -320,35 +323,11 @@ function list(items = []) {
   return `<ul>${items.map((item) => `<li>${safe(item)}</li>`).join("")}</ul>`;
 }
 
-function getApiBase() {
-  if (typeof window !== "undefined" && window.FG_API_BASE) {
-    return String(window.FG_API_BASE).replace(/\/$/, "");
-  }
-  var meta = typeof document !== "undefined" ? document.querySelector('meta[name="fg-api-base"]') : null;
-  if (meta && meta.content) return String(meta.content).replace(/\/$/, "");
-  try {
-    var stored = localStorage.getItem("fg_api_base");
-    if (stored) return String(stored).replace(/\/$/, "");
-  } catch (e) {}
-  return "";
-}
-
-function apiUrl(path) {
-  if (typeof window !== "undefined" && typeof window.fgApiUrl === "function") {
-    return window.fgApiUrl(path);
-  }
-  var base = getApiBase();
-  if (!path) return base || "/";
-  if (/^https?:\/\//i.test(path)) return path;
-  if (!base) return path.charAt(0) === "/" ? path : "/" + path;
-  return base + (path.charAt(0) === "/" ? path : "/" + path);
-}
-
 async function api(path, options = {}) {
   const controller = new AbortController();
-  const timer = setTimeout(function() { controller.abort(); }, 8000);
+  const timer = setTimeout(function() { controller.abort(); }, 5000);
   try {
-    const res = await fetch(apiUrl(path), {
+    const res = await fetch(path, {
       headers: { "Content-Type": "application/json" },
       signal: controller.signal,
       ...options,
@@ -367,10 +346,6 @@ async function detectBackend() {
   try {
     const health = await api("/api/health");
     usesLocalBackend = Boolean(health.ok);
-    if (usesLocalBackend && typeof document !== "undefined") {
-      document.documentElement.dataset.apiReady = "1";
-      if (getApiBase()) document.documentElement.dataset.apiRemote = "1";
-    }
   } catch (e) {
     usesLocalBackend = false;
   }
@@ -448,497 +423,24 @@ function getServiceCatalog() {
 var _servicesData = [];
 var selectedPlans = new Set();
 
-
-function updateCompareCount() {
-  var count = selectedPlans.size;
-  qsa("[data-compare-count], #compareCount, .svc-compare-count").forEach(function(el) {
-    el.textContent = String(count);
-  });
-  qsa(".svc-compare-toggle, #compareToggle, [data-compare-toggle]").forEach(function(el) {
-    el.classList.toggle("has-selection", count > 0);
-    if (el.tagName === "BUTTON" || el.getAttribute("role") === "button") {
-      el.setAttribute("aria-label", count ? ("Compare " + count + " plans") : "Compare plans");
-    }
-  });
-}
-
-function mergeCoachMedia(coaches) {
-  var bySlug = {};
-  (realData.coaches || []).forEach(function(c) { if (c && c.slug) bySlug[c.slug] = c; });
-  return (coaches || []).map(function(coach) {
-    var local = bySlug[coach.slug] || {};
-    return Object.assign({}, local, coach, {
-      image: coach.image || local.image || "",
-      highlight: coach.highlight || local.highlight || "Coach",
-      color: coach.color || local.color || "cyan",
-      focus: coach.focus && coach.focus.length ? coach.focus : (local.focus || []),
-      bio: coach.bio || local.bio || coach.role || "",
-    });
-  });
-}
-
-function updateCategoryCounts(coaches) {
-  var counts = {};
-  (coaches || []).forEach(function(c) {
-    var key = c.category || "fitness";
-    counts[key] = (counts[key] || 0) + 1;
-  });
-  qsa("[data-cat-count]").forEach(function(el) {
-    var key = el.getAttribute("data-cat-count");
-    var n = counts[key] || 0;
-    el.textContent = n === 1 ? "1 Coach" : (n + " Coaches");
-  });
-  qsa("[data-live=\"coaches\"]").forEach(function(el) {
-    if (!el.classList.contains("counter-num")) return;
-    el.dataset.target = String((coaches || []).length);
-  });
-  qsa("[data-live=\"specialties\"]").forEach(function(el) {
-    if (!el.classList.contains("counter-num")) return;
-    el.dataset.target = String(Object.keys(counts).length || 7);
-  });
-}
-
-async function fetchLiveStats() {
-  try {
-    return await api("/api/live");
-  } catch (e) {
-    return null;
-  }
-}
-
-function applyLiveStats(live) {
-  if (!live) return;
-  var map = {
-    clientsTransformed: (live.clientsTransformed || 1000).toLocaleString() + "+",
-    years: String(live.years || 13),
-    events: String(live.events || 50) + "+",
-    coaches: String(live.coaches || ""),
-    specialties: String(live.specialties || 7),
-    inquiriesToday: String(live.inquiriesToday || 0),
-    challengeJoins: String(live.challengeJoins || 0),
-    activeNow: String(live.activeNow || 0),
-    toolUses: String(live.toolUses || 0),
-    chatSessions: String(live.chatSessions || 0),
-  };
-  Object.keys(map).forEach(function(key) {
-    qsa('[data-live="' + key + '"]').forEach(function(el) {
-      var raw = live[key];
-      // Keep numeric counters numeric so animateCounters / scrubbers stay clean.
-      if (el.classList.contains("counter-num") || el.hasAttribute("data-live-raw")) {
-        el.textContent = String(raw != null ? raw : map[key]);
-        el.dataset.target = String(raw != null ? raw : el.dataset.target || 0);
-      } else {
-        el.textContent = map[key];
-      }
-    });
-  });
-  if (has("#livePulseText") && live.pulse) qs("#livePulseText").textContent = live.pulse;
-  if (has("#liveActiveNow")) qs("#liveActiveNow").textContent = String(live.activeNow || "—");
-  qsa("[data-live-pulse]").forEach(function(el) {
-    if (live.pulse) el.textContent = live.pulse;
-  });
-}
-
-function initLivePulse() {
-  if (!has("#liveStats") && !qsa("[data-live]").length) return;
-  var tick = function() {
-    fetchLiveStats().then(function(live) {
-      if (live) applyLiveStats(live);
-    });
-  };
-  tick();
-  setInterval(tick, 45000);
-}
-
-function bookLinkFromMatch(data) {
-  var plan = (data && data.plan) || {};
-  var match = (data && data.match) || {};
-  var coach = ((data && data.coaches) || [])[0] || {};
-  var params = new URLSearchParams();
-  if (match.goal) params.set("goal", match.goal);
-  if (plan.name) params.set("program", plan.name);
-  if (coach.name) params.set("coach", coach.name);
-  if (data && data.challenge && data.challenge.name) params.set("challenge", data.challenge.name);
-  var qs = params.toString();
-  return "book-consultation.html" + (qs ? "?" + qs : "");
-}
-
-function renderMatchResultHtml(data) {
-  var plan = data.plan || {};
-  var coaches = data.coaches || [];
-  var match = data.match || {};
-  var challenge = data.challenge || {};
-  var coachHtml = coaches.slice(0, 3).map(function(c) {
-    var img = c.image ? '<img src="' + safe(c.image) + '" alt="" />' : '<span>' + safe(coachInitials(c.name)) + '</span>';
-    return '<article class="goal-coach-chip">' + img + '<div><strong>' + safe(c.name) + '</strong><small>' + safe(c.role) + '</small></div></article>';
-  }).join("");
-  var bookHref = bookLinkFromMatch(data);
-  return '<div class="goal-match-card">' +
-    '<div class="goal-match-score">' + safe(data.score || 90) + '% match</div>' +
-    '<h3>' + safe(match.title || plan.name || "Your plan") + '</h3>' +
-    '<p>' + safe(match.summary || plan.summary || "") + '</p>' +
-    (challenge.name ? '<p class="goal-match-tip"><strong>Challenge:</strong> ' + safe(challenge.name) + ' · ' + safe(challenge.days || "") + ' days</p>' : '') +
-    '<p class="goal-match-tip">' + safe(data.tip || "") + ' ' + safe(data.mode || "") + '</p>' +
-    '<div class="goal-match-plan"><span>Recommended</span><strong>' + safe(plan.name || match.plan || "") + '</strong><em>' + safe(plan.price || "") + '</em></div>' +
-    '<div class="goal-match-coaches">' + (coachHtml || "<p>Browse all coaches to pick your fit.</p>") + '</div>' +
-    '<div class="goal-match-actions">' +
-      '<a class="primary-button" href="' + safe(bookHref) + '">Buy Now</a>' +
-      '<a class="ghost-button" href="transformation-challenge.html#tcQuiz">Try challenge quiz</a>' +
-      '<a class="ghost-button" href="https://wa.me/917207113310" target="_blank" rel="noopener">Have questions? Chat now</a>' +
-    '</div>' +
-  '</div>';
-}
-
-function initGoalMatcher() {
-  var form = qs("#goalMatchForm");
-  var result = qs("#goalMatchResult");
-  if (!form || !result) return;
-  form.addEventListener("submit", async function(e) {
-    e.preventDefault();
-    var payload = Object.fromEntries(new FormData(form).entries());
-    result.hidden = false;
-    result.classList.remove("is-ready");
-    result.innerHTML = '<div class="goal-match-loading">Matching you with a plan and coach…</div>';
-    try {
-      var data = await api("/api/match", { method: "POST", body: JSON.stringify(payload) });
-      result.innerHTML = renderMatchResultHtml(data);
-      result.classList.add("is-ready");
-      result.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    } catch (err) {
-      result.innerHTML = '<div class="goal-match-error">Could not match right now. <a href="book-consultation.html">Book a consultation</a> instead.</div>';
-    }
-  });
-}
-
-function initPlanQuiz() {
-  var root = qs("#planQuizRoot");
-  if (!root || root.dataset.wired === "1") return;
-  root.dataset.wired = "1";
-  var steps = [
-    {
-      key: "goal",
-      q: "What’s your main goal?",
-      options: [
-        { value: "weight-loss", label: "Lose fat / reshape" },
-        { value: "strength", label: "Build strength" },
-        { value: "yoga", label: "Yoga & mobility" },
-        { value: "running", label: "Running & endurance" },
-        { value: "rehab", label: "Rehab / return to train" }
-      ]
-    },
-    {
-      key: "experience",
-      q: "Your experience level?",
-      options: [
-        { value: "beginner", label: "Beginner" },
-        { value: "intermediate", label: "Intermediate" },
-        { value: "advanced", label: "Advanced" }
-      ]
-    },
-    {
-      key: "preference",
-      q: "How do you want to train?",
-      options: [
-        { value: "in-person", label: "In-person / doorstep" },
-        { value: "virtual", label: "Virtual coaching" }
-      ]
-    }
-  ];
-  var answers = {};
-  var step = 0;
-  root.innerHTML =
-    '<div class="plan-quiz">' +
-      '<div class="plan-quiz-progress"><span id="planQuizBar"></span></div>' +
-      '<p class="plan-quiz-q" id="planQuizQ"></p>' +
-      '<div class="plan-quiz-options" id="planQuizOptions"></div>' +
-      '<div class="plan-quiz-nav">' +
-        '<button type="button" class="ghost-button" id="planQuizBack" disabled>Back</button>' +
-        '<button type="button" class="primary-button" id="planQuizNext" disabled>Next</button>' +
-      '</div>' +
-      '<div class="goal-match-result" id="planQuizResult" hidden></div>' +
-    '</div>';
-
-  function render() {
-    var s = steps[step];
-    qs("#planQuizQ").textContent = s.q;
-    qs("#planQuizBar").style.width = (((step + 1) / steps.length) * 100) + "%";
-    qs("#planQuizOptions").innerHTML = s.options.map(function(o) {
-      return '<button type="button" class="plan-quiz-option' + (answers[s.key] === o.value ? " selected" : "") + '" data-value="' + safe(o.value) + '">' + safe(o.label) + '</button>';
-    }).join("");
-    qs("#planQuizBack").disabled = step === 0;
-    qs("#planQuizNext").disabled = !answers[s.key];
-    qs("#planQuizNext").textContent = step === steps.length - 1 ? "Get my plan" : "Next";
-  }
-
-  async function finish() {
-    var result = qs("#planQuizResult");
-    result.hidden = false;
-    result.innerHTML = '<div class="goal-match-loading">Matching via /api/quiz…</div>';
-    try {
-      var data = await api("/api/quiz", { method: "POST", body: JSON.stringify(answers) });
-      result.innerHTML = renderMatchResultHtml(data);
-      result.classList.add("is-ready");
-      result.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    } catch (e) {
-      result.innerHTML = '<div class="goal-match-error">Quiz API unavailable. <a href="transformation-challenge.html#tcQuiz">Open full challenge quiz</a>.</div>';
-    }
-  }
-
-  qs("#planQuizOptions").addEventListener("click", function(e) {
-    var btn = e.target.closest(".plan-quiz-option");
-    if (!btn) return;
-    answers[steps[step].key] = btn.getAttribute("data-value");
-    render();
-  });
-  qs("#planQuizBack").addEventListener("click", function() {
-    if (step > 0) { step -= 1; render(); }
-  });
-  qs("#planQuizNext").addEventListener("click", function() {
-    if (!answers[steps[step].key]) return;
-    if (step < steps.length - 1) { step += 1; render(); }
-    else finish();
-  });
-  render();
-}
-
-function initConsultPrefill() {
-  var form = qs("#consultPageForm") || qs("#leadForm");
-  if (!form) return;
-  var params = new URLSearchParams(window.location.search);
-  ["goal", "program", "coach", "name", "phone", "email", "message", "challenge"].forEach(function(key) {
-    var val = params.get(key);
-    if (!val) return;
-    var field = form.querySelector('[name="' + key + '"]');
-    if (!field && key === "challenge") {
-      var msg = form.querySelector('[name="message"]');
-      if (msg && !msg.value) msg.value = "Interested in: " + val;
-      return;
-    }
-    if (!field) return;
-    if (field.tagName === "SELECT") {
-      var opts = Array.prototype.slice.call(field.options);
-      var hit = opts.find(function(o) { return o.value === val || o.textContent.trim() === val; });
-      if (hit) field.value = hit.value;
-      else {
-        var opt = document.createElement("option");
-        opt.value = val;
-        opt.textContent = val;
-        opt.selected = true;
-        field.appendChild(opt);
-      }
-    } else {
-      field.value = val;
-    }
-  });
-
-  var preview = qs("#consultMatchPreview");
-  if (!preview) return;
-  var goal = params.get("goal");
-  if (!goal) {
-    preview.hidden = true;
-    return;
-  }
-  preview.hidden = false;
-  preview.innerHTML = '<div class="goal-match-loading">Loading plan preview…</div>';
-  api("/api/match", {
-    method: "POST",
-    body: JSON.stringify({
-      goal: goal,
-      experience: params.get("experience") || "beginner",
-      preference: params.get("preference") || "in-person"
-    })
-  }).then(function(data) {
-    preview.innerHTML = renderMatchResultHtml(data);
-    preview.classList.add("is-ready");
-  }).catch(function() {
-    preview.hidden = true;
-  });
-}
-
-function hydrateProgramSelects(plans) {
-  var list = Array.isArray(plans) && plans.length ? plans : (realData.plans || []);
-  qsa("select[name='program'][data-hydrate='plans']").forEach(function(sel) {
-    var current = sel.value;
-    var html = '<option value="">Select program</option>';
-    list.forEach(function(p) {
-      html += '<option value="' + safe(p.name) + '">' + safe(p.name) + " · " + safe(p.price || "") + "</option>";
-    });
-    html += '<option value="Corporate Events">Corporate Events</option><option value="Kids Programs">Kids Programs</option>';
-    sel.innerHTML = html;
-    if (current) sel.value = current;
-  });
-}
-
-function initCoachCategoryJump() {
-  qsa(".cc-card[data-coach-jump], [data-coach-jump]").forEach(function(card) {
-    card.style.cursor = "pointer";
-    card.addEventListener("click", function() {
-      var cat = card.getAttribute("data-coach-jump");
-      if (!cat) return;
-      activeCoachFilter = cat;
-      qsa("button[data-coach-filter]").forEach(function(btn) {
-        btn.classList.toggle("active", btn.getAttribute("data-coach-filter") === cat);
-      });
-      renderFilteredCoaches();
-      var grid = qs("#allCoaches") || qs("#coachGrid");
-      if (grid) grid.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-  });
-  // Also map specialty cards without explicit attrs by heading text.
-  qsa(".coach-scroll-track .cc-card").forEach(function(card) {
-    if (card.hasAttribute("data-coach-jump")) return;
-    var title = (card.querySelector("h3") || {}).textContent || "";
-    var map = {
-      "Yoga": "yoga", "Fitness": "fitness", "Sports": "sports", "Kids": "kids",
-      "Injury": "rehab", "Special": "special", "Hybrid": "hybrid"
-    };
-    Object.keys(map).some(function(key) {
-      if (title.indexOf(key) !== -1) {
-        card.setAttribute("data-coach-jump", map[key]);
-        return true;
-      }
-      return false;
-    });
-  });
-  qsa(".coach-scroll-track .cc-card[data-coach-jump]").forEach(function(card) {
-    if (card.dataset.jumpWired === "1") return;
-    card.dataset.jumpWired = "1";
-    card.style.cursor = "pointer";
-    card.addEventListener("click", function() {
-      var cat = card.getAttribute("data-coach-jump");
-      activeCoachFilter = cat;
-      qsa("button[data-coach-filter]").forEach(function(btn) {
-        btn.classList.toggle("active", btn.getAttribute("data-coach-filter") === cat);
-      });
-      renderFilteredCoaches();
-      var target = qs("#allCoaches") || qs("#coachGrid");
-      if (target) target.scrollIntoView({ behavior: "smooth" });
-    });
-  });
-
-  var params = new URLSearchParams(window.location.search);
-  var goal = params.get("goal") || params.get("filter");
-  if (goal && has("#coachGrid")) {
-    var goalMap = {
-      "weight-loss": "fitness", strength: "fitness", yoga: "yoga", running: "sports",
-      kids: "kids", rehab: "rehab", flexibility: "yoga"
-    };
-    activeCoachFilter = goalMap[goal] || (["yoga","fitness","sports","kids","rehab","special","hybrid"].indexOf(goal) >= 0 ? goal : "all");
-    qsa("button[data-coach-filter]").forEach(function(btn) {
-      btn.classList.toggle("active", btn.getAttribute("data-coach-filter") === activeCoachFilter);
-    });
-    renderFilteredCoaches();
-  }
-}
-
-function initEventFilters() {
-  var bar = qs("#eventFilters");
-  var grid = qs("#eventsGrid") || qs("#events .mg-grid");
-  if (!bar || !grid) return;
-  bar.addEventListener("click", function(e) {
-    var btn = e.target.closest("button[data-event-filter]");
-    if (!btn) return;
-    qsa("button[data-event-filter]", bar).forEach(function(b) { b.classList.toggle("active", b === btn); });
-    var filter = btn.getAttribute("data-event-filter");
-    qsa(".mg-card, .event-card", grid).forEach(function(card) {
-      if (filter === "all") { card.style.display = ""; return; }
-      var hay = ((card.textContent || "") + " " + (card.getAttribute("data-category") || "")).toLowerCase();
-      card.style.display = hay.indexOf(filter) !== -1 ? "" : "none";
-    });
-  });
-}
-
-function initToolsMatchHook() {
-  if (!has("#calcApp")) return;
-  document.addEventListener("click", function(e) {
-    if (!e.target.closest("#calcSubmit")) return;
-    setTimeout(function() {
-      var host = qs("#calResult");
-      if (!host || host.style.display === "none") return;
-      if (host.querySelector(".tools-match-box")) return;
-      var box = document.createElement("div");
-      box.className = "tools-match-box";
-      box.innerHTML = '<p class="tools-match-loading">Finding a plan that fits this result…</p>';
-      host.appendChild(box);
-      var goal = "weight-loss";
-      var title = ((qs(".cal-view-header h2") || {}).textContent || "").toLowerCase();
-      if (title.indexOf("bmi") !== -1 || title.indexOf("body fat") !== -1 || title.indexOf("macro") !== -1) goal = "weight-loss";
-      if (title.indexOf("1rm") !== -1 || title.indexOf("strength") !== -1) goal = "strength";
-      api("/api/match", {
-        method: "POST",
-        body: JSON.stringify({ goal: goal, experience: "beginner", preference: "in-person" })
-      }).then(function(data) {
-        box.innerHTML = renderMatchResultHtml(data);
-      }).catch(function() {
-        box.innerHTML = '<p><a href="transformation-challenge.html#tcQuiz">Take the plan quiz</a> for a coaching recommendation.</p>';
-      });
-    }, 50);
-  });
-}
-
-function initInteractivePageExtras() {
-  initPlanQuiz();
-  initConsultPrefill();
-  initCoachCategoryJump();
-  initEventFilters();
-  initToolsMatchHook();
-  // Rating filter on coaches page
-  var rating = qs("#coachRatingFilter");
-  if (rating && rating.dataset.wired !== "1") {
-    rating.dataset.wired = "1";
-    rating.addEventListener("change", renderFilteredCoaches);
-  }
-}
-
-function initMagneticCtas() {
-  qsa(".primary-button, .ghost-button, .header-play-btn").forEach(function(btn) {
-    if (btn.dataset.magnetic === "1") return;
-    btn.dataset.magnetic = "1";
-    btn.addEventListener("pointermove", function(e) {
-      var rect = btn.getBoundingClientRect();
-      var x = e.clientX - rect.left - rect.width / 2;
-      var y = e.clientY - rect.top - rect.height / 2;
-      btn.style.transform = "translate(" + (x * 0.08) + "px," + (y * 0.08) + "px)";
-    });
-    btn.addEventListener("pointerleave", function() {
-      btn.style.transform = "";
-    });
-  });
-}
-
-function initInteractiveMotion() {
-  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  document.documentElement.classList.add("dyn-motion");
-  initMagneticCtas();
-  // Parallax ambient plus marks lightly on scroll
-  var ambient = qs("#bg-ambient");
-  if (ambient) {
-    window.addEventListener("scroll", function() {
-      var y = Math.min(40, window.scrollY * 0.04);
-      ambient.style.transform = "translate3d(0," + y + "px,0)";
-    }, { passive: true });
-  }
-}
-
-
 var FALLBACK_COACHES = [
   { name: "Aditya Gururani", role: "Yoga Instructor & Breathing Specialist", slug: "aditya-gururani", category: "yoga", bio: "A certified yoga instructor specializing in breathwork, stress management, and functional mobility.", focus: ["Breathwork", "Stress management", "Functional mobility"], highlight: "Breathwork Expert", color: "cyan", image: "assets/coaches/aditya-gururani.jpg" },
   { name: "Kritika Chauhan", role: "Fitness Trainer", slug: "kritika-chauhan", category: "fitness", bio: "Fitness Trainer specializing in flexibility, mobility, and general fitness.", focus: ["Flexibility", "Mobility", "General fitness"], highlight: "Flexibility Coach", color: "red", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0302-69538f34664ae75da3c69fce.jpg" },
   { name: "Nitu Arya", role: "Yoga Instructor", slug: "nitu-arya", category: "yoga", bio: "Yoga Instructor focused on holistic wellness and flexibility.", focus: ["Yoga", "Flexibility", "General fitness"], highlight: "Holistic Yoga", color: "cyan", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0305-6953918f0222ba9c3d831822.jpeg" },
+  { name: "Rahul Bisht", role: "Yoga Instructor", slug: "rahul-bisht", category: "yoga", bio: "Yoga Instructor specializing in mobility and general fitness.", focus: ["Yoga", "Mobility", "General fitness"], highlight: "Mobility Master", color: "cyan", image: "https://web.s-cdn.boostkit.dev/website-files/603de2c09a1837000163b27d/69466d7b1b66370278b1e977-69466d7b0c30ac5c9f820a8f.jpeg" },
   { name: "Anand Yadav", role: "Children's Athletics Coach", slug: "anand-yadav", category: "kids", bio: "Children's Athletics Coach focused on kids fitness and sports development.", focus: ["Children's athletics", "Kids fitness", "Sports"], highlight: "Kids Fitness Expert", color: "blue", image: "https://web.s-cdn.boostkit.dev/website-files/603de2c09a1837000163b27d/694669eb876eab0610642251-694669eb1c636e8e2f4fb5c0.jpeg" },
   { name: "Ravi Pal", role: "Fitness Trainer & Injury Rehabilitation Coach", slug: "ravi-pal", category: "rehab", bio: "Fitness Trainer & Injury Rehabilitation Coach.", focus: ["Fitness training", "Injury rehabilitation", "Recovery"], highlight: "Injury Recovery", color: "blue", image: "https://web.s-cdn.boostkit.dev/website-files/603de2c09a1837000163b27d/69466d1b1c79393307d9ab91-69466d1bd73385b925812cfd.webp" },
   { name: "Subedhar Yadav", role: "Fitness Trainer (Special Children)", slug: "subedhar-yadav", category: "special", bio: "Fitness Trainer for special children focusing on mobility and strength.", focus: ["Special children", "Fitness", "Mobility"], highlight: "Special Needs Coach", color: "blue", image: "https://fpimages.withfloats.com/actual/69844b5073641513f8f1e239.jpeg" },
+  { name: "Prasenjit Ghosh", role: "Mudgar & Hybrid Training Specialist", slug: "prasenjit-ghosh", category: "hybrid", bio: "Mudgar & Hybrid Training Specialist for functional strength.", focus: ["Mudgar", "Hybrid training", "Strength"], highlight: "Hybrid Training", color: "cyan", image: "https://productimages.withfloats.com/tile/69836aa4fb1f2c7bc65e495e.jpeg" },
 ];
 
 function renderCoaches(coaches) {
-  if (!has("#coachGrid") && !has("#mindsCarousel")) { console.log("[renderCoaches] no coach mounts, skipping"); return; }
+  if (!has("#coachGrid")) { console.log("[renderCoaches] no #coachGrid, skipping"); return; }
   if (!coaches || !coaches.length) { console.log("[renderCoaches] using FALLBACK_COACHES"); coaches = FALLBACK_COACHES; }
-  coaches = mergeCoachMedia(coaches);
   console.log("[renderCoaches] coaches count:", coaches.length);
   allCoaches = coaches;
   coachProfiles = coaches;
-  updateCategoryCounts(coaches);
-  if (has("#coachGrid")) renderFilteredCoaches();
+  renderFilteredCoaches();
 }
 
 function coachInitials(name = "") {
@@ -961,15 +463,12 @@ function renderFilteredCoaches() {
   if (!has("#coachGrid")) return;
   const container = qs("#coachGrid");
   const search = qs("#coachSearch")?.value.trim().toLowerCase() || "";
-  const minRating = Number((qs("#coachRatingFilter") || {}).value || 0);
   const limit = Number(container.dataset.limit || 0);
-  const filtered = allCoaches.filter((coach, idx) => {
+  const filtered = allCoaches.filter((coach) => {
     const haystack = `${coach.name} ${coach.role} ${(coach.focus || []).join(" ")} ${coach.highlight || ""}`.toLowerCase();
     const matchesSearch = !search || haystack.includes(search);
     const matchesFilter = activeCoachFilter === "all" || coach.category === activeCoachFilter;
-    const meta = fakeCoachMeta(coach, idx);
-    const matchesRating = !minRating || Number(meta.rating) >= minRating;
-    return matchesSearch && matchesFilter && matchesRating;
+    return matchesSearch && matchesFilter;
   });
   const items = limit ? filtered.slice(0, limit) : filtered;
   var isHome = !has("#coachSearch") && !has("#coachFilters");
@@ -1018,7 +517,6 @@ function renderFilteredCoaches() {
         <div class="ccv2-tags">${(coach.focus || []).map(function(f) { return '<span style="border-color:' + hc + '33;color:' + hc + '">' + safe(f) + '</span>'; }).join("")}</div>
         <div class="ccv2-actions">
           <span class="ccv2-profile-btn" style="border-color:${ac}">View Profile</span>
-          <button type="button" class="ccv2-schedule-btn" style="border-color:${ac}" data-coach-calendar="${safe(coach.slug)}">Schedule</button>
           <button class="ccv2-book-btn coach-card-book-btn" style="background:${ac}" data-coach="${safe(coach.name)}">Book</button>
         </div>
       </div>
@@ -1397,7 +895,7 @@ function openWorkoutOverlay(slug) {
     overlay.setAttribute("role", "dialog");
     overlay.setAttribute("aria-modal", "true");
     overlay.setAttribute("aria-label", "Workout program details");
-    overlay.innerHTML = '<div class="workout-overlay-bar"><span>Workout program</span><button type="button" class="workout-overlay-close" aria-label="Close workout details">Close <span aria-hidden="true">—</span></button></div><iframe class="workout-overlay-frame" title="Workout program details"></iframe>';
+    overlay.innerHTML = '<div class="workout-overlay-bar"><span>Workout program</span><button type="button" class="workout-overlay-close" aria-label="Close workout details">Close <span aria-hidden="true">�</span></button></div><iframe class="workout-overlay-frame" title="Workout program details"></iframe>';
     document.body.appendChild(overlay);
     overlay.querySelector(".workout-overlay-close").addEventListener("click", closeWorkoutOverlay);
     overlay.addEventListener("click", function(event) { if (event.target === overlay) closeWorkoutOverlay(); });
@@ -1477,40 +975,15 @@ function formatTime(value) {
   return Number.isNaN(date.getTime()) ? "-" : date.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" });
 }
 
-function getAdminToken() {
-  try { return sessionStorage.getItem("fg_admin_token") || ""; }
-  catch { return ""; }
-}
-
-function ensureAdminToken() {
-  var existing = getAdminToken();
-  if (existing) return existing;
-  var entered = window.prompt("Enter ADMIN_TOKEN from your server .env to view owner data:");
-  if (!entered) return "";
-  try { sessionStorage.setItem("fg_admin_token", entered.trim()); }
-  catch {}
-  return entered.trim();
-}
-
 async function refreshAdminData() {
   if (!has("#adminTableBody")) return;
   if (usesLocalBackend) {
     try {
-      var token = ensureAdminToken();
-      if (!token) {
-        adminData = { leads: [], checkins: [], ai_scans: [], newsletter: [], calculations: [], submissions: [] };
-        qs("#adminNote").textContent = "Admin token required. Set ADMIN_TOKEN in .env, then reload this page.";
-        renderAdminTable();
-        return;
-      }
-      adminData = await api("/api/admin-data", {
-        headers: { "Content-Type": "application/json", "X-Admin-Token": token },
-      });
-      qs("#adminNote").textContent = "Showing latest records from the Python/SQLite backend.";
+      adminData = await api("/api/admin-data");
+      qs("#adminNote").textContent = "Showing latest records from the backend.";
     } catch (e) {
-      try { sessionStorage.removeItem("fg_admin_token"); } catch {}
-      adminData = { leads: [], checkins: [], ai_scans: [], newsletter: [], calculations: [], submissions: [] };
-      qs("#adminNote").textContent = "Could not load owner data. Check that python3 server.py is running and ADMIN_TOKEN is correct.";
+      adminData = { leads: [], checkins: [], ai_scans: [], newsletter: [], calculations: [] };
+      qs("#adminNote").textContent = "Backend not reachable. Start python server.py.";
     }
   }
   renderAdminTable();
@@ -1523,7 +996,6 @@ function renderAdminTable() {
   var body = qs("#adminTableBody");
   var active = (tabs.find(function(tab) { return tab.classList.contains("active"); }) || tabs[0]);
   var fields = {
-    submissions: [["name", "Name"], ["phone", "Phone"], ["email", "Email"], ["program", "Program"], ["goal", "Goal"], ["message", "Message"], ["created_at", "Received"]],
     leads: [["name", "Name"], ["phone", "Phone"], ["goal", "Goal"], ["program", "Program"], ["message", "Message"], ["created_at", "Received"]],
     checkins: [["name", "Name"], ["weight", "Weight (kg)"], ["stamina", "Stamina"], ["mood", "Mood"], ["created_at", "Received"]],
     ai_scans: [["name", "Name"], ["focus", "Focus"], ["summary", "Summary"], ["coach_route", "Coach route"], ["camera_used", "Camera"], ["created_at", "Received"]],
@@ -1639,9 +1111,9 @@ const quizQuestions = [
     question: "What is your experience level?",
     key: "level",
     options: [
-      { value: "beginner", label: "Beginner — new to fitness" },
-      { value: "intermediate", label: "Intermediate — some experience" },
-      { value: "advanced", label: "Advanced — regularly active" },
+      { value: "beginner", label: "Beginner � new to fitness" },
+      { value: "intermediate", label: "Intermediate � some experience" },
+      { value: "advanced", label: "Advanced � regularly active" },
     ],
   },
 ];
@@ -1716,7 +1188,6 @@ function injectBookModal() {
         '<p class="book-modal-coach-name" id="bookModalCoachName"></p>' +
       '</div>' +
       '<form class="book-modal-frm" id="bookModalForm">' +
-        '<input type="hidden" name="form_type" value="consultation" />' +
         '<input type="hidden" name="coach" id="bookModalCoachInput" />' +
         '<div class="book-frm-row">' +
           '<label>Your Name<input name="name" autocomplete="name" required placeholder="e.g. Rahul Sharma" /></label>' +
@@ -1826,153 +1297,35 @@ function openBookModal(coachName) {
   document.body.style.overflow = "hidden";
 }
 
-function buildWhatsAppLeadUrl(payload) {
-  if (typeof window !== "undefined" && typeof window.fgWhatsAppLeadUrl === "function") {
-    return window.fgWhatsAppLeadUrl(payload);
-  }
-  return "https://wa.me/917207113310";
-}
-
-function submitEndpointCandidates() {
-  if (typeof window !== "undefined" && typeof window.fgApiCandidates === "function") {
-    return window.fgApiCandidates("/api/submit");
-  }
-  var list = [apiUrl("/api/submit")];
-  if (!getApiBase()) list.push("/api/submit.php");
-  return list;
-}
-
-function rememberPendingLead(body) {
-  try {
-    var key = "fg_pending_leads";
-    var pending = JSON.parse(localStorage.getItem(key) || "[]");
-    if (!Array.isArray(pending)) pending = [];
-    pending.unshift(Object.assign({ savedAt: Date.now() }, body));
-    localStorage.setItem(key, JSON.stringify(pending.slice(0, 40)));
-  } catch (e) {}
-}
-
-async function postJsonCandidate(url, body) {
-  var res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
-    body: JSON.stringify(body),
-  });
-  var data = {};
-  try { data = await res.json(); } catch (err) { data = {}; }
-  return { res: res, data: data, url: url };
-}
-
-async function submitFormPayload(payload, formEl) {
-  var body = Object.assign({ form_type: payload.form_type || "consultation" }, payload || {});
-  // Corporate forms use contact_name; normalize for APIs that expect name.
-  if (!body.name && body.contact_name) body.name = body.contact_name;
-  var remote = getApiBase();
-  var candidates = submitEndpointCandidates();
-  var lastError = null;
-  var validationError = null;
-
-  for (var i = 0; i < candidates.length; i++) {
-    var endpoint = candidates[i];
-    try {
-      var result = await postJsonCandidate(endpoint, body);
-      if (result.res.ok && (result.data.ok || result.data.success)) {
-        result.data.savedToBackend = true;
-        result.data.apiEndpoint = endpoint;
-        return result.data;
-      }
-      if (result.res.status === 400 && result.data && result.data.error) {
-        validationError = new Error(result.data.error + (result.data.fields ? (" (" + result.data.fields.join(", ") + ")") : ""));
-        // Validation failed on a live API — don't keep hopping endpoints.
-        if (result.res.headers.get("content-type") && String(result.res.headers.get("content-type")).indexOf("json") !== -1) {
-          throw validationError;
-        }
-      }
-      lastError = new Error(result.data.error || ("Submit failed (" + result.res.status + ")"));
-    } catch (err) {
-      if (err === validationError) throw err;
-      lastError = err;
-    }
-  }
-
-  // Guaranteed customer path: never leave the visitor with a dead form.
-  var waUrl = buildWhatsAppLeadUrl(body);
-  rememberPendingLead(body);
-  if (remote) {
-    return {
-      ok: true,
-      savedToBackend: false,
-      whatsappFallback: true,
-      whatsappUrl: waUrl,
-      warning: "Cloud API unreachable (" + remote + "). Send this lead on WhatsApp so we do not lose it.",
-    };
-  }
-  return {
-    ok: true,
-    savedToBackend: false,
-    whatsappFallback: true,
-    whatsappUrl: waUrl,
-    warning: "Could not reach the website database. Send this lead on WhatsApp so our team still gets it.",
-    cause: lastError ? String(lastError.message || lastError) : "",
-  };
-}
-
-function bindFormSubmit(form, statusEl, successMessage) {
-  if (!form || form.dataset.fgBound === "1") return;
-  form.dataset.fgBound = "1";
-  form.addEventListener("submit", function(e) {
+function wireBookModalForm() {
+  var frm = qs("#bookModalForm");
+  if (!frm) return;
+  frm.addEventListener("submit", function(e) {
     e.preventDefault();
-    e.stopImmediatePropagation();
-    var status = statusEl || form.querySelector(".form-status, .book-frm-status, .cp-consult-status, .coach-frm-status, .mg-corp-form-status, #leadStatus, #bookFormStatus, #corpFormStatus, #consultPageStatus");
-    var payload = Object.fromEntries(new FormData(form).entries());
-    var submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
-    if (submitBtn) submitBtn.disabled = true;
-    if (status) {
-      status.textContent = "Sending\u2026";
-      status.style.color = "rgba(255,255,255,0.6)";
-    }
-    submitFormPayload(payload, form)
-      .then(function(result) {
-        if (status) {
-          if (result && result.whatsappFallback && result.whatsappUrl) {
-            status.innerHTML =
-              "\u26a0\ufe0f " + (result.warning || "Could not save to the database.") +
-              ' <a href="' + result.whatsappUrl + '" target="_blank" rel="noopener" style="color:#4ade80;text-decoration:underline">Send on WhatsApp instead</a>';
-            status.style.color = "#fbbf24";
-            try { window.open(result.whatsappUrl, "_blank", "noopener"); } catch (err) {}
-          } else {
-            var saved = result && result.savedToBackend;
-            status.textContent = successMessage || (saved
-              ? "\u2705 Saved. We\u2019ll be in touch shortly."
-              : "\u2705 Thank you! We\u2019ll be in touch shortly.");
-            status.style.color = "#4ade80";
-          }
-        }
-        var coachValue = form.querySelector('input[name="coach"]');
-        var keptCoach = coachValue ? coachValue.value : "";
-        if (!(result && result.whatsappFallback)) {
-          form.reset();
-          if (coachValue && keptCoach) coachValue.value = keptCoach;
+    var status = qs("#bookFormStatus");
+    var payload = Object.fromEntries(new FormData(frm).entries());
+    status.textContent = "Sending\u2026";
+    status.style.color = "rgba(255,255,255,0.6)";
+    var apiBase = "";
+    var fetchOpts = { method: "POST", body: JSON.stringify(payload), headers: { "Content-Type": "application/json" } };
+    fetch(apiBase || "/api/submit", fetchOpts)
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (d.ok || d.success) {
+          status.textContent = "\u2705 Thank you! We\u2019ll be in touch shortly.";
+          status.style.color = "#4ade80";
+          frm.reset();
+          var coachInput = qs("#bookModalCoachInput");
+          if (coachInput) coachInput.value = coachInput.value;
+        } else {
+          throw new Error(d.error || "Submit failed");
         }
       })
-      .catch(function(err) {
-        if (status) {
-          var wa = buildWhatsAppLeadUrl(payload);
-          status.innerHTML =
-            "\u26a0\ufe0f Something went wrong. Please try again or " +
-            '<a href="' + wa + '" target="_blank" rel="noopener" style="color:#4ade80;text-decoration:underline">message us on WhatsApp</a>.' +
-            (err && err.message ? " <span style='opacity:.7'>(" + safe(err.message) + ")</span>" : "");
-          status.style.color = "#dc3545";
-        }
-      })
-      .finally(function() {
-        if (submitBtn) submitBtn.disabled = false;
+      .catch(function() {
+        status.textContent = "\u26a0\ufe0f Something went wrong. Please try again.";
+        status.style.color = "#dc3545";
       });
   });
-}
-
-function wireBookModalForm() {
-  bindFormSubmit(qs("#bookModalForm"), qs("#bookFormStatus"));
 }
 
 function wireCoachPopups() {
@@ -2000,7 +1353,7 @@ function wireCoachPopups() {
 
     var card = e.target.closest(".coach-card, .coach-card-v2, .home-coach-card, .about-team-card");
     if (!card || !card.dataset.coachId) return;
-    if (e.target.closest(".coach-inline-form, .coach-card-book-btn, .ccv2-profile-btn, .ccv2-schedule-btn, [data-coach-calendar]")) return;
+    if (e.target.closest(".coach-inline-form, .coach-card-book-btn, .ccv2-profile-btn")) return;
     e.preventDefault();
     var coach = allCoaches.find(function(c) { return c.slug === card.dataset.coachId; });
     if (coach) renderCoachPopup(coach);
@@ -2010,40 +1363,28 @@ function wireCoachPopups() {
     var frm = e.target.closest(".cp-consult-frm, .coach-inline-frm");
     if (!frm) return;
     e.preventDefault();
-    e.stopPropagation();
     var status = frm.querySelector(".cp-consult-status, .coach-frm-status");
     var payload = Object.fromEntries(new FormData(frm).entries());
-    if (status) {
-      status.textContent = "Sending\u2026";
-      status.style.color = "rgba(255,255,255,0.6)";
-    }
-    submitFormPayload(payload, frm)
-      .then(function(result) {
-        if (status) {
-          if (result && result.whatsappFallback && result.whatsappUrl) {
-            status.innerHTML =
-              "\u26a0\ufe0f Could not save to database. " +
-              '<a href="' + result.whatsappUrl + '" target="_blank" rel="noopener" style="color:#4ade80;text-decoration:underline">Send on WhatsApp</a>';
-            status.style.color = "#fbbf24";
-            try { window.open(result.whatsappUrl, "_blank", "noopener"); } catch (err) {}
-          } else {
-            status.textContent = "\u2705 Thank you! We\u2019ll be in touch shortly.";
-            status.style.color = "#4ade80";
-            var coachInput = frm.querySelector('input[name="coach"]');
-            var kept = coachInput ? coachInput.value : "";
-            frm.reset();
-            if (coachInput && kept) coachInput.value = kept;
-          }
+    status.textContent = "Sending\u2026";
+    status.style.color = "rgba(255,255,255,0.6)";
+    var apiBase = "";
+    var fetchOpts = { method: "POST", body: JSON.stringify(payload), headers: { "Content-Type": "application/json" } };
+    fetch(apiBase || "/api/submit", fetchOpts)
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (d.ok || d.success) {
+          status.textContent = "\u2705 Thank you! We\u2019ll be in touch shortly.";
+          status.style.color = "#4ade80";
+          frm.reset();
+          var coachInput = frm.querySelector('input[name="coach"]');
+          if (coachInput) coachInput.value = coachInput.value;
+        } else {
+          throw new Error(d.error || "Submit failed");
         }
       })
-      .catch(function(err) {
-        if (status) {
-          var wa = buildWhatsAppLeadUrl(payload);
-          status.innerHTML =
-            "\u26a0\ufe0f Something went wrong. Please try again or " +
-            '<a href="' + wa + '" target="_blank" rel="noopener" style="color:#4ade80;text-decoration:underline">message us on WhatsApp</a>.';
-          status.style.color = "#dc3545";
-        }
+      .catch(function() {
+        status.textContent = "\u26a0\ufe0f Something went wrong. Please try again.";
+        status.style.color = "#dc3545";
       });
   });
 }
@@ -2051,17 +1392,17 @@ function wireCoachPopups() {
 function injectHeroContent(content) {
   var headline = qs("#heroHeadline");
   var subhead = qs("#heroSubheadline");
-  if (!headline && !subhead) return;
+  if (!headline) return;
   var d = content || realData;
-  if (headline && d.heroHeadline) {
-    headline.innerHTML = safe(d.heroHeadline).replace(/\.\s+/g, ".<br>");
-  }
-  if (subhead) {
-    subhead.textContent = d.heroSubhead || "At Fitness Gurukul, we believe in a holistic approach to health that incorporates fitness, nutrition, and lifestyle changes. We make health and fitness a part of everyday life.";
-  }
+  headline.textContent = d.heroHeadline || "Fitness Coaching in Hyderabad";
+  if (subhead) subhead.textContent = d.heroSubhead || "At Fitness Gurukul, we believe in a holistic approach to health that incorporates fitness, nutrition, and lifestyle changes. We make health and fitness a part of everyday life.";
 }
 
+function injectAuthModal() {
+}
 
+function wireAuth() {
+}
 
 function injectWhatsApp() {
   if (qs("#waWidget")) return;
@@ -2095,44 +1436,35 @@ function injectWhatsApp() {
 }
 
 function wireForms() {
-  bindFormSubmit(qs("#leadForm"), qs("#leadStatus"));
-  bindFormSubmit(qs("#consultPageForm"), qs("#consultPageStatus"));
-  bindFormSubmit(qs("#corpEventForm"), qs("#corpFormStatus"));
-  bindFormSubmit(qs("#eventRsvpForm"), qs("#eventRsvpStatus"));
+  var leadForm = qs("#leadForm");
+  if (leadForm) {
+    leadForm.addEventListener("submit", function(e) {
+      e.preventDefault();
+      var status = qs("#leadStatus");
+      var payload = Object.fromEntries(new FormData(leadForm).entries());
+      status.textContent = "Sending\u2026";
+      status.style.color = "rgba(255,255,255,0.6)";
+    var apiBase = "";
+    var fetchOpts = { method: "POST", body: JSON.stringify(payload), headers: { "Content-Type": "application/json" } };
+    fetch(apiBase || "/api/submit", fetchOpts)
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d.ok || d.success) {
+            status.textContent = "\u2705 Thank you! We\u2019ll be in touch shortly.";
+            status.style.color = "#4ade80";
+            leadForm.reset();
+          } else {
+            throw new Error(d.error || "Submit failed");
+          }
+        })
+        .catch(function() {
+          status.textContent = "\u26a0\ufe0f Something went wrong. Please try again.";
+          status.style.color = "#dc3545";
+        });
+    });
+  }
   qsa("[data-contact-phone]").forEach((node) => { node.textContent = realData.contact.phone; });
   qsa("[data-contact-email]").forEach((node) => { node.textContent = realData.contact.email; });
-}
-
-
-function wireAppDropdown() {
-  var dropdowns = qsa(".header-app-dropdown");
-  if (!dropdowns.length) return;
-  dropdowns.forEach(function(drop) {
-    var btn = drop.querySelector("[data-app-menu-btn]");
-    var menu = drop.querySelector("[data-app-menu]");
-    if (!btn || !menu) return;
-    btn.addEventListener("click", function(e) {
-      e.stopPropagation();
-      var open = !menu.hasAttribute("hidden");
-      qsa(".header-app-menu").forEach(function(m) { m.setAttribute("hidden", ""); });
-      qsa("[data-app-menu-btn]").forEach(function(b) { b.setAttribute("aria-expanded", "false"); b.classList.remove("open"); });
-      if (!open) {
-        menu.removeAttribute("hidden");
-        btn.setAttribute("aria-expanded", "true");
-        btn.classList.add("open");
-      }
-    });
-  });
-  document.addEventListener("click", function() {
-    qsa(".header-app-menu").forEach(function(m) { m.setAttribute("hidden", ""); });
-    qsa("[data-app-menu-btn]").forEach(function(b) { b.setAttribute("aria-expanded", "false"); b.classList.remove("open"); });
-  });
-  document.addEventListener("keydown", function(e) {
-    if (e.key === "Escape") {
-      qsa(".header-app-menu").forEach(function(m) { m.setAttribute("hidden", ""); });
-      qsa("[data-app-menu-btn]").forEach(function(b) { b.setAttribute("aria-expanded", "false"); b.classList.remove("open"); });
-    }
-  });
 }
 
 function wireNavigationAids() {
@@ -2246,9 +1578,7 @@ function initPlanCards() {
 
 /* -- Plan Modals (Core + Signature) --- */
 function initPlanModals() {
-  /* services.html has its own #planOverlay + openPlan(); still wire
-     compare/plan CTAs on #servicesGrid instead of bailing out entirely. */
-  var usePageOverlay = !!qs("#planOverlay");
+  if (qs("#planOverlay")) return;
   var modalsInjected = false;
   function buildPlanHero(info) {
     var metaHtml = info.meta.map(function(m) {
@@ -2377,7 +1707,7 @@ function initPlanModals() {
       return;
     }
     modalsInjected = true;
-    var html = '<div class="plan-modal-overlay" id="corePlanModal"><div class="plan-modal"><button class="plan-modal-close" data-close-modal><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button><div class="plan-modal-header"><div class="plan-modal-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><h2>Fitness Gurukul Core</h2><p class="plan-modal-sub">1-on-1 coaching — pick the plan that fits your journey</p></div><div class="plan-modal-tiers">';
+    var html = '<div class="plan-modal-overlay" id="corePlanModal"><div class="plan-modal"><button class="plan-modal-close" data-close-modal><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button><div class="plan-modal-header"><div class="plan-modal-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><h2>Fitness Gurukul Core</h2><p class="plan-modal-sub">1-on-1 coaching � pick the plan that fits your journey</p></div><div class="plan-modal-tiers">';
     var tiers = [
       { name: "Monthly", price: "₹5,999", period: "/mo", save: null },
       { name: "Quarterly", price: "₹15,999", period: "/qr", save: "Save ₹2,997 vs monthly" },
@@ -2411,7 +1741,7 @@ function initPlanModals() {
     var enduranceSteps = [
       { icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7M9 12l2 2 4-4M7 3h10l1 4H6L7 3z"/></svg>', title: "Digital Onboarding", desc: "Intake form covering running history, fitness level, goals, and medical background to build your runner profile." },
       { icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>', title: "Running Coach Assigned", desc: "Dedicated running coach assigned within hours. They connect via in-app chat to discuss your race goals." },
-      { icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>', title: "Running Plan Synced", desc: "Periodized training plan — track intervals, tempo runs, and long slow distance — synced to your app calendar." },
+      { icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>', title: "Running Plan Synced", desc: "Periodized training plan � track intervals, tempo runs, and long slow distance � synced to your app calendar." },
       { icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>', title: "Nutrition & Race Strategy", desc: "Endurance nutrition coaching, carb-loading plan, mid-run fueling, and pacing strategy loaded into your app." },
       { icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>', title: "Weekly Video Reviews", desc: "Form analysis, biofeedback tracking, and progress check-ins with your coach via weekly video calls." },
       { icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>', title: "Daily Coach Access", desc: "In-app chat support with your running coach. Get answers to training questions within 8 hours." }
@@ -2438,7 +1768,7 @@ function initPlanModals() {
     html += '<div class="plan-tier plan-tier-highlight" style="--i:0"><div class="plan-tier-badge">Premium</div><div class="plan-tier-top"><h4>Monthly Subscription</h4><p class="plan-tier-price"><span class="plan-actual">₹15,999</span><span class="plan-period">/month</span></p></div><div class="plan-tier-features"><span class="plan-tier-chip">5 sessions/week</span><span class="plan-tier-chip">1:1 coach</span><span class="plan-tier-chip">In-person PT</span><span class="plan-tier-chip">Nutrition plan</span><span class="plan-tier-chip">Structural assessment</span><span class="plan-tier-chip">App check-in</span></div><a class="primary-button" href="contact.html" style="justify-content:center;margin-top:16px">Book a Consultation</a></div>';
     html += '</div>' + howHtml(sigSteps) + '</div></div>';
     /* prime modal */
-    html += '<div class="plan-modal-overlay" id="primePlanModal"><div class="plan-modal"><button class="plan-modal-close" data-close-modal><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button><div class="plan-modal-header"><div class="plan-modal-icon" style="color:var(--white);border-color:rgba(251,191,36,0.2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><h2 style="background:linear-gradient(135deg,#fff 30%,var(--white));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Fitness Gurukul Prime</h2><p class="plan-modal-sub">Complete fitness & nutrition coaching — 3x/week in-person PT</p></div><div class="plan-modal-tiers">';
+    html += '<div class="plan-modal-overlay" id="primePlanModal"><div class="plan-modal"><button class="plan-modal-close" data-close-modal><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button><div class="plan-modal-header"><div class="plan-modal-icon" style="color:var(--white);border-color:rgba(251,191,36,0.2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><h2 style="background:linear-gradient(135deg,#fff 30%,var(--white));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Fitness Gurukul Prime</h2><p class="plan-modal-sub">Complete fitness & nutrition coaching � 3x/week in-person PT</p></div><div class="plan-modal-tiers">';
     var primeTiers = [
       { name: "Monthly", price: "₹9,500", period: "/mo", save: null },
       { name: "Quarterly", price: "₹26,999", period: "/qr", save: "Save ₹1,501 vs monthly" },
@@ -2456,7 +1786,7 @@ function initPlanModals() {
     html += '<div class="plan-tier plan-tier-highlight" style="--i:0"><div class="plan-tier-badge" style="background:#ffffff;color:#000">Popular</div><div class="plan-tier-top"><h4>Monthly Subscription</h4><p class="plan-tier-price"><span class="plan-actual">₹1,199</span><span class="plan-period">/month</span></p></div><div class="plan-tier-features"><span class="plan-tier-chip">Dedicated running coach</span><span class="plan-tier-chip">Periodized running program</span><span class="plan-tier-chip">Runner-specific S&amp;C</span><span class="plan-tier-chip">Endurance nutrition</span><span class="plan-tier-chip">Race strategy</span><span class="plan-tier-chip">Daily chat support</span></div><a class="primary-button" href="contact.html" style="justify-content:center;font-size:0.82rem;padding:10px 16px;border-radius:10px">Subscribe Now</a></div>';
     html += '</div>' + howHtml(enduranceSteps) + '</div></div>';
     /* forge modal */
-    html += '<div class="plan-modal-overlay" id="forgePlanModal"><div class="plan-modal"><button class="plan-modal-close" data-close-modal><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button><div class="plan-modal-header"><div class="plan-modal-icon" style="color:#ffffff;border-color:rgba(249,115,22,0.2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><h2 style="background:linear-gradient(135deg,#fff 30%,#ffffff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Fitness Gurukul Forge</h2><p class="plan-modal-sub">Hyrox / OCR Preparation — Functional Fitness Racing</p></div><div class="plan-modal-tiers" style="grid-template-columns:1fr;max-width:500px">';
+    html += '<div class="plan-modal-overlay" id="forgePlanModal"><div class="plan-modal"><button class="plan-modal-close" data-close-modal><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button><div class="plan-modal-header"><div class="plan-modal-icon" style="color:#ffffff;border-color:rgba(249,115,22,0.2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><h2 style="background:linear-gradient(135deg,#fff 30%,#ffffff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Fitness Gurukul Forge</h2><p class="plan-modal-sub">Hyrox / OCR Preparation � Functional Fitness Racing</p></div><div class="plan-modal-tiers" style="grid-template-columns:1fr;max-width:500px">';
     html += '<div class="plan-tier plan-tier-highlight" style="--i:0"><div class="plan-tier-badge" style="background:#ffffff;color:#000">New</div><div class="plan-tier-top"><h4>Monthly Subscription</h4><p class="plan-tier-price"><span class="plan-actual">₹999</span><span class="plan-period">/month</span></p></div><div class="plan-tier-features"><span class="plan-tier-chip">Dedicated S&amp;C Coach</span><span class="plan-tier-chip">Compounded S&amp;C</span><span class="plan-tier-chip">Engine building</span><span class="plan-tier-chip">Grip strength</span><span class="plan-tier-chip">Explosive power</span><span class="plan-tier-chip">Compromised running</span></div><a class="primary-button" href="contact.html" style="justify-content:center;font-size:0.82rem;padding:10px 16px;border-radius:10px">Subscribe Now</a></div>';
     html += '</div>' + howHtml(forgeSteps) + '</div></div>';
     /* elite modal */
@@ -2479,7 +1809,7 @@ function initPlanModals() {
   }
 
   function openModal(id) {
-    if (!usePageOverlay) injectModals();
+    injectModals();
     var modal = qs("#" + id);
     if (!modal) return;
     modal.classList.add("open");
@@ -2489,57 +1819,33 @@ function initPlanModals() {
     qsa(".plan-modal-overlay.open").forEach(function(m) { m.classList.remove("open"); });
     document.body.style.overflow = "";
   }
-  var modalByPlan = {
-    core: "corePlanModal",
-    prime: "primePlanModal",
-    signature: "sigPlanModal",
-    endurance: "endurancePlanModal",
-    forge: "forgePlanModal",
-    elite: "elitePlanModal"
-  };
-  function openPlanByKey(key) {
-    if (!key) return;
-    if (usePageOverlay && typeof window.openPlan === "function") {
-      window.openPlan(key);
-      return;
-    }
-    var modalId = modalByPlan[key];
-    if (modalId) openModal(modalId);
-  }
   document.addEventListener("click", function(e) {
     var target = e.target;
     /* psc-card click */
     var card = target.closest(".psc-card");
     if (card) {
       if (card.tagName === "A") e.preventDefault();
-      openPlanByKey(card.dataset.plan);
-      return;
-    }
-    /* compare toggle on card */
-    var compareBtn = target.closest(".svc-compare-btn");
-    if (compareBtn) {
-      e.preventDefault();
-      e.stopPropagation();
-      var comparePlan = compareBtn.dataset.plan;
-      if (comparePlan) {
-        if (selectedPlans.has(comparePlan)) selectedPlans.delete(comparePlan);
-        else selectedPlans.add(comparePlan);
-        updateCompareCount();
-        var grid = qs("#servicesGrid");
-        if (grid && grid.classList.contains("compare-view")) showCompareView();
-        else renderServices(getServiceCatalog());
-      }
-      return;
+      var plan = card.dataset.plan;
+      if (plan === "core") { openModal("corePlanModal"); return; }
+      if (plan === "prime") { openModal("primePlanModal"); return; }
+      if (plan === "signature") { openModal("sigPlanModal"); return; }
+      if (plan === "endurance") { openModal("endurancePlanModal"); return; }
+      if (plan === "elite") { openModal("elitePlanModal"); return; }
     }
     /* any button with data-plan (skip compare buttons) */
     var planBtn = target.closest("[data-plan]");
     if (planBtn && !planBtn.classList.contains("svc-compare-btn")) {
       if (planBtn.tagName === "A") e.preventDefault();
-      openPlanByKey(planBtn.dataset.plan);
-      return;
+      var p2 = planBtn.dataset.plan;
+      if (p2 === "core") { openModal("corePlanModal"); return; }
+      if (p2 === "prime") { openModal("primePlanModal"); return; }
+      if (p2 === "signature") { openModal("sigPlanModal"); return; }
+      if (p2 === "endurance") { openModal("endurancePlanModal"); return; }
+      if (p2 === "forge") { openModal("forgePlanModal"); return; }
+      if (p2 === "elite") { openModal("elitePlanModal"); return; }
     }
     /* core plan card on homepage */
-    if (target.closest("#corePlanCard")) { openPlanByKey("core"); return; }
+    if (target.closest("#corePlanCard")) { openModal("corePlanModal"); return; }
     /* close buttons */
     if (target.closest("[data-close-modal]") || target.closest("#corePlanModalClose")) { closeAllModals(); return; }
     /* backdrop click */
@@ -2548,25 +1854,6 @@ function initPlanModals() {
   });
   document.addEventListener("keydown", function(e) {
     if (e.key === "Escape" && qs(".plan-modal-overlay.open")) closeAllModals();
-  });
-}
-
-function initCompareControls() {
-  if (!has("#servicesGrid")) return;
-  document.addEventListener("click", function(e) {
-    var compareToggle = e.target.closest("#compareToggle, [data-compare-toggle]");
-    if (compareToggle) {
-      e.preventDefault();
-      showCompareView();
-      return;
-    }
-    var gridToggle = e.target.closest("#gridToggle, [data-grid-toggle]");
-    if (gridToggle) {
-      e.preventDefault();
-      var grid = qs("#servicesGrid");
-      if (grid) grid.classList.remove("compare-view");
-      renderServices(getServiceCatalog());
-    }
   });
 }
 
@@ -2612,42 +1899,14 @@ function initEcoCarousel() {
   var next = qs("#ecoArrowRight");
   if (!track || !prev || !next) return;
   var scrollAmount = 320;
-  var offset = 0;
-  var manual = false;
-  var resumeTimer;
-  function maxOffset() {
-    return -Math.max(0, Math.floor(track.scrollWidth / 2) - scrollAmount);
-  }
-  function applyOffset() {
-    manual = true;
-    track.style.animation = "none";
-    track.style.transform = "translateX(" + offset + "px)";
-  }
-  function resumeAuto() {
-    clearTimeout(resumeTimer);
-    resumeTimer = setTimeout(function() {
-      manual = false;
-      offset = 0;
-      track.style.transform = "";
-      track.style.animation = "";
-    }, 8000);
-  }
   function pauseAnimation() {
-    if (!manual) track.style.animationPlayState = "paused";
+    track.style.animationPlayState = "paused";
   }
   function resumeAnimation() {
-    if (!manual) track.style.animationPlayState = "running";
+    track.style.animationPlayState = "running";
   }
-  prev.addEventListener("click", function() {
-    offset = Math.min(0, offset + scrollAmount);
-    applyOffset();
-    resumeAuto();
-  });
-  next.addEventListener("click", function() {
-    offset = Math.max(maxOffset(), offset - scrollAmount);
-    applyOffset();
-    resumeAuto();
-  });
+  prev.addEventListener("click", function() { pauseAnimation(); track.scrollBy({ left: -scrollAmount, behavior: "smooth" }); });
+  next.addEventListener("click", function() { pauseAnimation(); track.scrollBy({ left: scrollAmount, behavior: "smooth" }); });
   track.addEventListener("mouseenter", pauseAnimation);
   track.addEventListener("mouseleave", resumeAnimation);
 }
@@ -2853,7 +2112,7 @@ function injectFooter() {
   if (existing) existing.remove();
   var f = document.createElement("footer");
   f.className = "site-footer footer-refresh";
-  f.innerHTML = `<div class="footer-topline"><a class="footer-logo" href="index.html"><img src="assets/fitness-gurukul-logo.jpg" alt="Fitness Gurukul" /><span class="footer-logo-text"><strong>Fitness</strong><span>Gurukul</span></span></a><p>Personal training, made personal.</p><a class="footer-cta" href="contact.html">Talk to a coach <span aria-hidden="true">&rarr;</span></a></div><div class="footer-refresh-grid"><div class="footer-intro"><p>Built for stronger, healthier lives in Hyderabad&mdash;at the studio, at home, and wherever you train.</p><a href="tel:+917207113310">+91 72071 13310</a></div><div class="footer-col"><h4>Discover</h4><nav class="footer-nav"><a href="about.html">About us</a><a href="coaches.html">Our coaches</a><a href="transformation-challenge.html">Transformation challenge</a></nav></div><div class="footer-col"><h4>Start here</h4><nav class="footer-nav"><a href="tools.html">Fitness tools</a><a href="events.html">Events</a><a href="testimonials.html">Success stories</a><a href="contact.html">Book a consultation</a></nav></div><div class="footer-col"><h4>Contact Us</h4><div class="footer-contact-col"><a href="tel:+917207113310"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>+91 72071 13310</a><a href="mailto:contact@fitnessgurukul.co.in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>contact@fitnessgurukul.co.in</a><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Manikonda, Hyderabad</span><a class="footer-contact-cta" href="contact.html">Get Directions &rarr;</a></div></div><div class="footer-col"><h4>Visit</h4><p class="footer-address">Manikonda, Hyderabad<br />Telangana, India</p><div class="footer-social"><a href="https://www.instagram.com/fitnessgurukulofficial/" target="_blank" rel="noopener" aria-label="Instagram">IG</a><a href="https://www.facebook.com/fitnessgurukul7/" target="_blank" rel="noopener" aria-label="Facebook">fb</a><a href="https://www.youtube.com/channel/UCLt2Qs1MeV_uf_xMJ7AaPlA" target="_blank" rel="noopener" aria-label="YouTube">YT</a></div></div></div><div class="footer-bottom"><p class="footer-copy">&copy; 2026 Fitness Gurukul. All rights reserved.</p><span class="footer-bottom-links"><a href="contact.html">Contact Us</a><a class="footer-staff-link" href="backend.html">Backend</a></span></div>`;
+  f.innerHTML = `<div class="footer-topline"><a class="footer-logo" href="index.html"><img src="assets/fitness-gurukul-logo.png" alt="Fitness Gurukul" /><span class="footer-logo-text"><strong>Fitness</strong><span>Gurukul</span></span></a><p>Personal training, made personal.</p><a class="footer-cta" href="contact.html">Talk to a coach <span aria-hidden="true">&rarr;</span></a></div><div class="footer-refresh-grid"><div class="footer-intro"><p>Built for stronger, healthier lives in Hyderabad&mdash;at the studio, at home, and wherever you train.</p><a href="tel:+917207113310">+91 72071 13310</a></div><div class="footer-col"><h4>Discover</h4><nav class="footer-nav"><a href="about.html">About us</a><a href="coaches.html">Our coaches</a><a href="workouts.html">Workout programs</a></nav></div><div class="footer-col"><h4>Start here</h4><nav class="footer-nav"><a href="tools.html">Fitness tools</a><a href="events.html">Events</a><a href="testimonials.html">Success stories</a><a href="contact.html">Book a consultation</a></nav></div><div class="footer-col"><h4>Contact Us</h4><div class="footer-contact-col"><a href="tel:+917207113310"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>+91 72071 13310</a><a href="mailto:contact@fitnessgurukul.co.in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>contact@fitnessgurukul.co.in</a><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Manikonda, Hyderabad</span><a class="footer-contact-cta" href="contact.html">Get Directions &rarr;</a></div></div><div class="footer-col"><h4>Visit</h4><p class="footer-address">Manikonda, Hyderabad<br />Telangana, India</p><div class="footer-social"><a href="https://www.instagram.com/fitnessgurukulofficial/" target="_blank" rel="noopener" aria-label="Instagram">IG</a><a href="https://www.facebook.com/fitnessgurukul7/" target="_blank" rel="noopener" aria-label="Facebook">fb</a><a href="https://www.youtube.com/channel/UCLt2Qs1MeV_uf_xMJ7AaPlA" target="_blank" rel="noopener" aria-label="YouTube">YT</a></div></div></div><div class="footer-bottom"><p class="footer-copy">&copy; 2026 Fitness Gurukul. All rights reserved.</p><a href="contact.html">Contact Us</a></div>`;
   document.body.appendChild(f);
 }
 
@@ -3063,9 +2322,9 @@ function injectSiteChatbot() {
   async function requestChatReply(message) {
     if (usesLocalBackend) {
       var controller = new AbortController();
-      var timer = setTimeout(function() { controller.abort(); }, 30000);
+      var timer = setTimeout(function() { controller.abort(); }, 65000);
       try {
-        var res = await fetch(apiUrl("/api/chat"), {
+        var res = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           signal: controller.signal,
@@ -3109,11 +2368,15 @@ function injectSiteChatbot() {
       if (Array.isArray(result.suggestions) && result.suggestions.length) {
         chatSuggestions = result.suggestions;
       }
-      if (result.source === "openai") {
+      if (result.source === "ollama") {
+        chatEngine = "ollama";
+        status.textContent = "Free local AI online";
+      } else if (result.source === "openai") {
         chatEngine = "openai";
         status.textContent = "AI assistant online";
       } else {
-        status.textContent = "Assistant online";
+        chatEngine = "local";
+        status.textContent = "Free assistant online";
       }
       renderSuggestions(chatSuggestions);
     } catch (error) {
@@ -3127,6 +2390,7 @@ function injectSiteChatbot() {
 
   async function loadChatStatus() {
     if (!usesLocalBackend) {
+      status.textContent = "Free assistant online";
       renderSuggestions(chatSuggestions);
       return;
     }
@@ -3135,14 +2399,17 @@ function injectSiteChatbot() {
       if (Array.isArray(statusPayload.suggestions) && statusPayload.suggestions.length) {
         chatSuggestions = statusPayload.suggestions;
       }
-      if (statusPayload.engine === "openai") {
+      if (statusPayload.engine === "ollama") {
+        chatEngine = "ollama";
+        status.textContent = "Free local AI online";
+      } else if (statusPayload.engine === "openai") {
         chatEngine = "openai";
         status.textContent = "AI assistant online";
       } else {
-        status.textContent = "Assistant online";
+        status.textContent = "Free assistant online";
       }
     } catch (error) {
-      status.textContent = "Assistant online";
+      status.textContent = "Free assistant online";
     }
     renderSuggestions(chatSuggestions);
   }
@@ -3205,12 +2472,7 @@ function showCompareView() {
   };
   var checkMark = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16" style="color:var(--white)"><polyline points="20 6 9 17 4 12"/></svg>';
   var crossMark = '<span style="color:var(--muted)">&mdash;</span>';
-  var selectedLabel = selectedPlans.size ? (selectedPlans.size + " selected") : "all plans";
-  var html = '<div class="svc-compare-toolbar">' +
-    '<p class="svc-compare-toolbar-note">Comparing ' + selectedLabel + '</p>' +
-    '<button type="button" class="ghost-button" id="gridToggle" data-grid-toggle>Back to grid</button>' +
-    '</div>';
-  html += '<div class="svc-compare-wrap"><table class="svc-compare-table"><thead><tr><th>Feature</th>';
+  var html = '<div class="svc-compare-wrap"><table class="svc-compare-table"><thead><tr><th>Feature</th>';
   services.forEach(function(s) { html += '<th>' + safe(s.name) + '</th>'; });
   html += '</tr></thead><tbody>';
   fields.forEach(function(f) {
@@ -3233,40 +2495,39 @@ function showCompareView() {
   });
   html += '</tr></tbody></table></div>';
   container.innerHTML = html;
-  updateCompareCount();
 }
 
+/* -- Missing stubs ------------------- */
+function updateCompareCount() {}
+function initStickyHeader() {}
+function renderAboutCoaches() {}
+function initServiceToggles() {}
+function initRipple() {}
+function initMagneticHover() {}
+function injectCursor() {}
+function initEventTilt() {}
+function initEventsParallax() {}
+function initDistTrack() {}
 
 async function boot() {
   /* wire modals immediately so buttons work even before async ops finish */
   try { initPlanModals(); } catch (e) { console.warn("boot:initPlanModals", e); }
-  try { initCompareControls(); } catch (e) { console.warn("boot:initCompareControls", e); }
   try { renderServices(realData.services); } catch (e) { console.warn("boot:seedServices", e); }
-  try { wireAppDropdown(); } catch (e) { console.warn("boot:wireAppDropdown", e); }
-  try { initInteractiveMotion(); } catch (e) { console.warn("boot:initInteractiveMotion", e); }
   await detectBackend();
   const content = await loadContent();
   const d = content || realData;
-  // Pricing cards use plan categories (core/prime/...). Prefer API plans over training services.
-  const planCatalog = (Array.isArray(d.plans) && d.plans.length) ? d.plans
-    : ((Array.isArray(d.services) && d.services.length && d.services[0].category && ["core","prime","signature","endurance","forge","elite"].includes(d.services[0].category)) ? d.services : realData.services);
-  try { renderServices(planCatalog); } catch (e) { console.warn("boot:renderServices", e); }
+  try { renderServices(Array.isArray(d.services) && d.services.length ? d.services : realData.services); } catch (e) { console.warn("boot:renderServices", e); }
   try { initPlanCards(); } catch (e) { console.warn("boot:initPlanCards", e); }
-  const coaches = mergeCoachMedia(d.coaches || realData.coaches);
-  try { renderCoaches(coaches); } catch (e) { console.warn("boot:renderCoaches", e); }
+  try { renderCoaches(d.coaches || realData.coaches); } catch (e) { console.warn("boot:renderCoaches", e); }
   try { renderTestimonials(d.testimonials || realData.testimonials); } catch (e) { console.warn("boot:renderTestimonials", e); }
   try { renderUpdates(d.updates || realData.updates); } catch (e) { console.warn("boot:renderUpdates", e); }
   try { renderServiceAreas(d.serviceAreas || realData.serviceAreas); } catch (e) { console.warn("boot:renderServiceAreas", e); }
   try { renderWorkoutGrid(d.workouts || realData.workouts); } catch (e) { console.warn("boot:renderWorkoutGrid", e); }
   try { renderContact(d.contact || realData.contact); } catch (e) { console.warn("boot:renderContact", e); }
   try { injectAmbientBg(); } catch (e) { console.warn("boot:injectAmbientBg", e); }
-  try { renderMindsCarousel(coaches); } catch (e) { console.warn("boot:renderMindsCarousel", e); }
+  try { renderAboutCoaches(d.coaches || realData.coaches); } catch (e) { console.warn("boot:renderAboutCoaches", e); }
+  try { renderMindsCarousel(d.coaches || realData.coaches); } catch (e) { console.warn("boot:renderMindsCarousel", e); }
   try { injectHeroContent(d); } catch (e) { console.warn("boot:injectHeroContent", e); }
-  try { if (d.live) applyLiveStats(d.live); } catch (e) { console.warn("boot:applyLiveStats", e); }
-  try { initLivePulse(); } catch (e) { console.warn("boot:initLivePulse", e); }
-  try { initGoalMatcher(); } catch (e) { console.warn("boot:initGoalMatcher", e); }
-  try { hydrateProgramSelects(d.plans || realData.plans); } catch (e) { console.warn("boot:hydrateProgramSelects", e); }
-  try { initInteractivePageExtras(); } catch (e) { console.warn("boot:initInteractivePageExtras", e); }
   try { initHeroCarousel(); } catch (e) { console.warn("boot:initHeroCarousel", e); }
   try { initCoachCarousel(); } catch (e) { console.warn("boot:initCoachCarousel", e); }
   try { initEcoCarousel(); } catch (e) { console.warn("boot:initEcoCarousel", e); }
@@ -3274,6 +2535,8 @@ async function boot() {
   try { animateCounters(); } catch (e) { console.warn("boot:animateCounters", e); }
   try { initRevealAnimations(); } catch (e) { console.warn("boot:initRevealAnimations", e); }
   try { initHomePage(); } catch (e) { console.warn("boot:initHomePage", e); }
+  try { initStickyHeader(); } catch (e) { console.warn("boot:initStickyHeader", e); }
+  try { initServiceToggles(); } catch (e) { console.warn("boot:initServiceToggles", e); }
   try { injectCoachModal(); } catch (e) { console.warn("boot:injectCoachModal", e); }
   try { wireCoachPopups(); } catch (e) { console.warn("boot:wireCoachPopups", e); }
   try { injectBookModal(); wireBookModalForm(); } catch (e) { console.warn("boot:wireBookModalForm", e); }
@@ -3283,6 +2546,12 @@ async function boot() {
   try { injectFooter(); } catch (e) { console.warn("boot:injectFooter", e); }
   try { injectWhatsAppFloat(); } catch (e) { console.warn("boot:injectWhatsAppFloat", e); }
   try { injectSiteChatbot(); } catch (e) { console.warn("boot:injectSiteChatbot", e); }
+  try { injectCursor(); } catch (e) { console.warn("boot:injectCursor", e); }
+  try { initRipple(); } catch (e) { console.warn("boot:initRipple", e); }
+  try { initEventTilt(); } catch (e) { console.warn("boot:initEventTilt", e); }
+  try { initEventsParallax(); } catch (e) { console.warn("boot:initEventsParallax", e); }
+  try { initDistTrack(); } catch (e) { console.warn("boot:initDistTrack", e); }
+  try { initMagneticHover(); } catch (e) { console.warn("boot:initMagneticHover", e); }
   try { initCycleCarousel(); } catch (e) { console.warn("boot:initCycleCarousel", e); }
 }
 
@@ -3296,14 +2565,14 @@ function initCycleCarousel() {
   if (!track) return;
 
   var slides = [
-    { img: "https://www.instagram.com/p/DZYWAPVE8mD/media/?size=l", caption: "World Bicycle Day 2026 — Flag Off at GMC Balayogi Stadium", link: "https://www.instagram.com/p/DZYWAPVE8mD/" },
-    { img: "https://fpimages.withfloats.com/actual/69844b5073641513f8f1e239.jpeg", caption: "Ride & Pose 2025 — Yoga Day Sunrise Ride at Narsingi", link: "https://www.instagram.com/p/DZoWDw4jyt6/" },
-    { img: "https://www.instagram.com/p/DZSe0wCpjXz/media/?size=l", caption: "World Bicycle Day 2026 — 2500+ Riders from Across Hyderabad", link: "https://www.instagram.com/p/DZSe0wCpjXz/" },
-    { img: "https://www.instagram.com/p/DUxmB6gklu8/media/?size=l", caption: "Hyderabad Club Run — 17th Edition at Gachibowli", link: "https://www.instagram.com/fitnessgurukulofficial/" },
-    { img: "https://www.instagram.com/p/DZYWAPVE8mD/media/?size=l", caption: "World Bicycle Day 2026 — Community Partner Fitness Gurukul", link: "https://www.instagram.com/p/DZYWAPVE8mD/" },
-    { img: "https://www.instagram.com/p/DZYWAPVE8mD/media/?size=l", caption: "World Bicycle Day 2026 — Riders at GMC Balayogi Stadium", link: "https://www.instagram.com/p/DZYWAPVE8mD/" },
-    { img: "https://www.instagram.com/p/DZYWAPVE8mD/media/?size=l", caption: "World Bicycle Day 2026 — Morning Ride Across Hyderabad", link: "https://www.instagram.com/p/DZYWAPVE8mD/" },
-    { img: "https://www.instagram.com/p/DZYWAPVE8mD/media/?size=l", caption: "World Bicycle Day 2026 — Fitness Gurukul Team at the Event", link: "https://www.instagram.com/p/DZYWAPVE8mD/" }
+    { img: "https://www.instagram.com/p/DZYWAPVE8mD/media/?size=l", caption: "World Bicycle Day 2026 � Flag Off at GMC Balayogi Stadium", link: "https://www.instagram.com/p/DZYWAPVE8mD/" },
+    { img: "https://fpimages.withfloats.com/actual/69844b5073641513f8f1e239.jpeg", caption: "Ride & Pose 2025 � Yoga Day Sunrise Ride at Narsingi", link: "https://www.instagram.com/p/DZoWDw4jyt6/" },
+    { img: "https://www.instagram.com/p/DZSe0wCpjXz/media/?size=l", caption: "World Bicycle Day 2026 � 2500+ Riders from Across Hyderabad", link: "https://www.instagram.com/p/DZSe0wCpjXz/" },
+    { img: "https://www.instagram.com/p/DUxmB6gklu8/media/?size=l", caption: "Hyderabad Club Run � 17th Edition at Gachibowli", link: "https://www.instagram.com/fitnessgurukulofficial/" },
+    { img: "https://www.instagram.com/p/DZYWAPVE8mD/media/?size=l", caption: "World Bicycle Day 2026 � Community Partner Fitness Gurukul", link: "https://www.instagram.com/p/DZYWAPVE8mD/" },
+    { img: "https://www.instagram.com/p/DZYWAPVE8mD/media/?size=l", caption: "World Bicycle Day 2026 � Riders at GMC Balayogi Stadium", link: "https://www.instagram.com/p/DZYWAPVE8mD/" },
+    { img: "https://www.instagram.com/p/DZYWAPVE8mD/media/?size=l", caption: "World Bicycle Day 2026 � Morning Ride Across Hyderabad", link: "https://www.instagram.com/p/DZYWAPVE8mD/" },
+    { img: "https://www.instagram.com/p/DZYWAPVE8mD/media/?size=l", caption: "World Bicycle Day 2026 � Fitness Gurukul Team at the Event", link: "https://www.instagram.com/p/DZYWAPVE8mD/" }
   ];
 
   var slideEls = [];
@@ -3448,13 +2717,16 @@ function initCycleCarousel() {
     "anand-yadav": { name:"Anand Yadav", role:"Children's Athletics Coach", badge:"Kids Fitness Expert", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0297-69538d52664ae75da3c69fc1.jpg", tags:["Children's athletics","Kids fitness","Sports"] },
     "aditya": { name:"Aditya", role:"Yoga Instructor & Fitness Coach", badge:"Mind-Body Coach", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0298-69538dd1474cc000b54586be.jpg", tags:["Yoga","Fitness","Body toning"] },
     "nitu-arya": { name:"Nitu Arya", role:"Yoga Instructor", badge:"Holistic Yoga", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0295-69538d35474cc000b54586b7.jpg", tags:["Yoga","Flexibility","General fitness"] },
+    "rahul-bisht": { name:"Rahul Bisht", role:"Yoga Instructor", badge:"Mobility Master", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0294-69538d19474cc000b54586b4.jpg", tags:["Yoga","Mobility","General fitness"] },
     "deepesh-kumar": { name:"Deepesh Kumar", role:"Fitness Trainer", badge:"Weight Loss Specialist", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0293-69538d00664ae75da3c69fbc.jpg", tags:["Fitness training","Strength","Weight loss"] },
     "s-jeetender": { name:"S Jeetender", role:"Fitness Trainer", badge:"Daily Fitness Pro", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0292-69538ce6474cc000b54586b3.jpg", tags:["Fitness training","Daily exercise","Strength"] },
     "rahul-dawar": { name:"Rahul Dawar", role:"Fitness Trainer", badge:"Health & Strength", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0291-69538ccf8c7b7b2c6178b6e1.jpg", tags:["Fitness training","Strength","Health routine"] },
+    "rahul-singh-pawar": { name:"Rahul Singh Pawar", role:"Yoga Instructor", badge:"Stress Relief Expert", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0290-69538cb65c5bdcd270817b1f.jpg", tags:["Yoga","Flexibility","Stress relief"] },
     "ravi-pal": { name:"Ravi Pal", role:"Fitness Trainer & Injury Rehab Coach", badge:"Injury Recovery", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0289-69538c800222ba9c3d831802.jpg", tags:["Fitness training","Injury rehabilitation","Recovery"] },
     "subedhar-yadav": { name:"Subedhar Yadav", role:"Fitness Trainer (Special Children)", badge:"Special Needs Coach", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/img_0287-69538c4c0222ba9c3d8317fd.jpg", tags:["Special children","Fitness","Mobility"] },
     "sanjeev": { name:"Sanjeev", role:"Fitness Trainer", badge:"Strength Trainer", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/274dba00-8541-4bfc-8666-e0b5433b3781-69538a190222ba9c3d8317f4.jpg", tags:["Fitness training","Strength","Daily exercise"] },
     "nandlal": { name:"Nandlal", role:"Fitness Trainer", badge:"Transformation Coach", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/04ea7dfe-a988-4a17-97cb-8dc44240cb59-695389c4474cc000b54586a8.jpg", tags:["Fitness training","Strength","Weight loss"] },
+    "prasenjit-ghosh": { name:"Prasenjit Ghosh", role:"Mudgar & Hybrid Training Specialist", badge:"Hybrid Training", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/db612d80-360a-4c76-9a18-0e97da5d1dc9-69538988474cc000b54586a5.jpg", tags:["Mudgar","Hybrid training","Strength"] },
     "vinay-ojha": { name:"Vinay Ojha", role:"Fitness Trainer", badge:"All-Round Fitness", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/32f29c04-6a08-46c7-b752-810892edad88-695388d0664ae75da3c69fa9.jpg", tags:["Fitness training","Strength","General fitness"] },
     "ankit-singh-chauhan": { name:"Ankit Singh Chauhan", role:"Fitness & Calisthenics Trainer", badge:"Calisthenics Expert", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/debb9e52-bcf2-4630-8cc5-2ffc9af3e114-69538879664ae75da3c69fa8.jpg", tags:["Fitness","Calisthenics","Strength"] },
     "suresh-yadav": { name:"Suresh Yadav", role:"Fitness Trainer (Special Children)", badge:"Special Needs Expert", img:"https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/suresh-695209865c5bdcd270817774.jpeg", tags:["Special children","Fitness","Mobility"] },
@@ -3482,6 +2754,7 @@ function initCycleCarousel() {
     "vinay-ojha": [["8-9","4:30-5:30","5-6"],["6-7","7:30-8:30"],["6-7","8-9","4:30-5:30","5-6"],["6-7","7:30-8:30"],["6-7","8-9","4:30-5:30","5-6"],["6-7","7:30-8:30"],[]],
     "parul-danu": [["5:15-6:15","6:30-7:30"],["11-12"],["5:15-6:15","6:30-7:30"],["11-12"],["5:15-6:15","6:30-7:30"],["11-12"],[]],
     "nandlal": [["7:00-8:00","5:00-6:00"],["6:00-7:00"],["6:00 - 7:00 HR","7:00-8:00","5:00-6:00"],["6:00-7:00"],["6:00 - 7:00 HR","7:00-8:00","5:00-6:00"],["6:00-7:00"],[]],
+    "prasenjit-ghosh": [["9:00-10:00"],["8:00-9:00 GC","7:30-8:30"],["9:00-10:00"],["8:00-9:00 GC","7:30-8:30"],["9:00-10:00"],["8:00-9:00 GC","7:30-8:30"],[]],
     "raju": [["5:45 - 6:45 HR","7:00-8:00","9:30-10:30 GC","4:30 to 5:30","6:30 to 7:30"],["7:00-8:00","8:00-9:00","10:30-11:30 GC","5:30 to 6:30","6:30 to 7:30"],["5:45 - 6:45 HR","7:00-8:00","8:00-9:00","10:30-11:30 GC","4:30 to 5:30","6:30 to 7:30"],["7:00-8:00","10:30-11:30 GC","5:30 to 6:30","6:30 to 7:30"],["5:45 - 6:45 HR","7:00-8:00","9:30-10:30 GC","4:30 to 5:30","6:30 to 7:30"],["7:00-8:00","8:00-9:00","5:30 to 6:30","6:30 to 7:30"],["7:00-8:00","8:00-9:00"]]
   };
 
@@ -3529,7 +2802,7 @@ function initCycleCarousel() {
     Object.keys(coachData).forEach(function(id) {
       var d = coachData[id];
       if (!coachSchedules[id]) return;
-      html += '<div class="cal-coach-block"><div class="cal-coach-block-header"><div class="cal-coach-block-img"><img src="' + d.img + '" alt="' + d.name + '" loading="lazy" /></div><div class="cal-coach-block-info"><strong>' + d.name + '</strong><span>' + d.role + ' — ' + scheduleTotal(coachSchedules[id]) + ' weekly slots</span></div></div>';
+      html += '<div class="cal-coach-block"><div class="cal-coach-block-header"><div class="cal-coach-block-img"><img src="' + d.img + '" alt="' + d.name + '" loading="lazy" /></div><div class="cal-coach-block-info"><strong>' + d.name + '</strong><span>' + d.role + ' � ' + scheduleTotal(coachSchedules[id]) + ' weekly slots</span></div></div>';
       html += buildScheduleCalendarHTML(id, true);
       html += '</div>';
     });
@@ -3563,7 +2836,7 @@ function initCycleCarousel() {
     if (calGridWrap) {
       calGridWrap.innerHTML = '<div class="cal-coach-container">' + buildCumulativeHTML() + '</div>';
     }
-    if (calTitle) calTitle.textContent = "All Coaches Schedule — June 2026";
+    if (calTitle) calTitle.textContent = "All Coaches Schedule � June 2026";
 
     function openCoachOverlay(coachId) {
       var data = coachData[coachId];
@@ -3594,7 +2867,7 @@ function initCycleCarousel() {
 
     /* Schedule buttons removed */
 
-    /* Also wire "View Profile" and "Know More" clicks — self-contained popup */
+    /* Also wire "View Profile" and "Know More" clicks � self-contained popup */
     function openCoachProfile(id) {
       var d = coachData[id];
       if (!d) return;
@@ -3647,22 +2920,12 @@ function initCycleCarousel() {
           '<p style="font-size:0.8rem;color:rgba(255,255,255,0.5);line-height:1.6;margin:0 0 14px">' + d.name + ' is a certified ' + d.role.toLowerCase() + ' at Fitness Gurukul, dedicated to helping clients achieve their fitness goals through personalized coaching.</p>' +
           '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">' + d.tags.map(function(t) { return '<span style="font-size:0.68rem;color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:3px 10px">' + t + '</span>'; }).join("") + '</div>' +
           '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px">' + certHtml + '</div>' +
-          '<div style="display:flex;flex-direction:column;gap:10px">' +
-            '<a href="book-consultation.html?coach=' + encodeURIComponent(d.name) + '" style="display:block;padding:12px;border-radius:10px;background:#fff;color:#000;font-weight:700;font-size:0.85rem;text-decoration:none;text-align:center">Book ' + d.name.split(" ")[0] + '</a>' +
-            (coachSchedules[id] ? '<button type="button" id="cpViewSchedule" style="display:block;width:100%;padding:12px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.2);color:#fff;font-weight:600;font-size:0.85rem;cursor:pointer;font-family:inherit">View schedule</button>' : '') +
-          '</div>' +
+          '<a href="contact.html#booking" style="display:block;padding:12px;border-radius:10px;background:#fff;color:#000;font-weight:700;font-size:0.85rem;text-decoration:none;text-align:center">Book ' + d.name.split(" ")[0] + '</a>' +
         '</div>';
       overlay.style.opacity = "1";
       overlay.style.visibility = "visible";
       overlay.querySelector("div > div").style.transform = "translateY(0)";
       document.body.style.overflow = "hidden";
-      var schedBtn = document.getElementById("cpViewSchedule");
-      if (schedBtn) {
-        schedBtn.addEventListener("click", function() {
-          closeCoachProfile();
-          openCoachOverlay(id);
-        });
-      }
     }
 
     function wireProfileButtons(root) {
@@ -3674,16 +2937,6 @@ function initCycleCarousel() {
           if (!card) return;
           e.preventDefault();
           openCoachProfile(card.getAttribute("data-coach-id"));
-        });
-      });
-      root.querySelectorAll("[data-coach-calendar]").forEach(function(el) {
-        if (el.dataset.calWired) return;
-        el.dataset.calWired = "1";
-        el.addEventListener("click", function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          var coachId = el.getAttribute("data-coach-calendar");
-          if (coachId) openCoachOverlay(coachId);
         });
       });
     }
@@ -3703,14 +2956,14 @@ function initCycleCarousel() {
         { name:"Fat Loss", desc:"Strategic calorie deficit programming combining resistance training and conditioning for sustainable fat loss while preserving muscle." },
         { name:"Maintenance Phase", desc:"Periodized programming to maintain strength and physique during off-seasons, travel, or between goal cycles." },
         { name:"Rehabilitation", desc:"Corrective exercise and mobility work to recover from injury, restore movement patterns, and prevent re-injury." },
-        { name:"General Fitness", desc:"Balanced programming for overall health — improving cardiovascular endurance, strength, flexibility, and daily energy." },
-        { name:"Hyrox Prep", desc:"Hybrid race preparation combining running with functional stations — SkiErg, sleds, wall balls, burpees, and compromised running stamina." },
-        { name:"Devil Circuit", desc:"Obstacle course race training — grip strength, climbing, crawling, agility, and mental toughness for OCR events." }
+        { name:"General Fitness", desc:"Balanced programming for overall health � improving cardiovascular endurance, strength, flexibility, and daily energy." },
+        { name:"Hyrox Prep", desc:"Hybrid race preparation combining running with functional stations � SkiErg, sleds, wall balls, burpees, and compromised running stamina." },
+        { name:"Devil Circuit", desc:"Obstacle course race training � grip strength, climbing, crawling, agility, and mental toughness for OCR events." }
       ]},
     { cat:"Yoga", sub:"Mind-body discipline for strength & flexibility", img:"https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=500&q=80",
       items:[
         { name:"Hatha Yoga", desc:"Slow-paced practice focusing on basic poses held for several breaths. Builds flexibility, balance, and mind-body awareness." },
-        { name:"Iyengar Yoga", desc:"Precision-focused alignment using props — blocks, straps, bolsters. Ideal for posture correction and therapeutic practice." },
+        { name:"Iyengar Yoga", desc:"Precision-focused alignment using props � blocks, straps, bolsters. Ideal for posture correction and therapeutic practice." },
         { name:"Vinyasa Yoga", desc:"Dynamic flow linking breath with movement. Builds cardiovascular endurance, strength, and coordination through sequenced transitions." },
         { name:"Ashtanga Yoga", desc:"Structured series of poses practiced in order with synchronized breathing. Builds heat, discipline, and deep flexibility." },
         { name:"Meditation", desc:"Guided mindfulness and breathing techniques to reduce stress, improve focus, and cultivate inner calm." },
@@ -3724,17 +2977,17 @@ function initCycleCarousel() {
         { name:"Vegan Plans", desc:"Complete plant-based nutrition covering all essential amino acids, micronutrients, and energy needs for training." },
         { name:"Vegetarian Plans", desc:"Lacto-ovo vegetarian meal plans with optimal protein distribution and iron/B12 management." },
         { name:"Intermittent Fasting", desc:"Time-restricted eating protocols aligned with training schedules for fat loss and metabolic flexibility." },
-        { name:"Ketogenic Diet", desc:"Low-carb, high-fat nutritional approach for ketosis — with proper electrolyte balance and adaptation guidance." },
-        { name:"Weight Loss & Gain", desc:"Custom plans for both directions — structured deficits for weight loss or controlled surpluses for healthy weight gain." }
+        { name:"Ketogenic Diet", desc:"Low-carb, high-fat nutritional approach for ketosis � with proper electrolyte balance and adaptation guidance." },
+        { name:"Weight Loss & Gain", desc:"Custom plans for both directions � structured deficits for weight loss or controlled surpluses for healthy weight gain." }
       ]},
     { cat:"Cycling", sub:"Structured ride programs for all distances", img:"https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=500&q=80",
       items:[
         { name:"Beginner Plans", desc:"Foundation-building programs covering bike fit, cadence, gear shifting, and group riding etiquette." },
-        { name:"5K Ride Prep", desc:"Short-distance speed work — interval training, pacing, and leg speed drills for fast 5K efforts." },
+        { name:"5K Ride Prep", desc:"Short-distance speed work � interval training, pacing, and leg speed drills for fast 5K efforts." },
         { name:"10K Ride Prep", desc:"Aerobic base building with tempo efforts, hill repeats, and sustained power output development." },
-        { name:"25K Ride Prep", desc:"Intermediate distance programming — endurance pacing, group ride tactics, and nutrition strategies." },
+        { name:"25K Ride Prep", desc:"Intermediate distance programming � endurance pacing, group ride tactics, and nutrition strategies." },
         { name:"50K Ride Prep", desc:"Long-distance preparation with lactate threshold work, prolonged tempo efforts, and fueling protocols." },
-        { name:"100K Ride Prep", desc:"Gran fondo and century training — periodized long rides, nutrition planning, and recovery management." },
+        { name:"100K Ride Prep", desc:"Gran fondo and century training � periodized long rides, nutrition planning, and recovery management." },
         { name:"Cycling Nutrition", desc:"Pre-ride fueling, on-bike carbohydrate intake, hydration strategy, and post-ride recovery nutrition." },
         { name:"Hyrox + Cycling", desc:"Hybrid programming combining cycling endurance with Hyrox functional stations for cross-training athletes." }
       ]},
@@ -3742,9 +2995,9 @@ function initCycleCarousel() {
       items:[
         { name:"Beginner Plans", desc:"Couch-to-5K style progression building confidence, consistency, and proper running form from scratch." },
         { name:"5K / 10K Prep", desc:"Structured speed work, interval training, and tempo runs targeting your best 5K or 10K time." },
-        { name:"Half Marathon Prep", desc:"Periodized 12—16 week plans combining easy runs, threshold work, long runs, and race-day strategy." },
+        { name:"Half Marathon Prep", desc:"Periodized 12�16 week plans combining easy runs, threshold work, long runs, and race-day strategy." },
         { name:"Marathon Prep", desc:"Full marathon programming with progressive long runs, pace work, nutrition, and taper planning." },
-        { name:"Running Nutrition", desc:"Fueling strategies for training and race day — carb loading, hydration, electrolyte balance, and recovery." },
+        { name:"Running Nutrition", desc:"Fueling strategies for training and race day � carb loading, hydration, electrolyte balance, and recovery." },
         { name:"Hyrox + Running", desc:"Specialized programming for compromised running after functional stations. Pacing, transitions, and fatigue management." }
       ]}
   ];
@@ -3754,7 +3007,7 @@ function initCycleCarousel() {
     items:[
       { name:"Combined Programming", desc:"Integrated cycling and Hyrox training plans that build both aerobic engines and functional station strength simultaneously." },
       { name:"Engine Building", desc:"Zone 2 base work combined with HIIT intervals to develop the cardiovascular capacity needed for hybrid racing." },
-      { name:"Compromised Running", desc:"Running on fatigued legs after station work — simulation drills to build race-specific resilience." },
+      { name:"Compromised Running", desc:"Running on fatigued legs after station work � simulation drills to build race-specific resilience." },
       { name:"Race Strategy", desc:"Pacing plans, transition practice, station approach tactics, and mental preparation for race day." },
       { name:"Nutrition & Recovery", desc:"Hybrid-specific fueling protocols balancing carbohydrate demands of cycling with protein needs for functional strength." }
     ]
@@ -3786,7 +3039,7 @@ function initCycleCarousel() {
     corpData.forEach(function(c) { cards += '<span>' + c + '</span>'; });
     cards += '</div></div>';
 
-    return '<div class="svc-cat-overlay" id="svcCatOverlay"><div class="svc-cat-modal"><button class="svc-cat-close" id="svcCatClose">&times;</button><div class="svc-cat-header"><h2>Our Services &amp; Programs</h2><p>From personal training to group wellness — find what fits your goal</p></div><div class="svc-cat-grid">' + cards + '</div></div></div>';
+    return '<div class="svc-cat-overlay" id="svcCatOverlay"><div class="svc-cat-modal"><button class="svc-cat-close" id="svcCatClose">&times;</button><div class="svc-cat-header"><h2>Our Services &amp; Programs</h2><p>From personal training to group wellness � find what fits your goal</p></div><div class="svc-cat-grid">' + cards + '</div></div></div>';
   }
 
   /* Inject trigger button */
@@ -3933,7 +3186,36 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 });
 
-/* Corporate event inquiry form is wired once via wireForms() / bindFormSubmit */
+/* Corporate event inquiry form */
+(function() {
+  var frm = document.getElementById("corpEventForm");
+  if (!frm) return;
+  frm.addEventListener("submit", function(e) {
+    e.preventDefault();
+    var status = document.getElementById("corpFormStatus");
+    var payload = Object.fromEntries(new FormData(frm).entries());
+    payload.form_type = "corporate_event";
+    status.textContent = "Sending\u2026";
+    status.style.color = "rgba(255,255,255,0.6)";
+    var apiBase = "";
+    var fetchOpts = { method: "POST", body: JSON.stringify(payload), headers: { "Content-Type": "application/json" } };
+    fetch(apiBase || "/api/submit", fetchOpts)
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (d.ok || d.success) {
+          status.textContent = "\u2705 Thank you! Our events team will contact you within 24 hours.";
+          status.style.color = "#4ade80";
+          frm.reset();
+        } else {
+          throw new Error(d.error || "Submit failed");
+        }
+      })
+      .catch(function() {
+        status.textContent = "\u26a0\ufe0f Something went wrong. Please try again.";
+        status.style.color = "#dc3545";
+      });
+  });
+})();
 
 /* Consult modal removed — using standalone book-consultation.html page */
 
