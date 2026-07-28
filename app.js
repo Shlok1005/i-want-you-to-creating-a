@@ -1160,6 +1160,61 @@ function injectAmbientBg() {
   document.body.prepend(el);
 }
 
+/** Latest public event — featured on Events and shown site-wide via the top banner. */
+var LATEST_EVENT = {
+  name: "Independence Day Ride",
+  shortDate: "Sun 16 Aug",
+  dateLabel: "16 August 2026",
+  time: "5:00 AM onwards",
+  location: "SmartBike Point, Narsingi",
+  registerUrl: "https://ifinish.in/cycling/FGCC-August",
+  pageUrl: "events.html#latest-event"
+};
+
+function injectLatestEventBanner() {
+  if (qs(".fg-latest-event-banner")) return;
+  var path = (window.location.pathname || "").toLowerCase();
+  if (/admin\.html|backend\.html|dashboard\.html|office\.html|owner-data\.html/.test(path)) return;
+
+  var p = typeof sitePathPrefix === "function" ? sitePathPrefix() : "";
+  var pageHref = p + LATEST_EVENT.pageUrl;
+  var bar = document.createElement("div");
+  bar.className = "fg-latest-event-banner";
+  bar.setAttribute("role", "region");
+  bar.setAttribute("aria-label", "Latest event");
+  bar.innerHTML =
+    '<div class="fg-latest-event-banner-inner">' +
+      '<span class="fg-latest-event-badge">Latest event</span>' +
+      '<p class="fg-latest-event-copy">' +
+        "<strong>" + LATEST_EVENT.name + "</strong>" +
+        '<span class="fg-latest-event-meta">' + LATEST_EVENT.shortDate + " · " + LATEST_EVENT.time + " · " + LATEST_EVENT.location + "</span>" +
+      "</p>" +
+      '<div class="fg-latest-event-actions">' +
+        '<a class="fg-latest-event-register" href="' + LATEST_EVENT.registerUrl + '" target="_blank" rel="noopener">Register</a>' +
+        '<a class="fg-latest-event-details" href="' + pageHref + '">Details</a>' +
+        '<button type="button" class="fg-latest-event-dismiss" aria-label="Dismiss latest event banner">&times;</button>' +
+      "</div>" +
+    "</div>";
+  document.body.prepend(bar);
+  document.body.classList.add("has-latest-event-banner");
+
+  try {
+    if (sessionStorage.getItem("fg-hide-latest-event-banner") === "1") {
+      bar.hidden = true;
+      document.body.classList.remove("has-latest-event-banner");
+    }
+  } catch (err) { /* ignore storage */ }
+
+  var dismiss = bar.querySelector(".fg-latest-event-dismiss");
+  if (dismiss) {
+    dismiss.addEventListener("click", function() {
+      bar.hidden = true;
+      document.body.classList.remove("has-latest-event-banner");
+      try { sessionStorage.setItem("fg-hide-latest-event-banner", "1"); } catch (e) { /* ignore */ }
+    });
+  }
+}
+
 /* -- Coach popup modal -------------------- */
 function injectCoachModal() {
   if (qs("#coachModal")) return;
@@ -2310,8 +2365,8 @@ function injectSiteChatbot() {
     if (text.includes("yoga") || text.includes("coach")) {
       return "We have yoga specialists like Aditya Gururani, Kritika Chauhan, and Parul Danu, plus strength and sports coaches across 10+ experts. Tell me your goal and I can help narrow the match on the Coaches page.";
     }
-    if (text.includes("event") || text.includes("marathon") || text.includes("cycling")) {
-      return "Fitness Gurukul runs community runs, corporate marathons, cycling events, bootcamps, and the Born Star running event. Check the Events page for upcoming dates or ask us to help you register.";
+    if (text.includes("event") || text.includes("marathon") || text.includes("cycling") || text.includes("independence") || text.includes("ride")) {
+      return "Our latest event is the Independence Day Ride on Sunday, 16 August 2026 at 5:00 AM from SmartBike Point, Narsingi — distances from 5K to 100K. Register on iFinish or open the Events page for details. We also run community runs, corporate marathons, and bootcamps.";
     }
     if (text.includes("contact") || text.includes("phone") || text.includes("whatsapp")) {
       return "You can call 08042781491, WhatsApp +91 72071 13310, or email contact@fitnessgurukul.co.in. We are in Manikonda, Hyderabad.";
@@ -2543,6 +2598,7 @@ async function boot() {
   try { wireForms(); } catch (e) { console.warn("boot:wireForms", e); }
   try { wireNavigationAids(); } catch (e) { console.warn("boot:wireNavigationAids", e); }
   try { refreshAdminData(); } catch (e) { console.warn("boot:refreshAdminData", e); }
+  try { injectLatestEventBanner(); } catch (e) { console.warn("boot:injectLatestEventBanner", e); }
   try { injectFooter(); } catch (e) { console.warn("boot:injectFooter", e); }
   try { injectWhatsAppFloat(); } catch (e) { console.warn("boot:injectWhatsAppFloat", e); }
   try { injectSiteChatbot(); } catch (e) { console.warn("boot:injectSiteChatbot", e); }
