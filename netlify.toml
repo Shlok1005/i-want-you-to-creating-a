@@ -5,6 +5,52 @@
 [build.environment]
   NODE_VERSION = "20"
 
-# Avoid Git LFS smudge failures on Netlify
-[build.processing]
-  skip_processing = false
+[[redirects]]
+  from = "/assets/fitness-gurukul-logo.png"
+  to = "/assets/cdn/logo.jpg"
+  status = 200
+
+[[redirects]]
+  from = "/assets/services/strength.jpg"
+  to = "/assets/cdn/service-1.jpg"
+  status = 200
+
+[[redirects]]
+  from = "/assets/services/cycling.jpg"
+  to = "/assets/cdn/service-2.jpg"
+  status = 200
+
+[[redirects]]
+  from = "/assets/services/running.jpg"
+  to = "/assets/cdn/service-3.jpg"
+  status = 200
+
+[[redirects]]
+  from = "/assets/services/yoga.jpg"
+  to = "/assets/cdn/service-4.jpg"
+  status = 200
+
+[[redirects]]
+  from = "/assets/services/indian-nutrition.jpg"
+  to = "/assets/cdn/bg-1.jpg"
+  status = 200
+
+[[redirects]]
+  from = "/assets/services/community-event.jpg"
+  to = "/assets/cdn/event-1.jpeg"
+  status = 200
+
+[[redirects]]
+  from = "/assets/story-map/:id.jpg"
+  to = "/assets/cdn/story-:id.jpeg"
+  status = 200
+
+[[redirects]]
+  from = "/assets/ai-fitness-hero.jpg"
+  to = "/assets/cdn/bg-1.jpg"
+  status = 200
+
+[[redirects]]
+  from = "/assets/ravi-miska.jpg"
+  to = "/assets/cdn/founder.jpg"
+  status = 200

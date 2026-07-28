@@ -52,7 +52,7 @@ body::before {
   background:
     linear-gradient(90deg, rgba(0, 0, 0, 0.96), rgba(0, 0, 0, 0.7) 42%, rgba(0, 0, 0, 0.94)),
     linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.92)),
-    url("assets/cdn/bg-1.png") center top / cover no-repeat;
+    url("assets/cdn/bg-1.jpg") center top / cover no-repeat;
   opacity: 0.45;
   filter: saturate(0.75) contrast(1.02) brightness(0.7);
 }
