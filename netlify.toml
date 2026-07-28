@@ -1,0 +1,10 @@
+[build]
+  publish = "."
+  command = "echo 'Static site — no build step'"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Avoid Git LFS smudge failures on Netlify
+[build.processing]
+  skip_processing = false
