@@ -1,0 +1,2 @@
+# Stdlib API / safety file for Render pip install -r requirements.txt
+# No packages required for server.py; Node deploy uses package.json instead.
