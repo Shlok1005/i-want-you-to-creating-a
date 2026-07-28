@@ -1,6 +1,6 @@
 [build]
-  publish = "."
-  command = "echo 'Static site — no build step'"
+  publish = "dist"
+  command = "bash scripts/prepare-static-dist.sh"
 
 [build.environment]
   NODE_VERSION = "20"
@@ -38,11 +38,6 @@
 [[redirects]]
   from = "/assets/services/community-event.jpg"
   to = "/assets/cdn/event-1.jpeg"
-  status = 200
-
-[[redirects]]
-  from = "/assets/story-map/:id.jpg"
-  to = "/assets/cdn/story-:id.jpeg"
   status = 200
 
 [[redirects]]

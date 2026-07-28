@@ -22,3 +22,4 @@ services/fg signature.png
 # Superseded source PNGs; compressed deploy copies are .jpg.
 assets/ai-fitness-hero.png
 assets/ai-community-event.png
+dist/
