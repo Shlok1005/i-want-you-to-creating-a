@@ -340,35 +340,5 @@
     </div>
   </footer>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      var form = document.getElementById("challengeLeadForm");
-      var status = document.getElementById("challengeLeadStatus");
-      if (!form || !status) return;
-      form.addEventListener("submit", function(event) {
-        event.preventDefault();
-        status.textContent = "Sending...";
-        status.style.color = "rgba(255,255,255,0.65)";
-        var payload = Object.fromEntries(new FormData(form).entries());
-        payload.form_type = payload.form_type || "transformation_challenge";
-        var send = window.fgSubmitLead;
-        if (!send) {
-          status.textContent = "Form script not loaded. Refresh and try again.";
-          status.style.color = "#ff6b6b";
-          return;
-        }
-        send(payload)
-          .then(function() {
-            status.textContent = "Thank you. You are on the challenge interest list.";
-            status.style.color = "#4ade80";
-            form.reset();
-          })
-          .catch(function() {
-            status.textContent = "Something went wrong. Please try again or message us on WhatsApp.";
-            status.style.color = "#ff6b6b";
-          });
-      });
-    });
-  </script>
 </body>
 </html>

@@ -46,6 +46,95 @@ const GOOGLE_SCRIPT_URL = String(
   "https://script.google.com/macros/s/AKfycbyesKPUAUXA1uMMFvJLxy9Ysb0dR_kJ6XHN1QyzdUs/exec"
 ).trim().replace(/\/dev\/?$/i, "/exec");
 
+const LEAD_NOTIFY_EMAILS = String(
+  process.env.LEAD_NOTIFY_EMAIL ||
+  process.env.FG_LEAD_EMAIL ||
+  "contact@fitnessgurukul.co.in,fitnessgurukul01@gmail.com"
+)
+  .split(/[,;\s]+/)
+  .map((email) => email.trim())
+  .filter(Boolean);
+
+function leadLabel(formType) {
+  if (formType === "transformation_challenge" || formType === "challenge_leads") return "challenge lead";
+  if (formType === "corporate_event" || formType === "corporate_events") return "corporate inquiry";
+  return "consultation lead";
+}
+
+function buildLeadEmailBody(submission) {
+  const formType = String(submission.form_type || "consultation");
+  const label = leadLabel(formType);
+  const name = String(submission.name || submission.contact_name || "");
+  const phone = String(submission.phone || "");
+  const subject = `[Fitness Gurukul] New ${label} — ${name || phone || "lead"}`;
+  const body = [
+    "New lead received from the Fitness Gurukul website.",
+    "",
+    `Type: ${label}`,
+    `Name: ${name}`,
+    `Phone: ${phone}`,
+    `Email: ${submission.email || ""}`,
+    `Program: ${submission.program || ""}`,
+    `Goal: ${submission.goal || ""}`,
+    `Coach: ${submission.coach || ""}`,
+    `Company: ${submission.company || ""}`,
+    `Contact name: ${submission.contact_name || ""}`,
+    `Event type: ${submission.event_type || ""}`,
+    `Attendees: ${submission.attendees || ""}`,
+    `Preferred date: ${submission.preferred_date || ""}`,
+    `Budget: ${submission.budget || ""}`,
+    `Location: ${submission.location || ""}`,
+    `Message: ${submission.message || ""}`,
+    `Source: ${submission.source || "node-server"}`,
+    `Timestamp: ${submission.timestamp || new Date().toISOString()}`,
+  ].join("\n");
+  return { subject, body, name, phone };
+}
+
+async function emailLeadViaFormSubmit(submission) {
+  if (String(process.env.FORMSUBMIT_DISABLE || "").trim() === "1") return false;
+  if (!LEAD_NOTIFY_EMAILS.length) return false;
+
+  const { subject, body, name, phone } = buildLeadEmailBody(submission);
+  const replyTo = String(submission.email || LEAD_NOTIFY_EMAILS[0]);
+  const formPayload = {
+    name: name || "Website lead",
+    phone: phone || "",
+    email: replyTo,
+    message: body,
+    _subject: subject,
+    _template: "table",
+    _captcha: "false",
+    _replyto: replyTo,
+  };
+
+  const results = await Promise.all(
+    LEAD_NOTIFY_EMAILS.map(async (to) => {
+      try {
+        const response = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(to)}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(formPayload),
+        });
+        if (!response.ok) {
+          console.warn(`FormSubmit failed for ${to}:`, response.status);
+          return false;
+        }
+        console.log(`Lead email sent via FormSubmit → ${to}`);
+        return true;
+      } catch (error) {
+        console.warn(`FormSubmit error for ${to}:`, error.message || error);
+        return false;
+      }
+    })
+  );
+
+  return results.some(Boolean);
+}
+
 async function forwardLeadToGoogleScript(submission) {
   if (!GOOGLE_SCRIPT_URL) return { ok: false, skipped: true };
   try {
@@ -70,6 +159,15 @@ async function forwardLeadToGoogleScript(submission) {
     console.warn("Google Script forward error:", error.message || error);
     return { ok: false, error: error.message || String(error) };
   }
+}
+
+async function notifyLeadChannels(submission) {
+  const google = await forwardLeadToGoogleScript(submission);
+  let emailed = Boolean(google && google.ok && google.data && google.data.emailed);
+  if (!google.ok || !emailed) {
+    emailed = (await emailLeadViaFormSubmit(submission)) || emailed;
+  }
+  return { google, emailed };
 }
 
 const CHAT_SUGGESTIONS = [
@@ -441,13 +539,14 @@ app.post("/api/submit", async (req, res) => {
 
   insertSubmission(submission);
 
-  const google = await forwardLeadToGoogleScript(submission);
+  const notify = await notifyLeadChannels(submission);
 
   console.log(`[NEW SUBMISSION] ${submission.name} — ${submission.program} — ${submission.timestamp}`);
   res.json({
     ok: true,
     id: submission.id,
-    google_script: Boolean(google && google.ok),
+    google_script: Boolean(notify.google && notify.google.ok),
+    emailed: Boolean(notify.emailed),
   });
 });
 

@@ -1037,6 +1037,11 @@ const FG_GOOGLE_SCRIPT_URL = (typeof window !== "undefined" && window.FG_GOOGLE_
   ? String(window.FG_GOOGLE_SCRIPT_URL)
   : "https://script.google.com/macros/s/AKfycbyesKPUAUXA1uMMFvJLxy9Ysb0dR_kJ6XHN1QyzdUs/exec";
 
+const LEAD_NOTIFY_EMAILS = [
+  "contact@fitnessgurukul.co.in",
+  "fitnessgurukul01@gmail.com",
+];
+
 function normalizeGoogleScriptUrl(url) {
   return String(url || "").trim().replace(/\/dev\/?$/i, "/exec");
 }
@@ -1046,6 +1051,66 @@ function leadLooksSuccessful(data, text) {
   if (data && (data.ok || data.success || data.result === "success")) return true;
   if (text && /unable to open|sign in|accounts\.google|ServiceLogin/i.test(text)) return false;
   return Boolean(text && /"ok"\s*:\s*true|"success"\s*:\s*true/i.test(text));
+}
+
+function leadEmailLabel(formType) {
+  if (formType === "transformation_challenge" || formType === "challenge_leads") return "challenge lead";
+  if (formType === "corporate_event" || formType === "corporate_events") return "corporate inquiry";
+  return "consultation lead";
+}
+
+function buildClientLeadEmail(payload) {
+  var formType = String((payload && payload.form_type) || "consultation");
+  var name = String((payload && (payload.name || payload.contact_name)) || "");
+  var phone = String((payload && payload.phone) || "");
+  var label = leadEmailLabel(formType);
+  var subject = "[Fitness Gurukul] New " + label + " — " + (name || phone || "lead");
+  var body = [
+    "New lead received from the Fitness Gurukul website.",
+    "",
+    "Type: " + label,
+    "Name: " + name,
+    "Phone: " + phone,
+    "Email: " + String((payload && payload.email) || ""),
+    "Program: " + String((payload && payload.program) || ""),
+    "Goal: " + String((payload && payload.goal) || ""),
+    "Coach: " + String((payload && payload.coach) || ""),
+    "Company: " + String((payload && payload.company) || ""),
+    "Contact name: " + String((payload && payload.contact_name) || ""),
+    "Event type: " + String((payload && payload.event_type) || ""),
+    "Attendees: " + String((payload && payload.attendees) || ""),
+    "Preferred date: " + String((payload && payload.preferred_date) || ""),
+    "Budget: " + String((payload && payload.budget) || ""),
+    "Location: " + String((payload && payload.location) || ""),
+    "Message: " + String((payload && payload.message) || ""),
+    "Source: " + String((payload && payload.source) || ""),
+    "Timestamp: " + String((payload && payload.timestamp) || new Date().toISOString()),
+  ].join("\n");
+  return { subject: subject, body: body, name: name, phone: phone };
+}
+
+async function emailLeadViaFormSubmit(payload) {
+  var built = buildClientLeadEmail(payload);
+  var replyTo = String((payload && payload.email) || LEAD_NOTIFY_EMAILS[0]);
+  var formPayload = {
+    name: built.name || "Website lead",
+    phone: built.phone || "",
+    email: replyTo,
+    message: built.body,
+    _subject: built.subject,
+    _template: "table",
+    _captcha: "false",
+    _replyto: replyTo,
+  };
+  var results = await Promise.all(LEAD_NOTIFY_EMAILS.map(function(to) {
+    return fetch("https://formsubmit.co/ajax/" + encodeURIComponent(to), {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify(formPayload),
+    }).then(function(res) { return res.ok; }).catch(function() { return false; });
+  }));
+  if (!results.some(Boolean)) throw new Error("Lead email failed");
+  return { ok: true, via: "email", emailed: true };
 }
 
 async function postLeadToGoogleScript(payload) {
@@ -1063,7 +1128,7 @@ async function postLeadToGoogleScript(payload) {
   if (!leadLooksSuccessful(data, text)) {
     throw new Error((data && data.error) || "Google Script submit failed");
   }
-  return { ok: true, via: "google-script", data: data };
+  return { ok: true, via: "google-script", data: data, emailed: Boolean(data && data.emailed) };
 }
 
 async function postLeadToApi(payload) {
@@ -1076,10 +1141,15 @@ async function postLeadToApi(payload) {
   if (!(data.ok || data.success)) {
     throw new Error((data && data.error) || "API submit failed");
   }
-  return { ok: true, via: data.via || "api", data: data };
+  return { ok: true, via: data.via || "api", data: data, emailed: Boolean(data.emailed) };
 }
 
-/** Primary: Google Apps Script sheet. Fallback: /api/submit (Netlify fn or Node). */
+/**
+ * All website lead forms use this:
+ * 1) Google Apps Script (sheet + MailApp to both inboxes)
+ * 2) /api/submit (Netlify/Node: sheet forward + FormSubmit email)
+ * 3) Direct FormSubmit email to both inboxes
+ */
 async function submitLead(payload) {
   const body = Object.assign({}, payload || {}, {
     form_type: (payload && payload.form_type) || "consultation",
@@ -1093,8 +1163,15 @@ async function submitLead(payload) {
     try {
       return await postLeadToApi(body);
     } catch (apiErr) {
-      saveLeadLocally(body);
-      throw apiErr;
+      console.warn("API lead failed, trying FormSubmit email", apiErr);
+      try {
+        const emailed = await emailLeadViaFormSubmit(body);
+        saveLeadLocally(body);
+        return emailed;
+      } catch (mailErr) {
+        saveLeadLocally(body);
+        throw mailErr;
+      }
     }
   }
 }
@@ -1102,6 +1179,7 @@ async function submitLead(payload) {
 if (typeof window !== "undefined") {
   window.fgSubmitLead = submitLead;
   window.FG_GOOGLE_SCRIPT_URL = normalizeGoogleScriptUrl(FG_GOOGLE_SCRIPT_URL);
+  window.FG_LEAD_NOTIFY_EMAILS = LEAD_NOTIFY_EMAILS.slice();
 }
 
 async function submitForm(formId, apiPath, statusId, transform) {
@@ -1110,20 +1188,15 @@ async function submitForm(formId, apiPath, statusId, transform) {
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const status = qs(statusId);
-    const payload = Object.fromEntries(new FormData(form).entries());
+    const payload = transform
+      ? transform(Object.fromEntries(new FormData(form).entries()))
+      : Object.fromEntries(new FormData(form).entries());
     try {
-      if (!usesLocalBackend) await detectBackend();
-      if (usesLocalBackend) {
-        await api(apiPath, { method: "POST", body: JSON.stringify(transform ? transform(payload) : payload) });
-      } else {
-        saveLeadLocally(payload);
-      }
+      await submitLead(payload);
       setStatus(status, "Saved. We'll reach back to you shortly.");
       form.reset();
     } catch (error) {
-      saveLeadLocally(payload);
-      setStatus(status, "Saved. We'll reach back to you shortly.");
-      form.reset();
+      setStatus(status, "Something went wrong. Please try again or WhatsApp us.");
     }
   });
 }
@@ -1550,27 +1623,62 @@ function injectWhatsApp() {
   });
 }
 
-function wireForms() {
-  var leadForm = qs("#leadForm");
-  if (leadForm && !leadForm.dataset.fgLeadBound) {
-    leadForm.dataset.fgLeadBound = "1";
-    leadForm.addEventListener("submit", function(e) {
-      e.preventDefault();
-      var status = qs("#leadStatus");
-      var payload = Object.fromEntries(new FormData(leadForm).entries());
-      payload.form_type = payload.form_type || "consultation";
+function bindLeadForm(form, statusEl, defaults) {
+  if (!form || form.dataset.fgLeadBound) return;
+  form.dataset.fgLeadBound = "1";
+  form.addEventListener("submit", function(e) {
+    e.preventDefault();
+    var status = statusEl || form.querySelector(".form-status, [role='status']");
+    var payload = Object.fromEntries(new FormData(form).entries());
+    if (defaults) Object.keys(defaults).forEach(function(key) {
+      if (payload[key] == null || payload[key] === "") payload[key] = defaults[key];
+    });
+    payload.form_type = payload.form_type || (defaults && defaults.form_type) || "consultation";
+    if (status) {
       status.textContent = "Sending\u2026";
       status.style.color = "rgba(255,255,255,0.6)";
-      submitLead(payload)
-        .then(function() {
+    }
+    submitLead(payload)
+      .then(function() {
+        if (status) {
           status.textContent = "\u2705 Thank you! We\u2019ll be in touch shortly.";
           status.style.color = "#4ade80";
-          leadForm.reset();
-        })
-        .catch(function() {
+        }
+        form.reset();
+      })
+      .catch(function() {
+        if (status) {
           status.textContent = "\u26a0\ufe0f Something went wrong. Please try again.";
           status.style.color = "#dc3545";
-        });
+        }
+      });
+  });
+}
+
+function wireForms() {
+  bindLeadForm(qs("#leadForm"), qs("#leadStatus"), { form_type: "consultation" });
+  bindLeadForm(qs("#consultPageForm"), qs("#consultPageStatus"), { form_type: "consultation" });
+  bindLeadForm(qs("#challengeLeadForm"), qs("#challengeLeadStatus"), {
+    form_type: "transformation_challenge",
+  });
+  var challengeStatus = qs("#challengeLeadStatus");
+  var challengeForm = qs("#challengeLeadForm");
+  if (challengeForm && challengeStatus && challengeForm.dataset.fgLeadBound === "1") {
+    // Prefer challenge-specific success copy after bindLeadForm's generic handler.
+    challengeForm.addEventListener("submit", function() {
+      var original = challengeStatus.textContent;
+      var observer = new MutationObserver(function() {
+        if (/Thank you/i.test(challengeStatus.textContent) && !/challenge interest/i.test(challengeStatus.textContent)) {
+          challengeStatus.textContent = "Thank you. You are on the challenge interest list.";
+          observer.disconnect();
+        } else if (/Something went wrong/i.test(challengeStatus.textContent)) {
+          challengeStatus.textContent = "Something went wrong. Please try again or message us on WhatsApp.";
+          observer.disconnect();
+        } else if (challengeStatus.textContent !== original && !/Sending/i.test(challengeStatus.textContent)) {
+          observer.disconnect();
+        }
+      });
+      observer.observe(challengeStatus, { childList: true, characterData: true, subtree: true });
     });
   }
   qsa("[data-contact-phone]").forEach((node) => { node.textContent = realData.contact.phone; });

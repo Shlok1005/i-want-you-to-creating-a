@@ -240,35 +240,5 @@
     </div>
   </footer>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      var form = document.getElementById("consultPageForm");
-      var status = document.getElementById("consultPageStatus");
-      if (!form) return;
-      form.addEventListener("submit", function(e) {
-        e.preventDefault();
-        var payload = Object.fromEntries(new FormData(form).entries());
-        payload.form_type = payload.form_type || "consultation";
-        status.textContent = "Sending\u2026";
-        status.style.color = "rgba(255,255,255,0.6)";
-        var send = window.fgSubmitLead || null;
-        if (!send) {
-          status.textContent = "\u26a0\ufe0f Form script not loaded. Refresh and try again.";
-          status.style.color = "#dc3545";
-          return;
-        }
-        send(payload)
-          .then(function() {
-            status.textContent = "\u2705 Thank you! We\u2019ll be in touch shortly.";
-            status.style.color = "#4ade80";
-            form.reset();
-          })
-          .catch(function() {
-            status.textContent = "\u26a0\ufe0f Something went wrong. Please try again.";
-            status.style.color = "#dc3545";
-          });
-      });
-    });
-  </script>
 </body>
 </html>

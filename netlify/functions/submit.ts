@@ -1,4 +1,5 @@
 import type { Config, Context } from "@netlify/functions";
+import { emailLeadViaFormSubmit } from "./_shared/lead-mail";
 
 const DEFAULT_SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbyesKPUAUXA1uMMFvJLxy9Ysb0dR_kJ6XHN1QyzdUs/exec";
@@ -6,7 +7,6 @@ const DEFAULT_SCRIPT_URL =
 function scriptUrl(): string {
   const fromEnv = Netlify.env.get("GOOGLE_SCRIPT_URL") || Netlify.env.get("FG_GOOGLE_SCRIPT_URL");
   const raw = String(fromEnv || DEFAULT_SCRIPT_URL).trim();
-  // /dev requires the owner to be logged in; public forms must use /exec.
   return raw.replace(/\/dev\/?$/i, "/exec");
 }
 
@@ -21,6 +21,30 @@ function corsHeaders(origin: string | null): HeadersInit {
 
 function str(value: unknown): string {
   return value == null ? "" : String(value).trim();
+}
+
+async function forwardToGoogleScript(payload: Record<string, unknown>) {
+  const upstream = await fetch(scriptUrl(), {
+    method: "POST",
+    redirect: "follow",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(payload),
+  });
+  const text = await upstream.text();
+  let data: Record<string, unknown> = {};
+  try {
+    data = JSON.parse(text) as Record<string, unknown>;
+  } catch {
+    data = {};
+  }
+
+  const ok =
+    Boolean(data.ok) ||
+    Boolean(data.success) ||
+    data.result === "success" ||
+    (upstream.ok && !/unable to open|sign in|accounts\.google/i.test(text));
+
+  return { ok, data, text };
 }
 
 export default async (req: Request, _context: Context) => {
@@ -74,50 +98,43 @@ export default async (req: Request, _context: Context) => {
     source: str(body.source) || "netlify-function",
   };
 
+  let googleOk = false;
+  let googleData: Record<string, unknown> = {};
   try {
-    const upstream = await fetch(scriptUrl(), {
-      method: "POST",
-      redirect: "follow",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(payload),
-    });
-    const text = await upstream.text();
-    let data: Record<string, unknown> = {};
-    try {
-      data = JSON.parse(text) as Record<string, unknown>;
-    } catch {
-      data = {};
-    }
-
-    const ok =
-      Boolean(data.ok) ||
-      Boolean(data.success) ||
-      data.result === "success" ||
-      (upstream.ok && !/unable to open|sign in|accounts\.google/i.test(text));
-
-    if (!ok) {
-      return new Response(
-        JSON.stringify({
-          ok: false,
-          error:
-            "Google Script is not publicly reachable. Redeploy the web app with Who has access: Anyone, and use the /exec URL.",
-          detail: str(data.error) || text.slice(0, 180),
-        }),
-        { status: 502, headers }
-      );
-    }
-
-    return new Response(JSON.stringify({ ok: true, via: "google-script", data }), {
-      status: 200,
-      headers,
-    });
+    const google = await forwardToGoogleScript(payload);
+    googleOk = google.ok;
+    googleData = google.data;
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Upstream request failed";
-    return new Response(JSON.stringify({ ok: false, error: message }), {
-      status: 502,
-      headers,
-    });
+    console.warn("Google Script forward failed", error);
   }
+
+  // If Sheets/MailApp path failed, still email both inboxes via FormSubmit.
+  let emailed = Boolean(googleOk && googleData.emailed);
+  if (!googleOk || !emailed) {
+    emailed = (await emailLeadViaFormSubmit(payload)) || emailed;
+  }
+
+  if (!googleOk && !emailed) {
+    return new Response(
+      JSON.stringify({
+        ok: false,
+        error:
+          "Lead could not be saved or emailed. Redeploy Google Apps Script with Who has access: Anyone (/exec), and activate FormSubmit for both inboxes.",
+      }),
+      { status: 502, headers }
+    );
+  }
+
+  return new Response(
+    JSON.stringify({
+      ok: true,
+      via: googleOk ? "google-script" : "email",
+      google_script: googleOk,
+      emailed,
+      data: googleData,
+    }),
+    { status: 200, headers }
+  );
 };
 
 export const config: Config = {

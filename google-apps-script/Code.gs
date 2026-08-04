@@ -1,16 +1,24 @@
 /**
- * Fitness Gurukul — Google Sheets lead collector
+ * Fitness Gurukul — Google Sheets lead collector + email alerts
  *
  * Setup:
- * 1. Create a Google Sheet named "Fitness Gurukul Leads" (or any name).
+ * 1. Create/open a Google Sheet.
  * 2. Extensions → Apps Script → paste this file → Save.
  * 3. Deploy → New deployment → Type: Web app
  *    - Execute as: Me
  *    - Who has access: Anyone
- * 4. Copy the /exec URL (not /dev) into the website as FG_GOOGLE_SCRIPT_URL.
+ * 4. Copy the /exec URL (not /dev) into the website.
  *
  * Sheet tabs are created automatically: Consultations, Challenge, Corporate, Other.
+ * Every accepted lead emails:
+ *   contact@fitnessgurukul.co.in
+ *   fitnessgurukul01@gmail.com
  */
+
+var LEAD_NOTIFY_EMAILS = [
+  "contact@fitnessgurukul.co.in",
+  "fitnessgurukul01@gmail.com"
+];
 
 var SHEET_TABS = {
   consultation: "Consultations",
@@ -84,10 +92,58 @@ function doPost(e) {
       JSON.stringify(data)
     ]);
 
-    return json_({ ok: true, success: true, form_type: formType });
+    var emailed = notifyLeadEmail_(data, formType, name, phone);
+    return json_({ ok: true, success: true, form_type: formType, emailed: emailed });
   } catch (err) {
     return json_({ ok: false, error: String(err && err.message ? err.message : err) });
   }
+}
+
+function notifyLeadEmail_(data, formType, name, phone) {
+  try {
+    var label = leadLabel_(formType);
+    var subject = "[Fitness Gurukul] New " + label + " — " + (name || phone || "lead");
+    var lines = [
+      "New lead received from the Fitness Gurukul website.",
+      "",
+      "Type: " + label,
+      "Name: " + (name || ""),
+      "Phone: " + (phone || ""),
+      "Email: " + String(data.email || ""),
+      "Program: " + String(data.program || ""),
+      "Goal: " + String(data.goal || ""),
+      "Coach: " + String(data.coach || ""),
+      "Company: " + String(data.company || ""),
+      "Contact name: " + String(data.contact_name || ""),
+      "Event type: " + String(data.event_type || ""),
+      "Attendees: " + String(data.attendees || ""),
+      "Preferred date: " + String(data.preferred_date || ""),
+      "Budget: " + String(data.budget || ""),
+      "Location: " + String(data.location || ""),
+      "Message: " + String(data.message || ""),
+      "Source: " + String(data.source || ""),
+      "Timestamp: " + String(data.timestamp || new Date().toISOString()),
+      "",
+      "Open your Fitness Gurukul Leads Google Sheet for the full row."
+    ];
+
+    MailApp.sendEmail({
+      to: LEAD_NOTIFY_EMAILS.join(","),
+      subject: subject,
+      body: lines.join("\n"),
+      replyTo: String(data.email || LEAD_NOTIFY_EMAILS[0])
+    });
+    return true;
+  } catch (err) {
+    console.error("Lead email failed: " + (err && err.message ? err.message : err));
+    return false;
+  }
+}
+
+function leadLabel_(formType) {
+  if (formType === "transformation_challenge" || formType === "challenge_leads") return "challenge lead";
+  if (formType === "corporate_event" || formType === "corporate_events") return "corporate inquiry";
+  return "consultation lead";
 }
 
 function parseBody_(e) {
