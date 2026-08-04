@@ -256,15 +256,18 @@
             <a href="https://wa.me/917207113310?text=Hi%20Fitness%20Gurukul%2C%20I%20have%20a%20question%20about%20the%204-week%20transformation%20challenge." target="_blank" rel="noopener">Ask on WhatsApp</a>
           </div>
         </div>
-        <form class="challenge-form" id="challengeLeadForm">
+        <form class="challenge-form" id="challengeLeadForm" name="challenge" method="POST" data-netlify="true" netlify-honeypot="bot-field">
           <div class="challenge-form-head">
             <span>Challenge Signup</span>
             <strong>Get on the list</strong>
             <p>We will contact you with pricing, joining details, and the best coach fit.</p>
           </div>
+          <input type="hidden" name="form-name" value="challenge" />
           <input type="hidden" name="form_type" value="transformation_challenge" />
+          <input type="hidden" name="subject" value="[Fitness Gurukul] New challenge lead" />
           <input type="hidden" name="program" value="4-Week Transformation Challenge" />
           <input type="hidden" name="goal" value="Join the 4-week transformation challenge" />
+          <p class="hidden" aria-hidden="true" style="display:none"><label>Don’t fill this out <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
           <div class="challenge-form-row">
             <label>Name<input name="name" autocomplete="name" required placeholder="Your full name" /></label>
             <label>Phone<input name="phone" type="tel" autocomplete="tel" required placeholder="+91 98765 43210" /></label>

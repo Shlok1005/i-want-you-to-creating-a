@@ -130,7 +130,11 @@
             <span class="cic-note">H.no.1-10/2, Lakshmi Nagar Colony, near Pochamma Temple, Hyderabad, 500089</span>
           </div>
         </div>
-        <form class="contact-page-form" id="leadForm">
+        <form class="contact-page-form" id="leadForm" name="consultation" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+          <input type="hidden" name="form-name" value="consultation" />
+          <input type="hidden" name="form_type" value="consultation" />
+          <input type="hidden" name="subject" value="[Fitness Gurukul] New consultation lead" />
+          <p class="hidden" aria-hidden="true" style="display:none"><label>Don’t fill this out <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
           <h3>Book a Free Consultation</h3>
           <p class="contact-form-sub">Tell us about yourself and we'll craft a plan for you.</p>
           <div class="cpf-row">

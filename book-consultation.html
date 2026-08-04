@@ -179,7 +179,11 @@
       </div>
       <h1>Book a Free Consultation</h1>
       <p>Tell us about yourself and we'll craft a plan for you. No commitment — just a conversation about your goals.</p>
-      <form id="consultPageForm">
+      <form id="consultPageForm" name="consultation" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+        <input type="hidden" name="form-name" value="consultation" />
+        <input type="hidden" name="form_type" value="consultation" />
+        <input type="hidden" name="subject" value="[Fitness Gurukul] New consultation lead" />
+        <p class="hidden" aria-hidden="true" style="display:none"><label>Don’t fill this out <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
         <div class="consult-row">
           <label>Your name<input name="name" autocomplete="name" required placeholder="e.g. Rahul Sharma" /></label>
           <label>Phone<input name="phone" type="tel" autocomplete="tel" required placeholder="+91 98765 43210" /></label>

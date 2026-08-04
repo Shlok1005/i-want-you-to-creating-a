@@ -1032,7 +1032,13 @@ function saveLeadLocally(payload) {
   localStorage.setItem("fg_leads", JSON.stringify(leads));
 }
 
-/** Public Google Apps Script web app (/exec). Override with window.FG_GOOGLE_SCRIPT_URL if needed. */
+/* ---- Simple lead capture -------------------------------------------
+ * Every lead form calls submitLead().
+ * 1) Save via Netlify Forms (works on Netlify)
+ * 2) Save + email via Google Apps Script (Sheets + MailApp)
+ * 3) Email both inboxes via FormSubmit if Script email did not run
+ * Succeeds if any path works.
+ * -------------------------------------------------------------------- */
 const FG_GOOGLE_SCRIPT_URL = (typeof window !== "undefined" && window.FG_GOOGLE_SCRIPT_URL)
   ? String(window.FG_GOOGLE_SCRIPT_URL)
   : "https://script.google.com/macros/s/AKfycbyesKPUAUXA1uMMFvJLxy9Ysb0dR_kJ6XHN1QyzdUs/exec";
@@ -1046,11 +1052,10 @@ function normalizeGoogleScriptUrl(url) {
   return String(url || "").trim().replace(/\/dev\/?$/i, "/exec");
 }
 
-function leadLooksSuccessful(data, text) {
-  if (!data && !text) return false;
-  if (data && (data.ok || data.success || data.result === "success")) return true;
-  if (text && /unable to open|sign in|accounts\.google|ServiceLogin/i.test(text)) return false;
-  return Boolean(text && /"ok"\s*:\s*true|"success"\s*:\s*true/i.test(text));
+function leadFormName(formType) {
+  if (formType === "transformation_challenge" || formType === "challenge_leads") return "challenge";
+  if (formType === "corporate_event" || formType === "corporate_events") return "corporate";
+  return "consultation";
 }
 
 function leadEmailLabel(formType) {
@@ -1059,45 +1064,79 @@ function leadEmailLabel(formType) {
   return "consultation lead";
 }
 
-function buildClientLeadEmail(payload) {
+function normalizeLeadPayload(payload) {
   var formType = String((payload && payload.form_type) || "consultation");
-  var name = String((payload && (payload.name || payload.contact_name)) || "");
-  var phone = String((payload && payload.phone) || "");
-  var label = leadEmailLabel(formType);
-  var subject = "[Fitness Gurukul] New " + label + " — " + (name || phone || "lead");
-  var body = [
-    "New lead received from the Fitness Gurukul website.",
-    "",
-    "Type: " + label,
-    "Name: " + name,
-    "Phone: " + phone,
-    "Email: " + String((payload && payload.email) || ""),
-    "Program: " + String((payload && payload.program) || ""),
-    "Goal: " + String((payload && payload.goal) || ""),
-    "Coach: " + String((payload && payload.coach) || ""),
-    "Company: " + String((payload && payload.company) || ""),
-    "Contact name: " + String((payload && payload.contact_name) || ""),
-    "Event type: " + String((payload && payload.event_type) || ""),
-    "Attendees: " + String((payload && payload.attendees) || ""),
-    "Preferred date: " + String((payload && payload.preferred_date) || ""),
-    "Budget: " + String((payload && payload.budget) || ""),
-    "Location: " + String((payload && payload.location) || ""),
-    "Message: " + String((payload && payload.message) || ""),
-    "Source: " + String((payload && payload.source) || ""),
-    "Timestamp: " + String((payload && payload.timestamp) || new Date().toISOString()),
-  ].join("\n");
-  return { subject: subject, body: body, name: name, phone: phone };
+  return Object.assign({}, payload || {}, {
+    form_type: formType,
+    name: String((payload && (payload.name || payload.contact_name)) || ""),
+    phone: String((payload && payload.phone) || ""),
+    email: String((payload && payload.email) || ""),
+    timestamp: String((payload && payload.timestamp) || new Date().toISOString()),
+    source: String((payload && payload.source) || ((typeof location !== "undefined" && location.pathname) || "website")),
+    subject: "[Fitness Gurukul] New " + leadEmailLabel(formType),
+  });
+}
+
+async function postToNetlifyForms(payload) {
+  var formName = leadFormName(payload.form_type);
+  var params = new URLSearchParams();
+  params.set("form-name", formName);
+  Object.keys(payload).forEach(function(key) {
+    if (payload[key] == null || payload[key] === "") return;
+    params.set(key, String(payload[key]));
+  });
+  var res = await fetch("/", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: params.toString(),
+  });
+  if (!res.ok) throw new Error("Netlify Forms failed");
+  return { ok: true, via: "netlify-forms" };
+}
+
+async function postLeadToGoogleScript(payload) {
+  var url = normalizeGoogleScriptUrl(FG_GOOGLE_SCRIPT_URL);
+  var res = await fetch(url, {
+    method: "POST",
+    redirect: "follow",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(payload),
+  });
+  var text = await res.text();
+  var data = {};
+  try { data = JSON.parse(text); } catch (_) { data = {}; }
+  var blocked = /unable to open|sign in|accounts\.google|ServiceLogin/i.test(text);
+  if (blocked || !(data.ok || data.success || data.result === "success")) {
+    throw new Error((data && data.error) || "Google Script failed");
+  }
+  return { ok: true, via: "google-script", emailed: Boolean(data.emailed) };
 }
 
 async function emailLeadViaFormSubmit(payload) {
-  var built = buildClientLeadEmail(payload);
-  var replyTo = String((payload && payload.email) || LEAD_NOTIFY_EMAILS[0]);
+  var label = leadEmailLabel(payload.form_type);
+  var name = payload.name || "Website lead";
+  var phone = payload.phone || "";
+  var replyTo = payload.email || LEAD_NOTIFY_EMAILS[0];
+  var message = [
+    "New " + label + " from the website.",
+    "Name: " + name,
+    "Phone: " + phone,
+    "Email: " + (payload.email || ""),
+    "Program: " + (payload.program || ""),
+    "Goal: " + (payload.goal || ""),
+    "Coach: " + (payload.coach || ""),
+    "Company: " + (payload.company || ""),
+    "Event: " + (payload.event_type || ""),
+    "Location: " + (payload.location || ""),
+    "Message: " + (payload.message || ""),
+    "Source: " + (payload.source || ""),
+  ].join("\n");
   var formPayload = {
-    name: built.name || "Website lead",
-    phone: built.phone || "",
+    name: name,
+    phone: phone,
     email: replyTo,
-    message: built.body,
-    _subject: built.subject,
+    message: message,
+    _subject: payload.subject || ("[Fitness Gurukul] New " + label),
     _template: "table",
     _captcha: "false",
     _replyto: replyTo,
@@ -1109,71 +1148,67 @@ async function emailLeadViaFormSubmit(payload) {
       body: JSON.stringify(formPayload),
     }).then(function(res) { return res.ok; }).catch(function() { return false; });
   }));
-  if (!results.some(Boolean)) throw new Error("Lead email failed");
+  if (!results.some(Boolean)) throw new Error("Email failed");
   return { ok: true, via: "email", emailed: true };
 }
 
-async function postLeadToGoogleScript(payload) {
-  const url = normalizeGoogleScriptUrl(FG_GOOGLE_SCRIPT_URL);
-  if (!url) throw new Error("Google Script URL missing");
-  const res = await fetch(url, {
-    method: "POST",
-    redirect: "follow",
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify(payload),
-  });
-  const text = await res.text();
-  let data = {};
-  try { data = JSON.parse(text); } catch (_) { data = {}; }
-  if (!leadLooksSuccessful(data, text)) {
-    throw new Error((data && data.error) || "Google Script submit failed");
-  }
-  return { ok: true, via: "google-script", data: data, emailed: Boolean(data && data.emailed) };
-}
-
 async function postLeadToApi(payload) {
-  const res = await fetch("/api/submit", {
+  var res = await fetch("/api/submit", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
-  const data = await res.json().catch(function() { return {}; });
-  if (!(data.ok || data.success)) {
-    throw new Error((data && data.error) || "API submit failed");
-  }
-  return { ok: true, via: data.via || "api", data: data, emailed: Boolean(data.emailed) };
+  var data = await res.json().catch(function() { return {}; });
+  if (!(data.ok || data.success)) throw new Error((data && data.error) || "API failed");
+  return { ok: true, via: data.via || "api", emailed: Boolean(data.emailed) };
 }
 
-/**
- * All website lead forms use this:
- * 1) Google Apps Script (sheet + MailApp to both inboxes)
- * 2) /api/submit (Netlify/Node: sheet forward + FormSubmit email)
- * 3) Direct FormSubmit email to both inboxes
- */
+/** Single entry point for every lead form on the site. */
 async function submitLead(payload) {
-  const body = Object.assign({}, payload || {}, {
-    form_type: (payload && payload.form_type) || "consultation",
-    timestamp: (payload && payload.timestamp) || new Date().toISOString(),
-    source: (payload && payload.source) || ((typeof location !== "undefined" && location.pathname) || "website"),
-  });
+  var body = normalizeLeadPayload(payload);
+  if (!body.name || !body.phone) throw new Error("Name and phone are required");
+
+  var saved = false;
+  var emailed = false;
+
   try {
-    return await postLeadToGoogleScript(body);
-  } catch (googleErr) {
-    console.warn("Google Script lead failed, trying /api/submit", googleErr);
+    await postToNetlifyForms(body);
+    saved = true;
+  } catch (err) {
+    console.warn("Netlify Forms:", err && err.message ? err.message : err);
+  }
+
+  try {
+    var google = await postLeadToGoogleScript(body);
+    saved = true;
+    emailed = Boolean(google.emailed);
+  } catch (err) {
+    console.warn("Google Script:", err && err.message ? err.message : err);
     try {
-      return await postLeadToApi(body);
+      var api = await postLeadToApi(body);
+      saved = true;
+      emailed = emailed || Boolean(api.emailed);
     } catch (apiErr) {
-      console.warn("API lead failed, trying FormSubmit email", apiErr);
-      try {
-        const emailed = await emailLeadViaFormSubmit(body);
-        saveLeadLocally(body);
-        return emailed;
-      } catch (mailErr) {
-        saveLeadLocally(body);
-        throw mailErr;
-      }
+      console.warn("API submit:", apiErr && apiErr.message ? apiErr.message : apiErr);
     }
   }
+
+  if (!emailed) {
+    try {
+      await emailLeadViaFormSubmit(body);
+      emailed = true;
+      saved = true;
+    } catch (err) {
+      console.warn("Lead email:", err && err.message ? err.message : err);
+    }
+  }
+
+  if (!saved && !emailed) {
+    saveLeadLocally(body);
+    throw new Error("Could not send lead");
+  }
+
+  return { ok: true, saved: saved, emailed: emailed };
 }
 
 if (typeof window !== "undefined") {
@@ -1387,8 +1422,12 @@ function injectBookModal() {
         '<h3>Book a Free Consultation</h3>' +
         '<p class="book-modal-coach-name" id="bookModalCoachName"></p>' +
       '</div>' +
-      '<form class="book-modal-frm" id="bookModalForm">' +
+      '<form class="book-modal-frm" id="bookModalForm" name="consultation" method="POST" data-netlify="true" netlify-honeypot="bot-field">' +
+        '<input type="hidden" name="form-name" value="consultation" />' +
+        '<input type="hidden" name="form_type" value="consultation" />' +
+        '<input type="hidden" name="subject" value="[Fitness Gurukul] New consultation lead" />' +
         '<input type="hidden" name="coach" id="bookModalCoachInput" />' +
+        '<p class="hidden" aria-hidden="true" style="display:none"><label>Don’t fill this out <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>' +
         '<div class="book-frm-row">' +
           '<label>Your Name<input name="name" autocomplete="name" required placeholder="e.g. Rahul Sharma" /></label>' +
           '<label>Phone<input name="phone" type="tel" autocomplete="tel" required placeholder="+91 98765 43210" /></label>' +
@@ -1462,8 +1501,12 @@ function renderCoachPopup(coach) {
       '<div class="cp-consult-form" style="display:none">' +
         '<h3 class="cp-consult-title">Book a Free Consultation</h3>' +
         '<p class="cp-consult-sub">with <strong>' + safe(coach.name) + '</strong></p>' +
-        '<form class="cp-consult-frm">' +
+        '<form class="cp-consult-frm" name="consultation" method="POST" data-netlify="true" netlify-honeypot="bot-field">' +
+          '<input type="hidden" name="form-name" value="consultation" />' +
+          '<input type="hidden" name="form_type" value="consultation" />' +
+          '<input type="hidden" name="subject" value="[Fitness Gurukul] New consultation lead" />' +
           '<input type="hidden" name="coach" value="' + safe(coach.name) + '" />' +
+          '<p class="hidden" aria-hidden="true" style="display:none"><label>Don’t fill this out <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>' +
           '<div class="cp-consult-row">' +
             '<label>Your name<input name="name" autocomplete="name" required placeholder="e.g. Rahul Sharma" /></label>' +
             '<label>Phone<input name="phone" type="tel" autocomplete="tel" required placeholder="+91 98765 43210" /></label>' +
@@ -1623,9 +1666,11 @@ function injectWhatsApp() {
   });
 }
 
-function bindLeadForm(form, statusEl, defaults) {
+function bindLeadForm(form, statusEl, defaults, messages) {
   if (!form || form.dataset.fgLeadBound) return;
   form.dataset.fgLeadBound = "1";
+  var successText = (messages && messages.success) || "\u2705 Thank you! We\u2019ll be in touch shortly.";
+  var errorText = (messages && messages.error) || "\u26a0\ufe0f Something went wrong. Please try again.";
   form.addEventListener("submit", function(e) {
     e.preventDefault();
     var status = statusEl || form.querySelector(".form-status, [role='status']");
@@ -1641,14 +1686,14 @@ function bindLeadForm(form, statusEl, defaults) {
     submitLead(payload)
       .then(function() {
         if (status) {
-          status.textContent = "\u2705 Thank you! We\u2019ll be in touch shortly.";
+          status.textContent = successText;
           status.style.color = "#4ade80";
         }
         form.reset();
       })
       .catch(function() {
         if (status) {
-          status.textContent = "\u26a0\ufe0f Something went wrong. Please try again.";
+          status.textContent = errorText;
           status.style.color = "#dc3545";
         }
       });
@@ -1658,29 +1703,15 @@ function bindLeadForm(form, statusEl, defaults) {
 function wireForms() {
   bindLeadForm(qs("#leadForm"), qs("#leadStatus"), { form_type: "consultation" });
   bindLeadForm(qs("#consultPageForm"), qs("#consultPageStatus"), { form_type: "consultation" });
-  bindLeadForm(qs("#challengeLeadForm"), qs("#challengeLeadStatus"), {
-    form_type: "transformation_challenge",
-  });
-  var challengeStatus = qs("#challengeLeadStatus");
-  var challengeForm = qs("#challengeLeadForm");
-  if (challengeForm && challengeStatus && challengeForm.dataset.fgLeadBound === "1") {
-    // Prefer challenge-specific success copy after bindLeadForm's generic handler.
-    challengeForm.addEventListener("submit", function() {
-      var original = challengeStatus.textContent;
-      var observer = new MutationObserver(function() {
-        if (/Thank you/i.test(challengeStatus.textContent) && !/challenge interest/i.test(challengeStatus.textContent)) {
-          challengeStatus.textContent = "Thank you. You are on the challenge interest list.";
-          observer.disconnect();
-        } else if (/Something went wrong/i.test(challengeStatus.textContent)) {
-          challengeStatus.textContent = "Something went wrong. Please try again or message us on WhatsApp.";
-          observer.disconnect();
-        } else if (challengeStatus.textContent !== original && !/Sending/i.test(challengeStatus.textContent)) {
-          observer.disconnect();
-        }
-      });
-      observer.observe(challengeStatus, { childList: true, characterData: true, subtree: true });
-    });
-  }
+  bindLeadForm(
+    qs("#challengeLeadForm"),
+    qs("#challengeLeadStatus"),
+    { form_type: "transformation_challenge" },
+    {
+      success: "Thank you. You are on the challenge interest list.",
+      error: "Something went wrong. Please try again or message us on WhatsApp.",
+    }
+  );
   qsa("[data-contact-phone]").forEach((node) => { node.textContent = realData.contact.phone; });
   qsa("[data-contact-email]").forEach((node) => { node.textContent = realData.contact.email; });
 }

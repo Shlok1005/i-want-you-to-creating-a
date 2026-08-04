@@ -410,7 +410,11 @@
           <div class="mg-corp-form-card">
             <h3>Plan Your Corporate Event</h3>
             <p>Fill in the details and our events team will get back to you within 24 hours.</p>
-            <form id="corpEventForm">
+            <form id="corpEventForm" name="corporate" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+              <input type="hidden" name="form-name" value="corporate" />
+              <input type="hidden" name="form_type" value="corporate_event" />
+              <input type="hidden" name="subject" value="[Fitness Gurukul] New corporate inquiry" />
+              <p class="hidden" aria-hidden="true" style="display:none"><label>Don’t fill this out <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
               <div class="mg-corp-row">
                 <label>Company Name<input name="company" required placeholder="e.g. TCS, Infosys" /></label>
                 <label>Contact Person<input name="contact_name" required placeholder="e.g. Priya Mehta" /></label>
