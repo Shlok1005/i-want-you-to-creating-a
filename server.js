@@ -40,6 +40,38 @@ const CONTACT = {
   address: "H.no.1-10/2, Lakshmi Nagar Colony, near Pochamma Temple, Manikonda, Hyderabad, 500089",
 };
 
+const GOOGLE_SCRIPT_URL = String(
+  process.env.GOOGLE_SCRIPT_URL ||
+  process.env.FG_GOOGLE_SCRIPT_URL ||
+  "https://script.google.com/macros/s/AKfycbyesKPUAUXA1uMMFvJLxy9Ysb0dR_kJ6XHN1QyzdUs/exec"
+).trim().replace(/\/dev\/?$/i, "/exec");
+
+async function forwardLeadToGoogleScript(submission) {
+  if (!GOOGLE_SCRIPT_URL) return { ok: false, skipped: true };
+  try {
+    const response = await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      redirect: "follow",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({
+        ...submission,
+        source: submission.source || "node-server",
+      }),
+    });
+    const text = await response.text();
+    let data = {};
+    try { data = JSON.parse(text); } catch (_) { data = {}; }
+    const ok = Boolean(data.ok || data.success || data.result === "success");
+    if (!ok) {
+      console.warn("Google Script forward failed:", (data && data.error) || text.slice(0, 160));
+    }
+    return { ok, data };
+  } catch (error) {
+    console.warn("Google Script forward error:", error.message || error);
+    return { ok: false, error: error.message || String(error) };
+  }
+}
+
 const CHAT_SUGGESTIONS = [
   "Which plan is best for weight loss?",
   "Compare Core, Prime and Signature",
@@ -373,7 +405,7 @@ app.post("/api/chat", async (req, res) => {
   });
 });
 
-app.post("/api/submit", (req, res) => {
+app.post("/api/submit", async (req, res) => {
   const { name, phone, email, program, goal, message, coach, form_type, company, contact_name, event_type, attendees, preferred_date, budget, location } = req.body;
 
   if (form_type === "corporate_event") {
@@ -409,8 +441,14 @@ app.post("/api/submit", (req, res) => {
 
   insertSubmission(submission);
 
+  const google = await forwardLeadToGoogleScript(submission);
+
   console.log(`[NEW SUBMISSION] ${submission.name} — ${submission.program} — ${submission.timestamp}`);
-  res.json({ ok: true, id: submission.id });
+  res.json({
+    ok: true,
+    id: submission.id,
+    google_script: Boolean(google && google.ok),
+  });
 });
 
 app.get("/api/submissions", (req, res) => {

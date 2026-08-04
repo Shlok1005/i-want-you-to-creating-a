@@ -1,7 +1,9 @@
 .env
+.netlify
 node_modules/
 __pycache__/
 *.pyc
+fitness_gurukul.sqlite3
 
 # Heavy source media kept outside the deploy bundle.
 GALLERY/

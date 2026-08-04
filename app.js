@@ -1032,6 +1032,78 @@ function saveLeadLocally(payload) {
   localStorage.setItem("fg_leads", JSON.stringify(leads));
 }
 
+/** Public Google Apps Script web app (/exec). Override with window.FG_GOOGLE_SCRIPT_URL if needed. */
+const FG_GOOGLE_SCRIPT_URL = (typeof window !== "undefined" && window.FG_GOOGLE_SCRIPT_URL)
+  ? String(window.FG_GOOGLE_SCRIPT_URL)
+  : "https://script.google.com/macros/s/AKfycbyesKPUAUXA1uMMFvJLxy9Ysb0dR_kJ6XHN1QyzdUs/exec";
+
+function normalizeGoogleScriptUrl(url) {
+  return String(url || "").trim().replace(/\/dev\/?$/i, "/exec");
+}
+
+function leadLooksSuccessful(data, text) {
+  if (!data && !text) return false;
+  if (data && (data.ok || data.success || data.result === "success")) return true;
+  if (text && /unable to open|sign in|accounts\.google|ServiceLogin/i.test(text)) return false;
+  return Boolean(text && /"ok"\s*:\s*true|"success"\s*:\s*true/i.test(text));
+}
+
+async function postLeadToGoogleScript(payload) {
+  const url = normalizeGoogleScriptUrl(FG_GOOGLE_SCRIPT_URL);
+  if (!url) throw new Error("Google Script URL missing");
+  const res = await fetch(url, {
+    method: "POST",
+    redirect: "follow",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(payload),
+  });
+  const text = await res.text();
+  let data = {};
+  try { data = JSON.parse(text); } catch (_) { data = {}; }
+  if (!leadLooksSuccessful(data, text)) {
+    throw new Error((data && data.error) || "Google Script submit failed");
+  }
+  return { ok: true, via: "google-script", data: data };
+}
+
+async function postLeadToApi(payload) {
+  const res = await fetch("/api/submit", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const data = await res.json().catch(function() { return {}; });
+  if (!(data.ok || data.success)) {
+    throw new Error((data && data.error) || "API submit failed");
+  }
+  return { ok: true, via: data.via || "api", data: data };
+}
+
+/** Primary: Google Apps Script sheet. Fallback: /api/submit (Netlify fn or Node). */
+async function submitLead(payload) {
+  const body = Object.assign({}, payload || {}, {
+    form_type: (payload && payload.form_type) || "consultation",
+    timestamp: (payload && payload.timestamp) || new Date().toISOString(),
+    source: (payload && payload.source) || ((typeof location !== "undefined" && location.pathname) || "website"),
+  });
+  try {
+    return await postLeadToGoogleScript(body);
+  } catch (googleErr) {
+    console.warn("Google Script lead failed, trying /api/submit", googleErr);
+    try {
+      return await postLeadToApi(body);
+    } catch (apiErr) {
+      saveLeadLocally(body);
+      throw apiErr;
+    }
+  }
+}
+
+if (typeof window !== "undefined") {
+  window.fgSubmitLead = submitLead;
+  window.FG_GOOGLE_SCRIPT_URL = normalizeGoogleScriptUrl(FG_GOOGLE_SCRIPT_URL);
+}
+
 async function submitForm(formId, apiPath, statusId, transform) {
   const form = qs(formId);
   if (!form) return;
@@ -1359,22 +1431,16 @@ function wireBookModalForm() {
     e.preventDefault();
     var status = qs("#bookFormStatus");
     var payload = Object.fromEntries(new FormData(frm).entries());
+    payload.form_type = payload.form_type || "consultation";
     status.textContent = "Sending\u2026";
     status.style.color = "rgba(255,255,255,0.6)";
-    var apiBase = "";
-    var fetchOpts = { method: "POST", body: JSON.stringify(payload), headers: { "Content-Type": "application/json" } };
-    fetch(apiBase || "/api/submit", fetchOpts)
-      .then(function(r) { return r.json(); })
-      .then(function(d) {
-        if (d.ok || d.success) {
-          status.textContent = "\u2705 Thank you! We\u2019ll be in touch shortly.";
-          status.style.color = "#4ade80";
-          frm.reset();
-          var coachInput = qs("#bookModalCoachInput");
-          if (coachInput) coachInput.value = coachInput.value;
-        } else {
-          throw new Error(d.error || "Submit failed");
-        }
+    submitLead(payload)
+      .then(function() {
+        status.textContent = "\u2705 Thank you! We\u2019ll be in touch shortly.";
+        status.style.color = "#4ade80";
+        frm.reset();
+        var coachInput = qs("#bookModalCoachInput");
+        if (coachInput) coachInput.value = coachInput.value;
       })
       .catch(function() {
         status.textContent = "\u26a0\ufe0f Something went wrong. Please try again.";
@@ -1420,22 +1486,16 @@ function wireCoachPopups() {
     e.preventDefault();
     var status = frm.querySelector(".cp-consult-status, .coach-frm-status");
     var payload = Object.fromEntries(new FormData(frm).entries());
+    payload.form_type = payload.form_type || "consultation";
     status.textContent = "Sending\u2026";
     status.style.color = "rgba(255,255,255,0.6)";
-    var apiBase = "";
-    var fetchOpts = { method: "POST", body: JSON.stringify(payload), headers: { "Content-Type": "application/json" } };
-    fetch(apiBase || "/api/submit", fetchOpts)
-      .then(function(r) { return r.json(); })
-      .then(function(d) {
-        if (d.ok || d.success) {
-          status.textContent = "\u2705 Thank you! We\u2019ll be in touch shortly.";
-          status.style.color = "#4ade80";
-          frm.reset();
-          var coachInput = frm.querySelector('input[name="coach"]');
-          if (coachInput) coachInput.value = coachInput.value;
-        } else {
-          throw new Error(d.error || "Submit failed");
-        }
+    submitLead(payload)
+      .then(function() {
+        status.textContent = "\u2705 Thank you! We\u2019ll be in touch shortly.";
+        status.style.color = "#4ade80";
+        frm.reset();
+        var coachInput = frm.querySelector('input[name="coach"]');
+        if (coachInput) coachInput.value = coachInput.value;
       })
       .catch(function() {
         status.textContent = "\u26a0\ufe0f Something went wrong. Please try again.";
@@ -1492,25 +1552,20 @@ function injectWhatsApp() {
 
 function wireForms() {
   var leadForm = qs("#leadForm");
-  if (leadForm) {
+  if (leadForm && !leadForm.dataset.fgLeadBound) {
+    leadForm.dataset.fgLeadBound = "1";
     leadForm.addEventListener("submit", function(e) {
       e.preventDefault();
       var status = qs("#leadStatus");
       var payload = Object.fromEntries(new FormData(leadForm).entries());
+      payload.form_type = payload.form_type || "consultation";
       status.textContent = "Sending\u2026";
       status.style.color = "rgba(255,255,255,0.6)";
-    var apiBase = "";
-    var fetchOpts = { method: "POST", body: JSON.stringify(payload), headers: { "Content-Type": "application/json" } };
-    fetch(apiBase || "/api/submit", fetchOpts)
-        .then(function(r) { return r.json(); })
-        .then(function(d) {
-          if (d.ok || d.success) {
-            status.textContent = "\u2705 Thank you! We\u2019ll be in touch shortly.";
-            status.style.color = "#4ade80";
-            leadForm.reset();
-          } else {
-            throw new Error(d.error || "Submit failed");
-          }
+      submitLead(payload)
+        .then(function() {
+          status.textContent = "\u2705 Thank you! We\u2019ll be in touch shortly.";
+          status.style.color = "#4ade80";
+          leadForm.reset();
         })
         .catch(function() {
           status.textContent = "\u26a0\ufe0f Something went wrong. Please try again.";
@@ -3253,18 +3308,11 @@ document.addEventListener("DOMContentLoaded", function() {
     payload.form_type = "corporate_event";
     status.textContent = "Sending\u2026";
     status.style.color = "rgba(255,255,255,0.6)";
-    var apiBase = "";
-    var fetchOpts = { method: "POST", body: JSON.stringify(payload), headers: { "Content-Type": "application/json" } };
-    fetch(apiBase || "/api/submit", fetchOpts)
-      .then(function(r) { return r.json(); })
-      .then(function(d) {
-        if (d.ok || d.success) {
-          status.textContent = "\u2705 Thank you! Our events team will contact you within 24 hours.";
-          status.style.color = "#4ade80";
-          frm.reset();
-        } else {
-          throw new Error(d.error || "Submit failed");
-        }
+    submitLead(payload)
+      .then(function() {
+        status.textContent = "\u2705 Thank you! Our events team will contact you within 24 hours.";
+        status.style.color = "#4ade80";
+        frm.reset();
       })
       .catch(function() {
         status.textContent = "\u26a0\ufe0f Something went wrong. Please try again.";
