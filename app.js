@@ -1167,7 +1167,7 @@ var LATEST_EVENT = {
   dateLabel: "16 August 2026",
   time: "5:00 AM onwards",
   location: "SmartBike Point, Narsingi",
-  registerUrl: "https://ifinish.in/cycling/FGCC-August",
+  registerUrl: "https://ifinish.in/cycling/IND_26",
   pageUrl: "events.html#latest-event"
 };
 
