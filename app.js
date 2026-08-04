@@ -1032,16 +1032,15 @@ function saveLeadLocally(payload) {
   localStorage.setItem("fg_leads", JSON.stringify(leads));
 }
 
-/* ---- Simple lead capture -------------------------------------------
- * Every lead form calls submitLead().
- * 1) Save via Netlify Forms (works on Netlify)
- * 2) Save + email via Google Apps Script (Sheets + MailApp)
- * 3) Email both inboxes via FormSubmit if Script email did not run
- * Succeeds if any path works.
+/* ---- Lead capture (simple) -----------------------------------------
+ * submitLead():
+ *   1) POST /api/submit  (Vercel/Node — Sheet + email)
+ *   2) Email both inboxes via FormSubmit (works on static hosting)
+ *   3) POST Google Apps Script (Sheet + MailApp) when deployed with doPost
  * -------------------------------------------------------------------- */
 const FG_GOOGLE_SCRIPT_URL = (typeof window !== "undefined" && window.FG_GOOGLE_SCRIPT_URL)
   ? String(window.FG_GOOGLE_SCRIPT_URL)
-  : "https://script.google.com/macros/s/AKfycbyesKPUAUXA1uMMFvJLxy9Ysb0dR_kJ6XHN1QyzdUs/exec";
+  : "https://script.google.com/macros/s/AKfycbyLBGzE5Fk5xcmn3D6mDsIeY0GvjPiAJXCv_6Y58Dxv-9mVNnND0Jh1jSyjXqqovNSA/exec";
 
 const LEAD_NOTIFY_EMAILS = [
   "contact@fitnessgurukul.co.in",
@@ -1050,12 +1049,6 @@ const LEAD_NOTIFY_EMAILS = [
 
 function normalizeGoogleScriptUrl(url) {
   return String(url || "").trim().replace(/\/dev\/?$/i, "/exec");
-}
-
-function leadFormName(formType) {
-  if (formType === "transformation_challenge" || formType === "challenge_leads") return "challenge";
-  if (formType === "corporate_event" || formType === "corporate_events") return "corporate";
-  return "consultation";
 }
 
 function leadEmailLabel(formType) {
@@ -1077,39 +1070,17 @@ function normalizeLeadPayload(payload) {
   });
 }
 
-async function postToNetlifyForms(payload) {
-  var formName = leadFormName(payload.form_type);
-  var params = new URLSearchParams();
-  params.set("form-name", formName);
-  Object.keys(payload).forEach(function(key) {
-    if (payload[key] == null || payload[key] === "") return;
-    params.set(key, String(payload[key]));
-  });
-  var res = await fetch("/", {
+async function postLeadToApi(payload) {
+  var res = await fetch("/api/submit", {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: params.toString(),
-  });
-  if (!res.ok) throw new Error("Netlify Forms failed");
-  return { ok: true, via: "netlify-forms" };
-}
-
-async function postLeadToGoogleScript(payload) {
-  var url = normalizeGoogleScriptUrl(FG_GOOGLE_SCRIPT_URL);
-  var res = await fetch(url, {
-    method: "POST",
-    redirect: "follow",
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
-  var text = await res.text();
-  var data = {};
-  try { data = JSON.parse(text); } catch (_) { data = {}; }
-  var blocked = /unable to open|sign in|accounts\.google|ServiceLogin/i.test(text);
-  if (blocked || !(data.ok || data.success || data.result === "success")) {
-    throw new Error((data && data.error) || "Google Script failed");
+  var data = await res.json().catch(function() { return {}; });
+  if (!(res.ok && (data.ok || data.success))) {
+    throw new Error((data && data.error) || ("API " + res.status));
   }
-  return { ok: true, via: "google-script", emailed: Boolean(data.emailed) };
+  return { ok: true, via: "api", emailed: Boolean(data.emailed), google_script: Boolean(data.google_script) };
 }
 
 async function emailLeadViaFormSubmit(payload) {
@@ -1136,7 +1107,7 @@ async function emailLeadViaFormSubmit(payload) {
     phone: phone,
     email: replyTo,
     message: message,
-    _subject: payload.subject || ("[Fitness Gurukul] New " + label),
+    _subject: payload.subject || ("[Fitness Gurukul] New " + label + " — " + name),
     _template: "table",
     _captcha: "false",
     _replyto: replyTo,
@@ -1146,68 +1117,75 @@ async function emailLeadViaFormSubmit(payload) {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify(formPayload),
-    }).then(function(res) { return res.ok; }).catch(function() { return false; });
+    }).then(function(res) {
+      return res.json().catch(function() { return {}; }).then(function(data) {
+        // FormSubmit returns 200 even for "needs Activation" — only count real success.
+        return Boolean(res.ok && (data.success === true || data.success === "true"));
+      });
+    }).catch(function() { return false; });
   }));
   if (!results.some(Boolean)) throw new Error("Email failed");
-  return { ok: true, via: "email", emailed: true };
+  return { ok: true, via: "email", emailed: true, inboxes: results };
 }
 
-async function postLeadToApi(payload) {
-  var res = await fetch("/api/submit", {
+async function postLeadToGoogleScript(payload) {
+  var url = normalizeGoogleScriptUrl(FG_GOOGLE_SCRIPT_URL);
+  var res = await fetch(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    redirect: "follow",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
     body: JSON.stringify(payload),
   });
-  var data = await res.json().catch(function() { return {}; });
-  if (!(data.ok || data.success)) throw new Error((data && data.error) || "API failed");
-  return { ok: true, via: data.via || "api", emailed: Boolean(data.emailed) };
+  var text = await res.text();
+  var data = {};
+  try { data = JSON.parse(text); } catch (_) { data = {}; }
+  if (/not found: doPost|unable to open|ServiceLogin/i.test(text) || !(data.ok || data.success)) {
+    throw new Error((data && data.error) || "Google Script not ready");
+  }
+  return { ok: true, via: "google-script", emailed: Boolean(data.emailed) };
 }
 
-/** Single entry point for every lead form on the site. */
+/** Single entry point for every lead form. */
 async function submitLead(payload) {
   var body = normalizeLeadPayload(payload);
   if (!body.name || !body.phone) throw new Error("Name and phone are required");
 
-  var saved = false;
   var emailed = false;
+  var saved = false;
 
+  // 1) Site API (Vercel /api/submit or local Node)
   try {
-    await postToNetlifyForms(body);
+    var api = await postLeadToApi(body);
     saved = true;
+    emailed = Boolean(api.emailed);
   } catch (err) {
-    console.warn("Netlify Forms:", err && err.message ? err.message : err);
+    console.warn("API:", err && err.message ? err.message : err);
   }
 
-  try {
-    var google = await postLeadToGoogleScript(body);
-    saved = true;
-    emailed = Boolean(google.emailed);
-  } catch (err) {
-    console.warn("Google Script:", err && err.message ? err.message : err);
-    try {
-      var api = await postLeadToApi(body);
-      saved = true;
-      emailed = emailed || Boolean(api.emailed);
-    } catch (apiErr) {
-      console.warn("API submit:", apiErr && apiErr.message ? apiErr.message : apiErr);
-    }
-  }
-
+  // 2) Browser email (works on static Vercel even when API is missing)
   if (!emailed) {
     try {
       await emailLeadViaFormSubmit(body);
       emailed = true;
       saved = true;
     } catch (err) {
-      console.warn("Lead email:", err && err.message ? err.message : err);
+      console.warn("FormSubmit:", err && err.message ? err.message : err);
     }
+  }
+
+  // 3) Google Sheet (needs Code.gs deployed with doPost)
+  try {
+    var google = await postLeadToGoogleScript(body);
+    saved = true;
+    emailed = emailed || Boolean(google.emailed);
+  } catch (err) {
+    console.warn("Google Script:", err && err.message ? err.message : err);
   }
 
   if (!saved && !emailed) {
     saveLeadLocally(body);
     throw new Error("Could not send lead");
   }
-
   return { ok: true, saved: saved, emailed: emailed };
 }
 

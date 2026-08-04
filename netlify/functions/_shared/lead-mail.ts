@@ -72,7 +72,8 @@ export async function emailLeadViaFormSubmit(payload: Record<string, unknown>): 
           },
           body: JSON.stringify(formPayload),
         });
-        return res.ok;
+        const data = (await res.json().catch(() => ({}))) as { success?: boolean | string };
+        return Boolean(res.ok && (data.success === true || data.success === "true"));
       } catch {
         return false;
       }

@@ -43,7 +43,7 @@ const CONTACT = {
 const GOOGLE_SCRIPT_URL = String(
   process.env.GOOGLE_SCRIPT_URL ||
   process.env.FG_GOOGLE_SCRIPT_URL ||
-  "https://script.google.com/macros/s/AKfycbyesKPUAUXA1uMMFvJLxy9Ysb0dR_kJ6XHN1QyzdUs/exec"
+  "https://script.google.com/macros/s/AKfycbyLBGzE5Fk5xcmn3D6mDsIeY0GvjPiAJXCv_6Y58Dxv-9mVNnND0Jh1jSyjXqqovNSA/exec"
 ).trim().replace(/\/dev\/?$/i, "/exec");
 
 const LEAD_NOTIFY_EMAILS = String(
@@ -119,8 +119,10 @@ async function emailLeadViaFormSubmit(submission) {
           },
           body: JSON.stringify(formPayload),
         });
-        if (!response.ok) {
-          console.warn(`FormSubmit failed for ${to}:`, response.status);
+        const data = await response.json().catch(() => ({}));
+        const ok = Boolean(response.ok && (data.success === true || data.success === "true"));
+        if (!ok) {
+          console.warn(`FormSubmit failed for ${to}:`, response.status, data.message || data);
           return false;
         }
         console.log(`Lead email sent via FormSubmit → ${to}`);

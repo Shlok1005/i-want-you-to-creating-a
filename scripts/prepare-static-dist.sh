@@ -8,7 +8,7 @@ find . -mindepth 1 -maxdepth 1 ! -name dist ! -name .git ! -name .github ! -name
   while IFS= read -r -d '' item; do
     base=$(basename "$item")
     case "$base" in
-      server.js|server.py|package.json|package-lock.json|render.yaml|Dockerfile|Procfile|requirements.txt|runtime.txt|.python-version|.dockerignore|netlify|google-apps-script) continue ;;
+      server.js|server.py|package.json|package-lock.json|render.yaml|Dockerfile|Procfile|requirements.txt|runtime.txt|.python-version|.dockerignore|netlify|google-apps-script|api) continue ;;
     esac
     cp -a "$item" "dist/$base"
   done
