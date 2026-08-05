@@ -2,21 +2,15 @@
  * Fitness Gurukul — Google Sheet lead collector + email
  *
  * SETUP (once):
- * 1. Open your Google Sheet (or create one named "Fitness Gurukul Leads")
- * 2. Extensions → Apps Script
- * 3. Delete any default code, paste THIS ENTIRE file, Save (Ctrl/Cmd+S)
- * 4. Deploy → New deployment
- *    - Type: Web app
+ * 1. Open your Google Sheet → Extensions → Apps Script
+ * 2. Paste THIS ENTIRE file → Save
+ * 3. Select function testSetup → Run → click Allow
+ * 4. Deploy → New deployment → Web app
  *    - Execute as: Me
  *    - Who has access: Anyone
- * 5. Deploy → copy the /exec URL
- * 6. Website already points at your /exec URL in app.js
+ * 5. Copy the /exec URL into the website (app.js)
  *
- * After any Code.gs edit: Deploy → Manage deployments → Edit (pencil) → New version → Deploy
- *
- * Result:
- * - New rows in tabs: Consultations / Challenge / Corporate
- * - Email to contact@fitnessgurukul.co.in AND fitnessgurukul01@gmail.com
+ * After edits: Deploy → Manage deployments → pencil → New version → Deploy
  */
 
 var EMAILS = [
@@ -24,54 +18,80 @@ var EMAILS = [
   "fitnessgurukul01@gmail.com"
 ];
 
-function doGet() {
+/** Optional: paste Sheet ID from the Sheet URL (/d/SHEET_ID/edit). Leave blank if script is bound to the Sheet. */
+var SPREADSHEET_ID = "";
+
+/** Run this once from the Apps Script editor to grant Sheets + Gmail permission. */
+function testSetup() {
+  var ss = getSpreadsheet_();
+  var sheet = getSheet_(ss, "Consultations");
+  ensureHeader_(sheet);
+  MailApp.sendEmail({
+    to: EMAILS.join(","),
+    subject: "[Fitness Gurukul] Apps Script setup OK",
+    body: "Lead collector is authorized.\nSheet: " + ss.getUrl()
+  });
+  Logger.log("Setup OK: " + ss.getUrl());
+}
+
+function doGet(e) {
+  var params = (e && e.parameter) || {};
+  // Website may send leads via GET (most reliable for Apps Script web apps).
+  if (params.write === "1" || (params.name && params.phone)) {
+    return handleLead_(params);
+  }
   return json_({
     ok: true,
     service: "Fitness Gurukul Leads",
-    hint: "POST JSON leads here from the website forms"
+    hint: "Send name+phone (GET or POST) to save a lead"
   });
 }
 
 function doPost(e) {
   try {
-    var data = parseBody_(e);
-    var formType = String(data.form_type || "consultation").trim() || "consultation";
-    var name = String(data.name || data.contact_name || "").trim();
-    var phone = String(data.phone || "").trim();
-
-    if (!name || !phone) {
-      return json_({ ok: false, error: "name and phone required" });
-    }
-
-    var tab = sheetTab_(formType);
-    var sheet = getSheet_(tab);
-    ensureHeader_(sheet);
-
-    sheet.appendRow([
-      String(data.timestamp || new Date().toISOString()),
-      formType,
-      name,
-      phone,
-      String(data.email || ""),
-      String(data.program || ""),
-      String(data.goal || ""),
-      String(data.message || ""),
-      String(data.coach || ""),
-      String(data.company || ""),
-      String(data.contact_name || ""),
-      String(data.event_type || ""),
-      String(data.attendees || ""),
-      String(data.preferred_date || ""),
-      String(data.budget || ""),
-      String(data.location || ""),
-      String(data.source || "")
-    ]);
-
-    var emailed = sendLeadEmail_(data, formType, name, phone);
-    return json_({ ok: true, success: true, emailed: emailed, form_type: formType, sheet: tab });
+    return handleLead_(parseBody_(e));
   } catch (err) {
     return json_({ ok: false, error: String(err && err.message ? err.message : err) });
   }
+}
+
+function handleLead_(data) {
+  data = data || {};
+  var formType = String(data.form_type || "consultation").trim() || "consultation";
+  var name = String(data.name || data.contact_name || "").trim();
+  var phone = String(data.phone || "").trim();
+
+  if (!name || !phone) {
+    return json_({ ok: false, error: "name and phone required" });
+  }
+
+  var ss = getSpreadsheet_();
+  var tab = sheetTab_(formType);
+  var sheet = getSheet_(ss, tab);
+  ensureHeader_(sheet);
+
+  sheet.appendRow([
+    String(data.timestamp || new Date().toISOString()),
+    formType,
+    name,
+    phone,
+    String(data.email || ""),
+    String(data.program || ""),
+    String(data.goal || ""),
+    String(data.message || ""),
+    String(data.coach || ""),
+    String(data.company || ""),
+    String(data.contact_name || ""),
+    String(data.event_type || ""),
+    String(data.attendees || ""),
+    String(data.preferred_date || ""),
+    String(data.budget || ""),
+    String(data.location || ""),
+    String(data.source || "")
+  ]);
+
+  var emailed = sendLeadEmail_(data, formType, name, phone);
+  return json_({ ok: true, success: true, emailed: emailed, form_type: formType, sheet: tab });
 }
 
 function parseBody_(e) {
@@ -87,48 +107,39 @@ function parseBody_(e) {
 }
 
 function sheetTab_(formType) {
-  if (formType.indexOf("challenge") >= 0) return "Challenge";
-  if (formType.indexOf("corporate") >= 0) return "Corporate";
+  if (String(formType).indexOf("challenge") >= 0) return "Challenge";
+  if (String(formType).indexOf("corporate") >= 0) return "Corporate";
   return "Consultations";
 }
 
-function getSheet_(tabName) {
+function getSpreadsheet_() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  if (!ss) {
-    throw new Error("Open this script from a Google Sheet (Extensions → Apps Script)");
-  }
+  if (ss) return ss;
+  if (SPREADSHEET_ID) return SpreadsheetApp.openById(SPREADSHEET_ID);
+  throw new Error(
+    "No spreadsheet bound. Open Apps Script from the Sheet (Extensions → Apps Script), or set SPREADSHEET_ID in Code.gs"
+  );
+}
+
+function getSheet_(ss, tabName) {
   return ss.getSheetByName(tabName) || ss.insertSheet(tabName);
 }
 
 function ensureHeader_(sheet) {
   if (sheet.getLastRow() > 0) return;
   sheet.appendRow([
-    "Timestamp",
-    "Form Type",
-    "Name",
-    "Phone",
-    "Email",
-    "Program",
-    "Goal",
-    "Message",
-    "Coach",
-    "Company",
-    "Contact Name",
-    "Event Type",
-    "Attendees",
-    "Preferred Date",
-    "Budget",
-    "Location",
-    "Source"
+    "Timestamp", "Form Type", "Name", "Phone", "Email", "Program", "Goal", "Message",
+    "Coach", "Company", "Contact Name", "Event Type", "Attendees", "Preferred Date",
+    "Budget", "Location", "Source"
   ]);
   sheet.setFrozenRows(1);
 }
 
 function sendLeadEmail_(data, formType, name, phone) {
   try {
-    var label = formType.indexOf("challenge") >= 0
+    var label = String(formType).indexOf("challenge") >= 0
       ? "challenge lead"
-      : (formType.indexOf("corporate") >= 0 ? "corporate inquiry" : "consultation lead");
+      : (String(formType).indexOf("corporate") >= 0 ? "corporate inquiry" : "consultation lead");
 
     MailApp.sendEmail({
       to: EMAILS.join(","),
@@ -146,9 +157,6 @@ function sendLeadEmail_(data, formType, name, phone) {
         "Company: " + String(data.company || ""),
         "Contact name: " + String(data.contact_name || ""),
         "Event type: " + String(data.event_type || ""),
-        "Attendees: " + String(data.attendees || ""),
-        "Preferred date: " + String(data.preferred_date || ""),
-        "Budget: " + String(data.budget || ""),
         "Location: " + String(data.location || ""),
         "Message: " + String(data.message || ""),
         "Source: " + String(data.source || ""),

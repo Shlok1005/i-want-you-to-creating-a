@@ -2,7 +2,7 @@ import type { Config, Context } from "@netlify/functions";
 import { emailLeadViaFormSubmit } from "./_shared/lead-mail";
 
 const DEFAULT_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbyLBGzE5Fk5xcmn3D6mDsIeY0GvjPiAJXCv_6Y58Dxv-9mVNnND0Jh1jSyjXqqovNSA/exec";
+  "https://script.google.com/macros/s/AKfycbzs4BNDiyJ2yo8RpQRpibAlgkvglpnb74E2RNPjGpZ7kkZdbllan4GdpObngHnHLWim/exec";
 
 function scriptUrl(): string {
   const fromEnv = Netlify.env.get("GOOGLE_SCRIPT_URL") || Netlify.env.get("FG_GOOGLE_SCRIPT_URL");

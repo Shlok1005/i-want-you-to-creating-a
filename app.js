@@ -1033,13 +1033,13 @@ function saveLeadLocally(payload) {
 }
 
 /* ---- Lead capture: Google Apps Script → Sheet + email --------------
- * Browser POSTs JSON to your /exec web app.
+ * Browser sends lead to your /exec web app (GET — most reliable).
  * Script appends a Sheet row and MailApps both owner inboxes.
  * No API keys. Override URL with window.FG_GOOGLE_SCRIPT_URL if needed.
  * -------------------------------------------------------------------- */
 const FG_GOOGLE_SCRIPT_URL = (typeof window !== "undefined" && window.FG_GOOGLE_SCRIPT_URL)
   ? String(window.FG_GOOGLE_SCRIPT_URL)
-  : "https://script.google.com/macros/s/AKfycbyLBGzE5Fk5xcmn3D6mDsIeY0GvjPiAJXCv_6Y58Dxv-9mVNnND0Jh1jSyjXqqovNSA/exec";
+  : "https://script.google.com/macros/s/AKfycbzs4BNDiyJ2yo8RpQRpibAlgkvglpnb74E2RNPjGpZ7kkZdbllan4GdpObngHnHLWim/exec";
 
 const LEAD_NOTIFY_EMAILS = [
   "contact@fitnessgurukul.co.in",
@@ -1068,23 +1068,38 @@ function normalizeLeadPayload(payload) {
   });
 }
 
-async function postLeadToGoogleScript(payload) {
-  var url = normalizeGoogleScriptUrl(FG_GOOGLE_SCRIPT_URL);
-  var res = await fetch(url, {
-    method: "POST",
-    redirect: "follow",
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify(payload),
+function leadQueryString(payload) {
+  var params = new URLSearchParams();
+  params.set("write", "1");
+  Object.keys(payload).forEach(function(key) {
+    var value = payload[key];
+    if (value == null || value === "") return;
+    params.set(key, String(value));
   });
-  var text = await res.text();
+  return params.toString();
+}
+
+function parseScriptResponse(text) {
   var data = {};
   try { data = JSON.parse(text); } catch (_) { data = {}; }
-  if (/not found: doPost|unable to open|ServiceLogin/i.test(text)) {
-    throw new Error("Google Script needs Code.gs deployed as Web app (Anyone, /exec)");
+  if (/Page Not Found|not found: doPost|unable to open|ServiceLogin/i.test(text) && !(data.ok || data.success)) {
+    throw new Error("Google Script deploy/access issue — paste Code.gs, Run testSetup, redeploy Anyone");
   }
   if (!(data.ok || data.success)) {
     throw new Error((data && data.error) || "Google Script submit failed");
   }
+  return data;
+}
+
+async function postLeadToGoogleScript(payload) {
+  var url = normalizeGoogleScriptUrl(FG_GOOGLE_SCRIPT_URL);
+  // GET is reliable with Apps Script web apps (POST often 302 → Page Not Found).
+  var getRes = await fetch(url + "?" + leadQueryString(payload), {
+    method: "GET",
+    redirect: "follow",
+  });
+  var getText = await getRes.text();
+  var data = parseScriptResponse(getText);
   return { ok: true, via: "google-script", emailed: Boolean(data.emailed), data: data };
 }
 
