@@ -43,7 +43,7 @@ const CONTACT = {
 const GOOGLE_SCRIPT_URL = String(
   process.env.GOOGLE_SCRIPT_URL ||
   process.env.FG_GOOGLE_SCRIPT_URL ||
-  "https://script.google.com/macros/s/AKfycbzs4BNDiyJ2yo8RpQRpibAlgkvglpnb74E2RNPjGpZ7kkZdbllan4GdpObngHnHLWim/exec"
+  "https://script.google.com/macros/s/AKfycbyXPppJZTHgWtOKAa61_lmtZdkYcYfjmO9YlOpYUWazc3t-wc40NJ7d_lh1KtECByQ/exec"
 ).trim().replace(/\/dev\/?$/i, "/exec");
 
 const LEAD_NOTIFY_EMAILS = String(

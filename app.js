@@ -1039,7 +1039,7 @@ function saveLeadLocally(payload) {
  * -------------------------------------------------------------------- */
 const FG_GOOGLE_SCRIPT_URL = (typeof window !== "undefined" && window.FG_GOOGLE_SCRIPT_URL)
   ? String(window.FG_GOOGLE_SCRIPT_URL)
-  : "https://script.google.com/macros/s/AKfycbzs4BNDiyJ2yo8RpQRpibAlgkvglpnb74E2RNPjGpZ7kkZdbllan4GdpObngHnHLWim/exec";
+  : "https://script.google.com/macros/s/AKfycbyXPppJZTHgWtOKAa61_lmtZdkYcYfjmO9YlOpYUWazc3t-wc40NJ7d_lh1KtECByQ/exec";
 
 const LEAD_NOTIFY_EMAILS = [
   "contact@fitnessgurukul.co.in",
