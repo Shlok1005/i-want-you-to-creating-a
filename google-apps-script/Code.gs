@@ -36,7 +36,7 @@ function testSetup() {
 
 function doGet(e) {
   var params = (e && e.parameter) || {};
-  // Website may send leads via GET (most reliable for Apps Script web apps).
+  // Primary path: website + /api/submit use GET write (POST /exec is unreliable).
   if (params.write === "1" || (params.name && params.phone)) {
     return handleLead_(params);
   }

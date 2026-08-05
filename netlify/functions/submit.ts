@@ -22,12 +22,22 @@ function corsHeaders(origin: string | null): HeadersInit {
   };
 }
 
+function leadQueryString(payload: Record<string, unknown>): string {
+  const params = new URLSearchParams();
+  params.set("write", "1");
+  Object.keys(payload).forEach((key) => {
+    const value = payload[key];
+    if (value == null || value === "") return;
+    params.set(key, String(value));
+  });
+  return params.toString();
+}
+
 async function forwardToGoogleScript(payload: Record<string, unknown>) {
-  const upstream = await fetch(scriptUrl(), {
-    method: "POST",
+  // GET write path is reliable; Apps Script /exec often 404s on POST.
+  const upstream = await fetch(scriptUrl() + "?" + leadQueryString(payload), {
+    method: "GET",
     redirect: "follow",
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify(payload),
   });
   const text = await upstream.text();
   let data: Record<string, unknown> = {};
@@ -40,7 +50,7 @@ async function forwardToGoogleScript(payload: Record<string, unknown>) {
     Boolean(data.ok) ||
     Boolean(data.success) ||
     data.result === "success" ||
-    (upstream.ok && !/unable to open|sign in|accounts\.google/i.test(text));
+    (upstream.ok && !/unable to open|sign in|accounts\.google|Page Not Found/i.test(text));
   return { ok, data };
 }
 

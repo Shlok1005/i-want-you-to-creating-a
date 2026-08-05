@@ -137,22 +137,31 @@ async function emailLeadViaFormSubmit(submission) {
   return results.some(Boolean);
 }
 
+function googleScriptQuery(submission) {
+  const params = new URLSearchParams();
+  params.set("write", "1");
+  const body = { ...submission, source: submission.source || "node-server" };
+  Object.keys(body).forEach((key) => {
+    const value = body[key];
+    if (value == null || value === "") return;
+    params.set(key, String(value));
+  });
+  return params.toString();
+}
+
 async function forwardLeadToGoogleScript(submission) {
   if (!GOOGLE_SCRIPT_URL) return { ok: false, skipped: true };
   try {
-    const response = await fetch(GOOGLE_SCRIPT_URL, {
-      method: "POST",
+    // GET write path is reliable; Apps Script /exec often 404s on POST.
+    const response = await fetch(GOOGLE_SCRIPT_URL + "?" + googleScriptQuery(submission), {
+      method: "GET",
       redirect: "follow",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify({
-        ...submission,
-        source: submission.source || "node-server",
-      }),
     });
     const text = await response.text();
     let data = {};
     try { data = JSON.parse(text); } catch (_) { data = {}; }
-    const ok = Boolean(data.ok || data.success || data.result === "success");
+    const ok = Boolean(data.ok || data.success || data.result === "success")
+      && !/unable to open|Page Not Found|ServiceLogin/i.test(text);
     if (!ok) {
       console.warn("Google Script forward failed:", (data && data.error) || text.slice(0, 160));
     }
