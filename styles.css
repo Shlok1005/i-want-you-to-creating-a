@@ -16456,3 +16456,291 @@ line-clamp: 2;
   .home-latest-event-inner { padding: 18px 16px; }
 }
 
+/* FitBudd payment plans */
+.cta-actions,
+.hero-plan-card-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.plan-overlay-cta-ghost {
+  background: transparent !important;
+  border: 1px solid rgba(255,255,255,0.35) !important;
+  color: #fff !important;
+}
+
+.plan-overlay-cta-ghost:hover {
+  background: rgba(255,255,255,0.06) !important;
+  border-color: rgba(255,255,255,0.5) !important;
+}
+
+.plan-pay-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 36px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #facc15, #f59e0b);
+  color: #111;
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-decoration: none;
+  letter-spacing: 0.01em;
+  box-shadow: 0 6px 24px rgba(250, 204, 21, 0.35);
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.plan-pay-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 32px rgba(250, 204, 21, 0.5);
+}
+
+.plan-pay-btn--lg {
+  padding: 16px 44px;
+  font-size: 1.1rem;
+  border-radius: 14px;
+}
+
+.plan-overlay-pay-hero {
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  text-align: center;
+}
+
+.plan-tier-bw {
+  text-decoration: none;
+  display: block;
+}
+
+.plan-tier-bw--active {
+  border-color: rgba(250, 204, 21, 0.5);
+  background: rgba(250, 204, 21, 0.08);
+}
+
+.plan-overlay-fitbudd {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.plan-overlay-fitbudd h3 {
+  font-size: 1.1rem;
+  color: #fff;
+  margin: 0 0 14px;
+}
+
+.plan-overlay-fitbudd-frame {
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+  background: #fffbeb;
+}
+
+.plan-overlay-fitbudd-frame iframe {
+  display: block;
+  width: 100%;
+  background: #fffbeb;
+  border: 0;
+  border-radius: 14px;
+}
+
+.plans-compare-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 20px;
+  padding: 12px 20px;
+  background: rgba(250, 204, 21, 0.08);
+  border: 1px solid rgba(250, 204, 21, 0.3);
+  border-radius: 12px;
+}
+
+.plans-compare-bar span {
+  color: rgba(255,255,255,0.75);
+  font-size: 0.88rem;
+}
+
+.plans-compare-btn {
+  padding: 8px 22px;
+  border-radius: 8px;
+  background: #facc15;
+  color: #111;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.plans-compare-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.plans-compare-clear {
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.6);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.plans-compare-clear:hover {
+  border-color: rgba(255,255,255,0.4);
+}
+
+.plans-hz-compare-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: transparent;
+  color: rgba(255,255,255,0.55);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.plans-hz-compare-check:hover {
+  border-color: rgba(250,204,21,0.4);
+  color: rgba(255,255,255,0.8);
+}
+
+.plans-hz-compare-check.checked {
+  border-color: rgba(250, 204, 21, 0.6);
+  background: rgba(250, 204, 21, 0.12);
+  color: #facc15;
+}
+
+.plans-hz-compare-check svg {
+  flex-shrink: 0;
+}
+
+.compare-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 24px 60px;
+  overflow-x: auto;
+}
+
+.compare-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.compare-header h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 8px;
+}
+
+.compare-header p {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.92rem;
+}
+
+.compare-grid {
+  display: grid;
+  gap: 0;
+  min-width: 700px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(17,17,17,0.95);
+}
+
+.compare-cell {
+  padding: 14px 16px;
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.75);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-right: 1px solid rgba(255,255,255,0.06);
+  line-height: 1.4;
+}
+
+.compare-cell:last-child {
+  border-right: none;
+}
+
+.compare-label {
+  font-weight: 700;
+  color: rgba(255,255,255,0.5);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: rgba(255,255,255,0.02);
+}
+
+.compare-feat-label {
+  text-transform: none;
+  font-weight: 500;
+  font-size: 0.82rem;
+}
+
+.compare-plan-head {
+  text-align: center;
+  padding: 20px 16px;
+  background: rgba(255,255,255,0.03);
+}
+
+.compare-plan-head h3 {
+  font-size: 1rem;
+  color: #fff;
+  margin: 0 0 4px;
+}
+
+.compare-plan-head p {
+  color: rgba(255,255,255,0.45);
+  font-size: 0.78rem;
+  margin: 0 0 12px;
+}
+
+.compare-check {
+  text-align: center;
+}
+
+.compare-yes {
+  color: #4ade80;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.compare-no {
+  color: rgba(255,255,255,0.2);
+}
+
+.plan-overlay-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+@media (max-width: 720px) {
+  .plan-overlay-fitbudd-frame iframe { min-height: 600px; }
+  .plans-compare-bar { flex-direction: column; gap: 10px; }
+  .compare-grid { font-size: 0.78rem; }
+  .compare-inner { padding: 24px 12px 40px; }
+  .plan-overlay-pay-hero .plan-pay-btn--lg { width: 100%; padding: 14px 24px; }
+  .plan-overlay-cta-row { flex-direction: column; align-items: stretch; }
+  .plan-overlay-cta-row > * { text-align: center; justify-content: center; }
+}
+

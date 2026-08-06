@@ -77,7 +77,7 @@
               <li><strong>Daily in-app chat support</strong> <span>with 8-hour response window</span></li>
               <li><strong>App check-in protocols</strong> <span>selfie + location attendance validation</span></li>
             </ul>
-            <a class="primary-button hero-plan-card-cta" href="#plans">Get Started Now</a>
+            <div class="hero-plan-card-cta-row"><a class="primary-button hero-plan-card-cta" href="https://fitnessgurukul.fitbudd.com/packs/evGNGcNlmDQviKRqFK27" target="_blank" rel="noopener">Pay now</a><a class="ghost-button hero-plan-card-cta" href="book-consultation.html">Book a consultation</a></div>
             <p class="hero-plan-card-note">Less than your monthly coffee spend. One coach, one plan, real results.</p>
             </div>
           </div>
@@ -672,6 +672,11 @@
       <div class="plans-bw-header">
         <h2>Choose Your Plan</h2>
         <p>Every plan includes a dedicated coach, personalized nutrition, and the Fitness Gurukul app. Pick the level of support that fits your life.</p>
+        <div class="plans-compare-bar" id="compareBar" hidden>
+          <span><strong id="compareCount">0</strong> plans selected</span>
+          <button class="plans-compare-btn" id="compareBtn" onclick="openCompare()">Compare Plans</button>
+          <button class="plans-compare-clear" onclick="clearCompare()">Clear</button>
+        </div>
       </div>
 
       <div class="plans-hz-card" onclick="openPlan('core')">
@@ -765,6 +770,24 @@
         </div>
         <div class="plans-hz-card-img"><img src="assets/cdn/bg-1.jpg" alt="Fitness Gurukul Forge" loading="lazy" /></div>
       </div>
+
+      <div class="plans-hz-card" onclick="openPlan('elite')">
+        <div class="plans-hz-card-body">
+          <h3>Virtual 1:1 Elite Transformation</h3>
+          <div class="plans-hz-sub">Weight Loss · Lean Muscle · Lifestyle Overhaul</div>
+          <div class="plans-hz-row">
+            <div class="plans-hz-price"><span class="amt">₹1,999</span><span class="period">/month</span></div>
+            <div class="plans-hz-sessions">Online · Digital Coaching</div>
+          </div>
+          <ul class="plans-hz-features">
+            <li>Dedicated fitness &amp; nutrition coach</li>
+            <li>Custom workout &amp; Indian meal plan</li>
+            <li>Weekly video reviews + daily chat</li>
+          </ul>
+          <button class="plans-hz-btn">View Details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+        </div>
+        <div class="plans-hz-card-img"><img src="assets/cdn/service-1.jpg" alt="Virtual Elite Transformation" loading="lazy" /></div>
+      </div>
       </div>
     </section>
 
@@ -796,6 +819,11 @@
         <div class="plan-how-step"><div class="step-num">Step 06</div><h4>Daily Tracking &amp; Review</h4><p>Log meals, water, and steps daily. Your coach monitors in real time. End of month, a full review of weight, measurements, and consistency sets up your next cycle.</p></div>
       </div>
     </div>
+  </div>
+
+  <div class="plan-overlay-bw" id="compareOverlay">
+    <button class="plan-overlay-close" onclick="closeCompare()">&times;</button>
+    <div class="compare-inner" id="compareInner"></div>
   </div>
 
   <section class="fg-app-section reveal" style="padding-bottom:0">
@@ -911,6 +939,7 @@ var planData = {
   core: {
     name: 'Fitness Gurukul Core',
     sub: 'Our Most Personalized Coaching Experience',
+    packId: 'evGNGcNlmDQviKRqFK27',
     tiers: [
       { label: 'Monthly', price: '₹5,999', period: '/month' },
       { label: 'Quarterly', price: '₹15,999', period: '/quarter' },
@@ -934,6 +963,7 @@ var planData = {
     name: 'Fitness Gurukul Signature',
     sub: 'Build Strength. Correct Movement. Transform Physique.',
     bestValue: true,
+    packId: 'sBd3TAU6V2hHBNxkBbGg',
     tiers: [
       { label: 'Monthly', price: '₹15,999', period: '/month' }
     ],
@@ -951,6 +981,7 @@ var planData = {
   prime: {
     name: 'Fitness Gurukul Prime',
     sub: 'Complete Fitness & Nutrition Coaching',
+    packId: 'vlfs2cBCk2Gts81RK4Ub',
     tiers: [
       { label: 'Monthly', price: '₹9,500', period: '/month' },
       { label: 'Quarterly', price: '₹26,999', period: '/quarter' },
@@ -969,6 +1000,7 @@ var planData = {
   endurance: {
     name: 'Fitness Gurukul Endurance',
     sub: 'Coaching, Nutrition, Strength & Race Strategy',
+    packId: 'hgX9svTJxnewUKFLd9wO',
     tiers: [
       { label: 'Monthly', price: '₹1,199', period: '/month' }
     ],
@@ -987,6 +1019,7 @@ var planData = {
   forge: {
     name: 'Fitness Gurukul Forge',
     sub: 'Hyrox / OCR Preparation',
+    packId: 'z0vdU1aAH5D3HyOiAmXC',
     tiers: [
       { label: 'Monthly', price: '₹999', period: '/month' }
     ],
@@ -1004,6 +1037,7 @@ var planData = {
   elite: {
     name: 'Virtual 1:1 Elite Transformation',
     sub: 'Weight Loss · Lean Muscle · Lifestyle Overhaul',
+    packId: '7BFXhJoGj53Ci6RQPGKG',
     tiers: [
       { label: 'Monthly', price: '₹1,999', period: '/month' },
       { label: 'Quarterly', price: '₹4,499', period: '/quarter' },
@@ -1024,13 +1058,96 @@ var planData = {
   }
 };
 
+var compareSet = new Set();
+
+function updateCompareBar() {
+  var bar = document.getElementById('compareBar');
+  var count = document.getElementById('compareCount');
+  var btn = document.getElementById('compareBtn');
+  count.textContent = compareSet.size;
+  bar.hidden = compareSet.size === 0;
+  btn.disabled = compareSet.size < 2;
+}
+
+function toggleCompare(key, e) {
+  if (e) { e.stopPropagation(); e.preventDefault(); }
+  if (compareSet.has(key)) { compareSet.delete(key); } else if (compareSet.size < 4) { compareSet.add(key); }
+  updateCompareBar();
+  document.querySelectorAll('.plans-hz-compare-check').forEach(function(cb) {
+    cb.classList.toggle('checked', compareSet.has(cb.dataset.plan));
+  });
+}
+
+function clearCompare() {
+  compareSet.clear();
+  updateCompareBar();
+  document.querySelectorAll('.plans-hz-compare-check').forEach(function(cb) {
+    cb.classList.remove('checked');
+  });
+}
+
+function openCompare() {
+  if (compareSet.size < 2) return;
+  var keys = Array.from(compareSet);
+  var html = '<div class="compare-header"><h2>Compare Plans</h2><p>Side-by-side comparison of your selected plans</p></div>';
+  html += '<div class="compare-grid" style="grid-template-columns:200px repeat(' + keys.length + ',1fr)">';
+
+  var rows = [
+    { label: 'Price', fn: function(d) { return d.tiers[0].price + ' <small>' + d.tiers[0].period + '</small>'; } },
+    { label: 'Sessions', fn: function(d) { return d.sessions; } },
+    { label: 'Duration Options', fn: function(d) { return d.tiers.map(function(t) { return t.label; }).join(', '); } }
+  ];
+  var allFeatures = [];
+  keys.forEach(function(k) { (planData[k].includes || []).forEach(function(f) { if (allFeatures.indexOf(f) === -1) allFeatures.push(f); }); });
+
+  html += '<div class="compare-cell compare-label"></div>';
+  keys.forEach(function(k) {
+    var d = planData[k];
+    var packUrl = d.packId ? 'https://fitnessgurukul.fitbudd.com/packs/' + d.packId : '#';
+    html += '<div class="compare-cell compare-plan-head"><h3>' + d.name + '</h3><p>' + d.sub + '</p>';
+    html += '<a class="plan-pay-btn" href="' + packUrl + '" target="_blank" rel="noopener">Pay now</a></div>';
+  });
+
+  rows.forEach(function(r) {
+    html += '<div class="compare-cell compare-label">' + r.label + '</div>';
+    keys.forEach(function(k) { html += '<div class="compare-cell">' + r.fn(planData[k]) + '</div>'; });
+  });
+
+  allFeatures.forEach(function(feat) {
+    html += '<div class="compare-cell compare-label compare-feat-label">' + feat + '</div>';
+    keys.forEach(function(k) {
+      var has = (planData[k].includes || []).indexOf(feat) !== -1;
+      html += '<div class="compare-cell compare-check">' + (has ? '<span class="compare-yes">&#10003;</span>' : '<span class="compare-no">—</span>') + '</div>';
+    });
+  });
+  html += '</div>';
+
+  document.getElementById('compareInner').innerHTML = html;
+  document.getElementById('compareOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCompare() {
+  document.getElementById('compareOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
 function openPlan(id) {
   var d = planData[id];
+  if (!d) return;
+  var packUrl = d.packId ? 'https://fitnessgurukul.fitbudd.com/packs/' + d.packId : '';
+
+  var text = '';
+  if (packUrl) {
+    text += '<div class="plan-overlay-pay-hero"><a class="plan-pay-btn plan-pay-btn--lg" href="' + packUrl + '" target="_blank" rel="noopener">Pay Now — ' + d.tiers[0].price + d.tiers[0].period + '</a></div>';
+  }
+
   var badge = d.bestValue ? '<div class="overlay-best-value">Best Value</div>' : '';
-  var text = badge + '<h2>' + d.name + '</h2><div class="plan-overlay-sub">' + d.sub + '</div>';
+  text += badge + '<h2>' + d.name + '</h2><div class="plan-overlay-sub">' + d.sub + '</div>';
   text += '<div class="plan-overlay-tiers">';
-  d.tiers.forEach(function(t) {
-    text += '<div class="plan-tier-bw"><div class="tier-name">' + t.label + '</div><div class="tier-price">' + t.price + ' <small>' + t.period + '</small></div></div>';
+  d.tiers.forEach(function(t, i) {
+    var tierUrl = packUrl ? packUrl : '#';
+    text += '<a class="plan-tier-bw' + (i === 0 ? ' plan-tier-bw--active' : '') + '" href="' + tierUrl + '" target="_blank" rel="noopener"><div class="tier-name">' + t.label + '</div><div class="tier-price">' + t.price + ' <small>' + t.period + '</small></div></a>';
   });
   text += '</div>';
   text += '<div class="plan-overlay-sessions">' + d.sessions + '</div>';
@@ -1038,7 +1155,19 @@ function openPlan(id) {
   text += '<div class="plan-overlay-section"><h3>What\'s Included</h3><ul class="plan-overlay-list">';
   d.includes.forEach(function(i) { text += '<li>' + i + '</li>'; });
   text += '</ul></div>';
-  text += '<a class="plan-overlay-cta" href="contact.html">Get Started <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>';
+
+  if (packUrl) {
+    text += '<div class="plan-overlay-fitbudd">';
+    text += '<h3>Checkout</h3>';
+    text += '<div class="plan-overlay-fitbudd-frame"><iframe title="' + d.name + ' checkout" src="' + packUrl + '?embed=3" allow="payment *" allowtransparency="true" style="width:100%;min-height:520px;height:520px;border:none;display:block;background:#FFFBEB;border-radius:12px;"></iframe></div>';
+    text += '</div>';
+  }
+
+  text += '<div class="plan-overlay-cta-row">';
+  if (packUrl) text += '<a class="plan-pay-btn" href="' + packUrl + '" target="_blank" rel="noopener">Pay Now</a>';
+  text += '<a class="plan-overlay-cta" href="book-consultation.html">Book a consultation</a>';
+  text += '<a class="plan-overlay-cta plan-overlay-cta-ghost" href="https://wa.me/917207113310" target="_blank" rel="noopener">Have questions? Chat now</a>';
+  text += '</div>';
 
   var visual = '<img src="' + d.img + '" alt="' + d.name + '" loading="lazy" />';
   visual += '<div class="plan-overlay-visual-cap"><span>' + d.name + '</span></div>';
@@ -1078,10 +1207,48 @@ document.querySelectorAll('.svc-hz-card').forEach(function(card) {
 
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
+    closePlan();
+    closeCompare();
     document.querySelectorAll('.svc-hz-card.active').forEach(function(card) {
       card.classList.remove('active');
     });
     document.body.style.overflow = '';
+  }
+});
+
+(function addCompareCheckboxes() {
+  var planKeys = ['core','signature','prime','endurance','forge','elite'];
+  var cards = document.querySelectorAll('.plans-hz-card');
+  cards.forEach(function(card, i) {
+    if (!planKeys[i]) return;
+    var key = planKeys[i];
+    var cb = document.createElement('button');
+    cb.className = 'plans-hz-compare-check';
+    cb.dataset.plan = key;
+    cb.type = 'button';
+    cb.setAttribute('aria-label', 'Compare ' + (planData[key] ? planData[key].name : ''));
+    cb.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="4 12 9 17 20 6"/></svg> Compare';
+    cb.addEventListener('click', function(e) { toggleCompare(key, e); });
+    card.querySelector('.plans-hz-card-body').appendChild(cb);
+  });
+})();
+
+document.getElementById('compareOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeCompare();
+});
+
+window.addEventListener('message', function(e) {
+  var data = e && e.data;
+  if (!data || typeof data !== 'object') return;
+  if (Object.prototype.hasOwnProperty.call(data, 'frameHeight')) {
+    var frames = document.querySelectorAll('.plan-overlay-fitbudd-frame iframe');
+    var h = Number(data.frameHeight);
+    if (h > 200) {
+      frames.forEach(function(f) { f.style.height = h + 'px'; f.style.minHeight = h + 'px'; });
+    }
+  }
+  if (Object.prototype.hasOwnProperty.call(data, 'goto') && data.goto) {
+    window.location.href = data.goto;
   }
 });
 </script>
