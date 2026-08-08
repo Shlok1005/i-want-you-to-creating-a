@@ -1,6 +1,8 @@
 /**
  * Vercel serverless lead endpoint.
- * POST /api/submit  → Google Sheet (Apps Script) + email both inboxes.
+ * POST /api/submit  → Google Sheet (Apps Script GET write) + email both inboxes.
+ *
+ * Apps Script /exec accepts GET reliably; POST often returns Page Not Found.
  */
 const GOOGLE_SCRIPT_URL = String(
   process.env.GOOGLE_SCRIPT_URL ||
@@ -25,14 +27,21 @@ function label(formType) {
   return "consultation lead";
 }
 
+function leadQueryString(payload) {
+  const params = new URLSearchParams();
+  params.set("write", "1");
+  Object.keys(payload || {}).forEach((key) => {
+    const value = payload[key];
+    if (value == null || value === "") return;
+    params.set(key, String(value));
+  });
+  return params.toString();
+}
+
 async function forwardGoogle(payload) {
   try {
-    const res = await fetch(GOOGLE_SCRIPT_URL, {
-      method: "POST",
-      redirect: "follow",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(payload),
-    });
+    const url = GOOGLE_SCRIPT_URL + "?" + leadQueryString(payload);
+    const res = await fetch(url, { method: "GET", redirect: "follow" });
     const text = await res.text();
     let data = {};
     try {
@@ -42,7 +51,7 @@ async function forwardGoogle(payload) {
     }
     const ok =
       Boolean(data.ok || data.success || data.result === "success") &&
-      !/not found: doPost|unable to open|ServiceLogin/i.test(text);
+      !/not found: doPost|unable to open|ServiceLogin|Page Not Found/i.test(text);
     return { ok, emailed: Boolean(data.emailed), detail: text.slice(0, 160) };
   } catch (err) {
     return { ok: false, emailed: false, detail: String(err.message || err) };
@@ -108,7 +117,15 @@ module.exports = async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(204).end();
   if (req.method !== "POST") return res.status(405).json({ ok: false, error: "POST only" });
 
-  const raw = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
+  let raw = req.body || {};
+  if (typeof raw === "string") {
+    try {
+      raw = JSON.parse(raw || "{}");
+    } catch (_) {
+      raw = {};
+    }
+  }
+
   const formType = str(raw.form_type) || "consultation";
   const name = str(raw.name) || str(raw.contact_name);
   const phone = str(raw.phone);
