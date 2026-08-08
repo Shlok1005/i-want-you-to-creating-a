@@ -187,6 +187,32 @@
             </div>
           </article>
         </div>
+        <div class="challenge-video-strip" aria-label="Video testimonials">
+          <div class="challenge-section-head" style="margin-top:36px">
+            <span class="section-kicker">Watch</span>
+            <h2>Video testimonials</h2>
+            <p>Hear the same journeys in their own words — then join the 90-day challenge.</p>
+          </div>
+          <div class="challenge-video-grid">
+            <button class="challenge-video-card" type="button" data-video="testimonials/neha.mp4" onclick="openStoryVideo(this)">
+              <img src="neha.png" alt="" loading="lazy" />
+              <span>Neha’s story</span>
+            </button>
+            <button class="challenge-video-card" type="button" data-video="testimonials/testimonal-final.mp4" onclick="openStoryVideo(this)">
+              <img src="udit.png" alt="" loading="lazy" />
+              <span>Strength &amp; confidence</span>
+            </button>
+            <button class="challenge-video-card" type="button" data-video="testimonials/testomonial-vid-1.mp4" onclick="openStoryVideo(this)">
+              <img src="deepak.png" alt="" loading="lazy" />
+              <span>From zero to fitness</span>
+            </button>
+            <button class="challenge-video-card" type="button" data-video="testimonials/final-testimonial.mp4" onclick="openStoryVideo(this)">
+              <img src="ramakrishna.png" alt="" loading="lazy" />
+              <span>Journey to healthier me</span>
+            </button>
+          </div>
+          <p style="margin-top:18px"><a class="ghost-button" href="testimonials.html#videos">See all video testimonials</a></p>
+        </div>
       </div>
     </section>
 
@@ -347,5 +373,26 @@
     </div>
   </footer>
 
+<script>
+function openStoryVideo(el) {
+  var src = el.getAttribute('data-video');
+  if (!src) return;
+  var o = document.createElement('div');
+  o.id = 'storyVideoOverlay';
+  o.style.cssText = 'position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity 0.3s';
+  o.innerHTML = '<div style="position:relative;width:80vw;max-width:900px;max-height:90vh"><button onclick="closeStoryVideo()" style="position:absolute;top:-40px;right:0;background:none;border:none;color:#fff;font-size:1.6rem;cursor:pointer;padding:4px 12px">&#10005;</button><video controls autoplay style="width:100%;display:block;border-radius:12px;background:#000;max-height:80vh"><source src="'+src+'" type="video/mp4"></video></div>';
+  document.body.appendChild(o);
+  document.body.style.overflow = 'hidden';
+  requestAnimationFrame(function(){o.style.opacity='1'});
+  o.addEventListener('click',function(e){if(e.target===o)closeStoryVideo()});
+}
+function closeStoryVideo() {
+  var o = document.getElementById('storyVideoOverlay');
+  if (!o) return;
+  o.style.opacity = '0';
+  document.body.style.overflow = '';
+  setTimeout(function(){if(o.parentNode)o.parentNode.removeChild(o)},350);
+}
+</script>
 </body>
 </html>

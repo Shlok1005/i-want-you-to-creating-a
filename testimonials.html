@@ -62,6 +62,7 @@
         <p class="hero-fittr-sub">Every number is a person. Every story is a life changed. Real results from real people who committed to their fitness journey.</p>
         <div class="hero-actions">
           <a class="primary-button" href="#storymap">Read Their Stories</a>
+          <a class="ghost-button" href="#videos">Watch Videos</a>
           <a class="ghost-button" href="contact.html">Start Your Journey</a>
         </div>
       </div>
@@ -132,11 +133,13 @@
         object-fit: cover;
         display: block;
       }
+      .ts-storymap-visual[data-video] { cursor: pointer; }
       .ts-storymap-play {
         position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-        background: rgba(0,0,0,0.35); opacity: 0; transition: opacity 0.3s;
+        background: rgba(0,0,0,0.35); opacity: 0.85; transition: opacity 0.3s, background 0.3s;
       }
-      .ts-storymap-card:hover .ts-storymap-play { opacity: 1; }
+      .ts-storymap-card:hover .ts-storymap-play,
+      .ts-storymap-visual:focus .ts-storymap-play { opacity: 1; background: rgba(0,0,0,0.45); }
       .ts-storymap-play svg {
         width: 56px; height: 56px; filter: drop-shadow(0 4px 20px rgba(0,0,0,0.6));
       }
@@ -219,7 +222,10 @@
       <div class="ts-storymap-track">
         <article class="ts-storymap-card">
           <span class="ts-storymap-node" aria-hidden="true"></span>
-          <div class="ts-storymap-visual"><img src="udit.png" alt="Udit" loading="lazy" /></div>
+          <div class="ts-storymap-visual" role="button" tabindex="0" data-video="testimonials/testimonal-final.mp4" onclick="openStoryVideo(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openStoryVideo(this)}">
+            <img src="udit.png" alt="Udit" loading="lazy" />
+            <div class="ts-storymap-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="white"><polygon points="8,5 19,12 8,19"/></svg></div>
+          </div>
           <div class="ts-storymap-body">
             <span class="ts-storymap-kicker">01 Body Recomposition</span>
             <h3>Udit</h3>
@@ -228,9 +234,12 @@
             <div class="ts-storymap-meta"><span>88 kg to 74 kg</span><span>Planned training</span><span>Nutrition support</span></div>
           </div>
         </article>
-        <article class="ts-storymap-card" >
+        <article class="ts-storymap-card">
           <span class="ts-storymap-node" aria-hidden="true"></span>
-          <div class="ts-storymap-visual"><img src="neha.png" alt="Neha" loading="lazy" /><div class="ts-storymap-play"><svg viewBox="0 0 24 24" fill="white"><polygon points="8,5 19,12 8,19"/></svg></div></div>
+          <div class="ts-storymap-visual" role="button" tabindex="0" data-video="testimonials/neha.mp4" onclick="openStoryVideo(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openStoryVideo(this)}">
+            <img src="neha.png" alt="Neha" loading="lazy" />
+            <div class="ts-storymap-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="white"><polygon points="8,5 19,12 8,19"/></svg></div>
+          </div>
           <div class="ts-storymap-body">
             <span class="ts-storymap-kicker">02 Weight Loss</span>
             <h3>Neha</h3>
@@ -241,7 +250,10 @@
         </article>
         <article class="ts-storymap-card">
           <span class="ts-storymap-node" aria-hidden="true"></span>
-          <div class="ts-storymap-visual"><img src="ramakrishna.png" alt="Ramakrishna" loading="lazy" /></div>
+          <div class="ts-storymap-visual" role="button" tabindex="0" data-video="testimonials/final-testimonial.mp4" onclick="openStoryVideo(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openStoryVideo(this)}">
+            <img src="ramakrishna.png" alt="Ramakrishna" loading="lazy" />
+            <div class="ts-storymap-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="white"><polygon points="8,5 19,12 8,19"/></svg></div>
+          </div>
           <div class="ts-storymap-body">
             <span class="ts-storymap-kicker">03 Strength Return</span>
             <h3>Ramakrishna</h3>
@@ -252,7 +264,10 @@
         </article>
         <article class="ts-storymap-card">
           <span class="ts-storymap-node" aria-hidden="true"></span>
-          <div class="ts-storymap-visual"><img src="deepak.png" alt="Deepak" loading="lazy" /></div>
+          <div class="ts-storymap-visual" role="button" tabindex="0" data-video="testimonials/testomonial-vid-1.mp4" onclick="openStoryVideo(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openStoryVideo(this)}">
+            <img src="deepak.png" alt="Deepak" loading="lazy" />
+            <div class="ts-storymap-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="white"><polygon points="8,5 19,12 8,19"/></svg></div>
+          </div>
           <div class="ts-storymap-body">
             <span class="ts-storymap-kicker">04 Lifestyle Reset</span>
             <h3>Deepak</h3>
@@ -265,7 +280,7 @@
       </div>
     </section>
 
-    <section class="section-shell">
+    <section class="section-shell" id="videos">
       <div class="page-shell">
       <div class="section-heading">
         <div>
@@ -275,27 +290,54 @@
         </div>
       </div>
       <div class="ts-video-grid">
-        <div class="ts-video-card">
-          <div class="ts-video-placeholder"><span>Video testimonial available on request</span><a href="https://wa.me/917207113310?text=Hi%20Fitness%20Gurukul%2C%20please%20share%20the%20Journey%20to%20a%20Healthier%20Me%20testimonial." target="_blank" rel="noopener">Ask on WhatsApp</a></div>
+        <button class="ts-video-card" type="button" data-video="testimonials/final-testimonial.mp4" onclick="openStoryVideo(this)">
+          <div class="ts-video-thumb">
+            <video muted playsinline preload="metadata" poster="neha.png">
+              <source src="testimonials/final-testimonial.mp4" type="video/mp4" />
+            </video>
+            <span class="ts-video-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="white"><polygon points="8,5 19,12 8,19"/></svg></span>
+          </div>
           <div class="ts-video-body">
             <strong>Journey to a Healthier Me</strong>
             <p>A powerful weight-loss journey — from struggling with daily routines to completing a full lifestyle transformation with FG coaching.</p>
           </div>
-        </div>
-        <div class="ts-video-card">
-          <div class="ts-video-placeholder"><span>Video testimonial available on request</span><a href="https://wa.me/917207113310?text=Hi%20Fitness%20Gurukul%2C%20please%20share%20the%20Strength%20and%20Confidence%20testimonial." target="_blank" rel="noopener">Ask on WhatsApp</a></div>
+        </button>
+        <button class="ts-video-card" type="button" data-video="testimonials/neha.mp4" onclick="openStoryVideo(this)">
+          <div class="ts-video-thumb">
+            <video muted playsinline preload="metadata" poster="neha.png">
+              <source src="testimonials/neha.mp4" type="video/mp4" />
+            </video>
+            <span class="ts-video-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="white"><polygon points="8,5 19,12 8,19"/></svg></span>
+          </div>
+          <div class="ts-video-body">
+            <strong>Neha’s Fat-Loss Story</strong>
+            <p>Practical meals, consistent coaching, and training that stuck — a sustainable fat-loss journey in her own words.</p>
+          </div>
+        </button>
+        <button class="ts-video-card" type="button" data-video="testimonials/testimonal-final.mp4" onclick="openStoryVideo(this)">
+          <div class="ts-video-thumb">
+            <video muted playsinline preload="metadata" poster="udit.png">
+              <source src="testimonials/testimonal-final.mp4" type="video/mp4" />
+            </video>
+            <span class="ts-video-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="white"><polygon points="8,5 19,12 8,19"/></svg></span>
+          </div>
           <div class="ts-video-body">
             <strong>Strength &amp; Confidence</strong>
             <p>How personalized training helped build not just muscle, but real self-belief and daily discipline that lasts.</p>
           </div>
-        </div>
-        <div class="ts-video-card">
-          <div class="ts-video-placeholder"><span>Video testimonial available on request</span><a href="https://wa.me/917207113310?text=Hi%20Fitness%20Gurukul%2C%20please%20share%20the%20From%20Zero%20to%20Fitness%20testimonial." target="_blank" rel="noopener">Ask on WhatsApp</a></div>
+        </button>
+        <button class="ts-video-card" type="button" data-video="testimonials/testomonial-vid-1.mp4" onclick="openStoryVideo(this)">
+          <div class="ts-video-thumb">
+            <video muted playsinline preload="metadata" poster="deepak.png">
+              <source src="testimonials/testomonial-vid-1.mp4" type="video/mp4" />
+            </video>
+            <span class="ts-video-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="white"><polygon points="8,5 19,12 8,19"/></svg></span>
+          </div>
           <div class="ts-video-body">
             <strong>From Zero to Fitness</strong>
             <p>A beginner's story — no gym experience, no confidence, and how the right coach turned everything around.</p>
           </div>
-        </div>
+        </button>
       </div>
       </div>
     </section>
