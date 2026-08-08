@@ -13202,8 +13202,17 @@ line-clamp: 2;
   color: #fff;
 }
 .site-popup-icon {
-  color: rgba(255,255,255,0.15);
-  margin-bottom: 12px;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+.site-popup-icon img {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  border-radius: 18px;
+  display: block;
+  box-shadow: 0 10px 28px rgba(0, 90, 200, 0.28);
 }
 .site-popup-card h3 {
   font-size: 1.3rem;
