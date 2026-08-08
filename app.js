@@ -127,8 +127,8 @@ const realData = {
     { name: "Parul Danu", role: "Yoga Instructor", slug: "parul-danu", category: "yoga", bio: "Yoga Instructor", focus: ["Yoga", "Flexibility", "Stress relief"], highlight: "Yoga & Wellness", color: "cyan", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/parul-695209395c5bdcd270817773.jpeg" },
     { name: "Raju", role: "Fitness Trainer", slug: "raju", category: "fitness", bio: "Fitness Trainer", focus: ["Fitness training", "Strength", "Health routine"], highlight: "Fitness Guide", color: "red", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/raju-69520adb8c7b7b2c6178b36b.jpeg" },
     { name: "Vishal Choudhary", role: "Fitness Trainer", slug: "vishal-choudhary", category: "fitness", bio: "Fitness Trainer", focus: ["Fitness training", "Strength", "Personal training"], highlight: "Personal Training Pro", color: "red", image: "https://web.s-cdn.boostkit.dev/webaction-files/67dd161916df35677e31c42c_myteam/vishal-69520b6a5c5bdcd270817783.jpeg" },
-    { name: "Devendra Mittal", role: "Fitness Trainer", slug: "mittal", category: "fitness", bio: "Fitness Trainer specializing in strength and conditioning.", focus: ["Fitness training", "Strength", "Conditioning"], highlight: "Strength & Conditioning", color: "red", image: "assets/cdn/founder.jpg" },
-    { name: "Shashi Mishra", role: "Fitness Trainer", slug: "shashi-mishra", category: "fitness", bio: "Fitness Trainer focused on overall wellness and strength.", focus: ["Fitness training", "Strength", "Wellness"], highlight: "Wellness Coach", color: "red", image: "assets/cdn/founder.jpg" },
+    { name: "Devendra Mittal", role: "Fitness Trainer", slug: "mittal", category: "fitness", bio: "Fitness Trainer specializing in strength and conditioning.", focus: ["Fitness training", "Strength", "Conditioning"], highlight: "Strength & Conditioning", color: "red", image: "assets/coaches/mittal.jpg" },
+    { name: "Shashi Mishra", role: "Fitness Trainer", slug: "shashi-mishra", category: "fitness", bio: "Fitness Trainer focused on overall wellness and strength.", focus: ["Fitness training", "Strength", "Wellness"], highlight: "Wellness Coach", color: "red", image: "assets/coaches/mittal.jpg" },
   ],
   testimonials: [
     { name: "Udit Narayan", quote: "I went from being overweight with zero confidence to completely transforming my body. The coaching at Fitness Gurukul gave me the discipline and structure I never had. Every session was planned, every meal was guided. This is the best investment I have made in myself.", result: "Body Recomposition", rating: 5, galleryImage: STORY_MAP_IMAGES[0], before: 88, after: 74, unit: "kg", metric: "Weight", journey: [{ month: "Start", value: "88 kg" , clients: 70, rating: 4.9}, { month: "Month 2", value: "83 kg" }, { month: "Month 4", value: "79 kg" }, { month: "Month 6", value: "76 kg" }, { month: "Month 8", value: "74 kg" }], coach: "Fitness Gurukul" },
@@ -789,21 +789,21 @@ function renderWorkoutGrid(workouts) {
 
   function getWorkoutImage(w) {
     var images = {
-      "Strength": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200&q=80&auto=format&fit=crop",
-      "Hypertrophy": "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=1200&q=80&auto=format&fit=crop",
-      "Muscle Building": "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=1200&q=80&auto=format&fit=crop",
-      "Fat Loss": "https://images.unsplash.com/photo-1549476464-37392f717541?w=1200&q=80&auto=format&fit=crop",
-      "HIIT": "https://images.unsplash.com/photo-1599058917765-a780eda07a3e?w=1200&q=80&auto=format&fit=crop",
-      "Athletic": "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=1200&q=80&auto=format&fit=crop",
-      "Functional": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1200&q=80&auto=format&fit=crop",
-      "Bodyweight": "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1200&q=80&auto=format&fit=crop",
-      "Home": "https://images.unsplash.com/photo-1601422407692-ec4eeec1d9b3?w=1200&q=80&auto=format&fit=crop",
-      "Recovery": "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=1200&q=80&auto=format&fit=crop",
-      "Core": "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=1200&q=80&auto=format&fit=crop",
-      "Full Body": "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1200&q=80&auto=format&fit=crop",
-      "Quick": "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=1200&q=80&auto=format&fit=crop"
+      "Strength": "index/services/strength.png",
+      "Hypertrophy": "index/services/strength.png",
+      "Muscle Building": "index/services/strength.png",
+      "Fat Loss": "index/services/running.png",
+      "HIIT": "index/services/strength.png",
+      "Athletic": "index/services/running.png",
+      "Functional": "index/services/strength.png",
+      "Bodyweight": "index/services/yoga.jpg",
+      "Home": "index/services/strength.png",
+      "Recovery": "index/services/yoga.jpg",
+      "Core": "index/services/strength.png",
+      "Full Body": "index/services/yoga.jpg",
+      "Quick": "index/services/strength.png"
     };
-    return images[w.c] || "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1200&q=80&auto=format&fit=crop";
+    return images[w.c] || "index/services/strength.png";
   }
 
   var cats = {};
@@ -2313,7 +2313,7 @@ function injectFooter() {
   if (existing) existing.remove();
   var f = document.createElement("footer");
   f.className = "site-footer footer-refresh";
-  f.innerHTML = `<div class="footer-topline"><a class="footer-logo" href="index.html"><img src="assets/cdn/logo.jpg" alt="Fitness Gurukul" /><span class="footer-logo-text"><strong>Fitness</strong><span>Gurukul</span></span></a><p>Personal training, made personal.</p><a class="footer-cta" href="contact.html">Talk to a coach <span aria-hidden="true">&rarr;</span></a></div><div class="footer-refresh-grid"><div class="footer-intro"><p>Built for stronger, healthier lives in Hyderabad&mdash;at the studio, at home, and wherever you train.</p><a href="tel:+917207113310">+91 72071 13310</a></div><div class="footer-col"><h4>Discover</h4><nav class="footer-nav"><a href="about.html">About us</a><a href="coaches.html">Our coaches</a><a href="workouts.html">Workout programs</a></nav></div><div class="footer-col"><h4>Start here</h4><nav class="footer-nav"><a href="tools.html">Fitness tools</a><a href="events.html">Events</a><a href="testimonials.html">Success stories</a><a href="contact.html">Book a consultation</a></nav></div><div class="footer-col"><h4>Contact Us</h4><div class="footer-contact-col"><a href="tel:+917207113310"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>+91 72071 13310</a><a href="mailto:contact@fitnessgurukul.co.in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>contact@fitnessgurukul.co.in</a><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Manikonda, Hyderabad</span><a class="footer-contact-cta" href="contact.html">Get Directions &rarr;</a></div></div><div class="footer-col"><h4>Visit</h4><p class="footer-address">Manikonda, Hyderabad<br />Telangana, India</p><div class="footer-social"><a href="https://www.instagram.com/fitnessgurukulofficial/" target="_blank" rel="noopener" aria-label="Instagram">IG</a><a href="https://www.facebook.com/fitnessgurukul7/" target="_blank" rel="noopener" aria-label="Facebook">fb</a><a href="https://www.youtube.com/channel/UCLt2Qs1MeV_uf_xMJ7AaPlA" target="_blank" rel="noopener" aria-label="YouTube">YT</a></div></div></div><div class="footer-bottom"><p class="footer-copy">&copy; 2026 Fitness Gurukul. All rights reserved.</p><a href="contact.html">Contact Us</a></div>`;
+  f.innerHTML = `<div class="footer-topline"><a class="footer-logo" href="index.html"><img src="assets/fitness-gurukul-logo.png" alt="Fitness Gurukul" /><span class="footer-logo-text"><strong>Fitness</strong><span>Gurukul</span></span></a><p>Personal training, made personal.</p><a class="footer-cta" href="contact.html">Talk to a coach <span aria-hidden="true">&rarr;</span></a></div><div class="footer-refresh-grid"><div class="footer-intro"><p>Built for stronger, healthier lives in Hyderabad&mdash;at the studio, at home, and wherever you train.</p><a href="tel:+917207113310">+91 72071 13310</a></div><div class="footer-col"><h4>Discover</h4><nav class="footer-nav"><a href="about.html">About us</a><a href="coaches.html">Our coaches</a><a href="workouts.html">Workout programs</a></nav></div><div class="footer-col"><h4>Start here</h4><nav class="footer-nav"><a href="tools.html">Fitness tools</a><a href="events.html">Events</a><a href="testimonials.html">Success stories</a><a href="contact.html">Book a consultation</a></nav></div><div class="footer-col"><h4>Contact Us</h4><div class="footer-contact-col"><a href="tel:+917207113310"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>+91 72071 13310</a><a href="mailto:contact@fitnessgurukul.co.in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>contact@fitnessgurukul.co.in</a><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Manikonda, Hyderabad</span><a class="footer-contact-cta" href="contact.html">Get Directions &rarr;</a></div></div><div class="footer-col"><h4>Visit</h4><p class="footer-address">Manikonda, Hyderabad<br />Telangana, India</p><div class="footer-social"><a href="https://www.instagram.com/fitnessgurukulofficial/" target="_blank" rel="noopener" aria-label="Instagram">IG</a><a href="https://www.facebook.com/fitnessgurukul7/" target="_blank" rel="noopener" aria-label="Facebook">fb</a><a href="https://www.youtube.com/channel/UCLt2Qs1MeV_uf_xMJ7AaPlA" target="_blank" rel="noopener" aria-label="YouTube">YT</a></div></div></div><div class="footer-bottom"><p class="footer-copy">&copy; 2026 Fitness Gurukul. All rights reserved.</p><a href="contact.html">Contact Us</a></div>`;
   document.body.appendChild(f);
 }
 
@@ -3151,7 +3151,7 @@ function initCycleCarousel() {
 /* -- Services Catalog Overlay -- */
 (function() {
   var svcData = [
-    { cat:"Personal Training", sub:"One-on-one coaching for every fitness goal", img:"https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500&q=80",
+    { cat:"Personal Training", sub:"One-on-one coaching for every fitness goal", img:"index/services/strength.png",
       items:[
         { name:"Strength Training", desc:"Build raw power with progressive overload, compound lifts, and periodized programming for increased bone density and functional strength." },
         { name:"Muscle Gain", desc:"Science-backed hypertrophy training with structured volume, frequency, and nutrition to optimize lean mass gains." },
@@ -3162,7 +3162,7 @@ function initCycleCarousel() {
         { name:"Hyrox Prep", desc:"Hybrid race preparation combining running with functional stations � SkiErg, sleds, wall balls, burpees, and compromised running stamina." },
         { name:"Devil Circuit", desc:"Obstacle course race training � grip strength, climbing, crawling, agility, and mental toughness for OCR events." }
       ]},
-    { cat:"Yoga", sub:"Mind-body discipline for strength & flexibility", img:"https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=500&q=80",
+    { cat:"Yoga", sub:"Mind-body discipline for strength & flexibility", img:"index/services/yoga.jpg",
       items:[
         { name:"Hatha Yoga", desc:"Slow-paced practice focusing on basic poses held for several breaths. Builds flexibility, balance, and mind-body awareness." },
         { name:"Iyengar Yoga", desc:"Precision-focused alignment using props � blocks, straps, bolsters. Ideal for posture correction and therapeutic practice." },
@@ -3171,7 +3171,7 @@ function initCycleCarousel() {
         { name:"Meditation", desc:"Guided mindfulness and breathing techniques to reduce stress, improve focus, and cultivate inner calm." },
         { name:"Pranayam", desc:"Breath control exercises to regulate energy, calm the nervous system, and enhance respiratory capacity." }
       ]},
-    { cat:"Nutrition", sub:"Science-backed meal plans for every body", img:"https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=500&q=80",
+    { cat:"Nutrition", sub:"Science-backed meal plans for every body", img:"index/services/indian-nutrtion.png",
       items:[
         { name:"Fat Loss Nutrition", desc:"Calorie-controlled macro plans with flexible dieting. Emphasis on protein satiety, fiber, and nutrient density for sustainable weight loss." },
         { name:"Muscle Gain Nutrition", desc:"Calorie-surplus plans with precise macro targets to fuel muscle protein synthesis and recovery." },
@@ -3182,7 +3182,7 @@ function initCycleCarousel() {
         { name:"Ketogenic Diet", desc:"Low-carb, high-fat nutritional approach for ketosis � with proper electrolyte balance and adaptation guidance." },
         { name:"Weight Loss & Gain", desc:"Custom plans for both directions � structured deficits for weight loss or controlled surpluses for healthy weight gain." }
       ]},
-    { cat:"Cycling", sub:"Structured ride programs for all distances", img:"https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=500&q=80",
+    { cat:"Cycling", sub:"Structured ride programs for all distances", img:"index/services/cycling.jpg",
       items:[
         { name:"Beginner Plans", desc:"Foundation-building programs covering bike fit, cadence, gear shifting, and group riding etiquette." },
         { name:"5K Ride Prep", desc:"Short-distance speed work � interval training, pacing, and leg speed drills for fast 5K efforts." },
@@ -3193,7 +3193,7 @@ function initCycleCarousel() {
         { name:"Cycling Nutrition", desc:"Pre-ride fueling, on-bike carbohydrate intake, hydration strategy, and post-ride recovery nutrition." },
         { name:"Hyrox + Cycling", desc:"Hybrid programming combining cycling endurance with Hyrox functional stations for cross-training athletes." }
       ]},
-    { cat:"Running", sub:"Performance & endurance coaching", img:"https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&q=80",
+    { cat:"Running", sub:"Performance & endurance coaching", img:"index/services/running.png",
       items:[
         { name:"Beginner Plans", desc:"Couch-to-5K style progression building confidence, consistency, and proper running form from scratch." },
         { name:"5K / 10K Prep", desc:"Structured speed work, interval training, and tempo runs targeting your best 5K or 10K time." },
@@ -3205,7 +3205,7 @@ function initCycleCarousel() {
   ];
 
   var hyroxData = {
-    cat:"Cycling + Hyrox", sub:"Hybrid endurance race preparation", img:"https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=500&q=80",
+    cat:"Cycling + Hyrox", sub:"Hybrid endurance race preparation", img:"index/services/community-event.jpg",
     items:[
       { name:"Combined Programming", desc:"Integrated cycling and Hyrox training plans that build both aerobic engines and functional station strength simultaneously." },
       { name:"Engine Building", desc:"Zone 2 base work combined with HIIT intervals to develop the cardiovascular capacity needed for hybrid racing." },

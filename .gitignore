@@ -4,24 +4,14 @@ node_modules/
 __pycache__/
 *.pyc
 fitness_gurukul.sqlite3
+dist/
 
-# Heavy source media kept outside the deploy bundle.
+# Heavy unused source trees (spaces / legacy names). Restored deploy media
+# lives in gallery/, index/, screens/, services/fg-*.png, and assets/.
 GALLERY/
 TESTIMONIALS/
 coaches content/
 services/VIDEOS/
-INDEX/SERVICES/
-INDEX/story map/
+INDEX/
 new  ind/
-
-# Legacy large plan graphics; optimized copies live in assets/plans/.
-services/fg core.png
-services/fg endurance.png
-services/fg hyrox.png
-services/fg prime.png
-services/fg signature.png
-
-# Superseded source PNGs; compressed deploy copies are .jpg.
-assets/ai-fitness-hero.png
-assets/ai-community-event.png
-dist/
+insta posts/

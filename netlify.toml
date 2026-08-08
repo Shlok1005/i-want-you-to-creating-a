@@ -5,47 +5,53 @@
 [build.environment]
   NODE_VERSION = "20"
 
-[[redirects]]
-  from = "/assets/fitness-gurukul-logo.png"
-  to = "/assets/cdn/logo.jpg"
-  status = 200
-
+# Legacy path aliases -> restored original media
 [[redirects]]
   from = "/assets/services/strength.jpg"
-  to = "/assets/cdn/service-1.jpg"
+  to = "/index/services/strength.png"
   status = 200
 
 [[redirects]]
   from = "/assets/services/cycling.jpg"
-  to = "/assets/cdn/service-2.jpg"
+  to = "/index/services/cycling.jpg"
   status = 200
 
 [[redirects]]
   from = "/assets/services/running.jpg"
-  to = "/assets/cdn/service-3.jpg"
+  to = "/index/services/running.png"
   status = 200
 
 [[redirects]]
   from = "/assets/services/yoga.jpg"
-  to = "/assets/cdn/service-4.jpg"
+  to = "/index/services/yoga.jpg"
   status = 200
 
 [[redirects]]
   from = "/assets/services/indian-nutrition.jpg"
-  to = "/assets/cdn/bg-1.jpg"
+  to = "/index/services/indian-nutrtion.png"
   status = 200
 
 [[redirects]]
   from = "/assets/services/community-event.jpg"
-  to = "/assets/cdn/event-1.jpeg"
+  to = "/index/services/community-event.jpg"
   status = 200
 
 [[redirects]]
   from = "/assets/ai-fitness-hero.jpg"
-  to = "/assets/cdn/bg-1.jpg"
+  to = "/assets/ai-fitness-hero.png"
   status = 200
 
 [[redirects]]
   from = "/assets/ravi-miska.jpg"
-  to = "/assets/cdn/founder.jpg"
+  to = "/gallery/about-us/ravi-miska.png"
+  status = 200
+
+[[redirects]]
+  from = "/assets/cdn/logo.jpg"
+  to = "/assets/fitness-gurukul-logo.png"
+  status = 200
+
+[[redirects]]
+  from = "/assets/cdn/story-:n.jpeg"
+  to = "/index/story-map/:n.png"
   status = 200
