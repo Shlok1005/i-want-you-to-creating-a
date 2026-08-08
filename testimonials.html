@@ -51,26 +51,19 @@
   </nav>
 
   <main>
-    <section class="hero-fittr">
-      <div class="hero-fittr-bg">
-        <img src="udit.png" alt="" />
+    <section class="ts-hero" aria-label="Fitness Gurukul transformations">
+      <div class="ts-hero-media" aria-hidden="true">
+        <img src="index/services/community-event.jpg" alt="" />
       </div>
-      <div class="hero-fittr-overlay"></div>
-      <div class="hero-fittr-content">
-        <span class="hero-fittr-badge">Success Stories</span>
-        <h1 class="hero-fittr-headline">Real <em>Transformations</em></h1>
-        <p class="hero-fittr-sub">Every number is a person. Every story is a life changed. Real results from real people who committed to their fitness journey.</p>
-        <div class="hero-actions">
-          <a class="primary-button" href="#storymap">Read Their Stories</a>
-          <a class="ghost-button" href="#videos">Watch Videos</a>
-          <a class="ghost-button" href="contact.html">Start Your Journey</a>
+      <div class="ts-hero-scrim" aria-hidden="true"></div>
+      <div class="ts-hero-copy page-shell">
+        <p class="ts-hero-brand">Fitness Gurukul</p>
+        <h1>Real people. Real change.</h1>
+        <p class="ts-hero-sub">Hyderabad transformations built with coaching, community rides, and routines that stick.</p>
+        <div class="ts-hero-actions">
+          <a class="primary-button" href="#storymap">Meet their stories</a>
+          <a class="ghost-button" href="#videos">Community voices</a>
         </div>
-      </div>
-      <div class="hero-fittr-counters">
-        <div class="counter-item"><span class="counter-num" data-target="1000">0</span><span class="counter-label">Lives Changed</span></div>
-        <div class="counter-item"><span class="counter-num" data-target="15000">0</span><span class="counter-label">kg Lost</span></div>
-        <div class="counter-item"><span class="counter-num" data-target="13">0</span><span class="counter-label">Years Strong</span></div>
-        <div class="counter-item"><span class="counter-num" data-target="10">0</span><span class="counter-label">Expert Coaches+</span></div>
       </div>
     </section>
 
@@ -125,7 +118,6 @@
       .ts-storymap-visual {
         min-height: 280px;
         position: relative;
-        cursor: pointer;
       }
       .ts-storymap-visual img {
         width: 100%;
@@ -222,9 +214,8 @@
       <div class="ts-storymap-track">
         <article class="ts-storymap-card">
           <span class="ts-storymap-node" aria-hidden="true"></span>
-          <div class="ts-storymap-visual" role="button" tabindex="0" data-video="testimonials/testimonal-final.mp4" onclick="openStoryVideo(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openStoryVideo(this)}">
+          <div class="ts-storymap-visual">
             <img src="udit.png" alt="Udit" loading="lazy" />
-            <div class="ts-storymap-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="white"><polygon points="8,5 19,12 8,19"/></svg></div>
           </div>
           <div class="ts-storymap-body">
             <span class="ts-storymap-kicker">01 Body Recomposition</span>
@@ -236,12 +227,12 @@
         </article>
         <article class="ts-storymap-card">
           <span class="ts-storymap-node" aria-hidden="true"></span>
-          <div class="ts-storymap-visual" role="button" tabindex="0" data-video="testimonials/neha.mp4" onclick="openStoryVideo(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openStoryVideo(this)}">
+          <div class="ts-storymap-visual" role="button" tabindex="0" aria-label="Play Neha video testimonial" data-video="testimonials/neha.mp4" onclick="openStoryVideo(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openStoryVideo(this)}">
             <img src="neha.png" alt="Neha" loading="lazy" />
             <div class="ts-storymap-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="white"><polygon points="8,5 19,12 8,19"/></svg></div>
           </div>
           <div class="ts-storymap-body">
-            <span class="ts-storymap-kicker">02 Weight Loss</span>
+            <span class="ts-storymap-kicker">02 Weight Loss · Watch her story</span>
             <h3>Neha</h3>
             <p>A sustainable fat-loss journey built around practical meals, consistent coaching, and training that could actually be maintained.</p>
             <div class="ts-storymap-progress"><span style="width:79%"></span></div>
@@ -250,9 +241,8 @@
         </article>
         <article class="ts-storymap-card">
           <span class="ts-storymap-node" aria-hidden="true"></span>
-          <div class="ts-storymap-visual" role="button" tabindex="0" data-video="testimonials/final-testimonial.mp4" onclick="openStoryVideo(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openStoryVideo(this)}">
+          <div class="ts-storymap-visual">
             <img src="ramakrishna.png" alt="Ramakrishna" loading="lazy" />
-            <div class="ts-storymap-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="white"><polygon points="8,5 19,12 8,19"/></svg></div>
           </div>
           <div class="ts-storymap-body">
             <span class="ts-storymap-kicker">03 Strength Return</span>
@@ -264,9 +254,8 @@
         </article>
         <article class="ts-storymap-card">
           <span class="ts-storymap-node" aria-hidden="true"></span>
-          <div class="ts-storymap-visual" role="button" tabindex="0" data-video="testimonials/testomonial-vid-1.mp4" onclick="openStoryVideo(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openStoryVideo(this)}">
+          <div class="ts-storymap-visual">
             <img src="deepak.png" alt="Deepak" loading="lazy" />
-            <div class="ts-storymap-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="white"><polygon points="8,5 19,12 8,19"/></svg></div>
           </div>
           <div class="ts-storymap-body">
             <span class="ts-storymap-kicker">04 Lifestyle Reset</span>
@@ -284,58 +273,46 @@
       <div class="page-shell">
       <div class="section-heading">
         <div>
-          <span class="section-kicker">Hear From Our Community</span>
-          <h2>Video <span class="ts-glow">Testimonials</span></h2>
-          <p>Real clients sharing their transformations, struggles, and successes — in their own words.</p>
+          <span class="section-kicker">Community &amp; Events</span>
+          <h2>More voices from the <span class="ts-glow">FG community</span></h2>
+          <p>Clips from rides, community days, and members — different people and moments beyond the story map.</p>
         </div>
       </div>
       <div class="ts-video-grid">
         <button class="ts-video-card" type="button" data-video="testimonials/final-testimonial.mp4" onclick="openStoryVideo(this)">
           <div class="ts-video-thumb">
-            <video muted playsinline preload="metadata" poster="neha.png">
+            <video muted playsinline preload="metadata" poster="index/services/community-event.jpg">
               <source src="testimonials/final-testimonial.mp4" type="video/mp4" />
             </video>
             <span class="ts-video-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="white"><polygon points="8,5 19,12 8,19"/></svg></span>
           </div>
           <div class="ts-video-body">
-            <strong>Journey to a Healthier Me</strong>
-            <p>A powerful weight-loss journey — from struggling with daily routines to completing a full lifestyle transformation with FG coaching.</p>
-          </div>
-        </button>
-        <button class="ts-video-card" type="button" data-video="testimonials/neha.mp4" onclick="openStoryVideo(this)">
-          <div class="ts-video-thumb">
-            <video muted playsinline preload="metadata" poster="neha.png">
-              <source src="testimonials/neha.mp4" type="video/mp4" />
-            </video>
-            <span class="ts-video-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="white"><polygon points="8,5 19,12 8,19"/></svg></span>
-          </div>
-          <div class="ts-video-body">
-            <strong>Neha’s Fat-Loss Story</strong>
-            <p>Practical meals, consistent coaching, and training that stuck — a sustainable fat-loss journey in her own words.</p>
+            <strong>Community voice</strong>
+            <p>A member sharing their Fitness Gurukul journey from the community.</p>
           </div>
         </button>
         <button class="ts-video-card" type="button" data-video="testimonials/testimonal-final.mp4" onclick="openStoryVideo(this)">
           <div class="ts-video-thumb">
-            <video muted playsinline preload="metadata" poster="udit.png">
+            <video muted playsinline preload="metadata" poster="gallery/april-ride/dsc-4504.jpg">
               <source src="testimonials/testimonal-final.mp4" type="video/mp4" />
             </video>
             <span class="ts-video-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="white"><polygon points="8,5 19,12 8,19"/></svg></span>
           </div>
           <div class="ts-video-body">
-            <strong>Strength &amp; Confidence</strong>
-            <p>How personalized training helped build not just muscle, but real self-belief and daily discipline that lasts.</p>
+            <strong>Event voice</strong>
+            <p>Moments and stories captured around FG rides and training culture.</p>
           </div>
         </button>
         <button class="ts-video-card" type="button" data-video="testimonials/testomonial-vid-1.mp4" onclick="openStoryVideo(this)">
           <div class="ts-video-thumb">
-            <video muted playsinline preload="metadata" poster="deepak.png">
+            <video muted playsinline preload="metadata" poster="gallery/april-ride/dsc-4519.jpg">
               <source src="testimonials/testomonial-vid-1.mp4" type="video/mp4" />
             </video>
             <span class="ts-video-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="white"><polygon points="8,5 19,12 8,19"/></svg></span>
           </div>
           <div class="ts-video-body">
-            <strong>From Zero to Fitness</strong>
-            <p>A beginner's story — no gym experience, no confidence, and how the right coach turned everything around.</p>
+            <strong>Member voice</strong>
+            <p>Another FG community member on starting from scratch and sticking with it.</p>
           </div>
         </button>
       </div>
