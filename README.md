@@ -1,6 +1,8 @@
 # Fitness Gurukul Full-Stack Website
 
-Multi-page Fitness Gurukul website with a responsive frontend, Python backend, and SQLite database.
+Multi-page Fitness Gurukul website with a responsive frontend, Node/Python backends, and SQLite database.
+
+> **Full code documentation:** see [`DOCUMENTATION.md`](./DOCUMENTATION.md) for architecture, tech stack, APIs, lead flow, chatbot, deployment, and file-by-file details.
 
 ## What is included
 
