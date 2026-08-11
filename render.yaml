@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: fitness-gurukul
+    name: blogs
     runtime: node
     buildCommand: npm install
     startCommand: node server.js

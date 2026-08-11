@@ -1,7 +1,7 @@
 {
-  "name": "fitness-gurukul-backend",
+  "name": "blogs",
   "version": "1.0.0",
-  "description": "Fitness Gurukul form submission backend",
+  "description": "Fitness Gurukul website + blog SEO + lead backend",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

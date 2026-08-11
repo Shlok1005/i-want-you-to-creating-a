@@ -2346,8 +2346,8 @@ function buildFooterSeoHtml(groups, prefix) {
   var html = '<section class="footer-seo" aria-label="Blog and SEO links">' +
     '<div class="footer-seo-inner">' +
       '<div class="footer-seo-head">' +
-        '<h2>Explore fitness guides</h2>' +
-        '<p>Browse Fitness Gurukul blogs on strength training, group fitness, kids programs, and race prep — built for Hyderabad and beyond. <a href="' + blog + '">View all blogs</a></p>' +
+        '<h2>Blogs</h2>' +
+        '<p>Guides for strength, group fitness, kids training &amp; race prep. <a href="' + blog + '">View all</a></p>' +
       '</div>' +
       '<div class="footer-seo-cats">';
   (groups || []).forEach(function(g) {

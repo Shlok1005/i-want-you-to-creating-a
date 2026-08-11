@@ -127,7 +127,9 @@ Lead submit still succeeds offline (SQLite); Google Apps Script / FormSubmit for
 
 ## Deploy
 
-- **Node host (e.g. Render):** `npm start` via `render.yaml`
+Deployment service name: **`blogs`**
+
+- **Node host (e.g. Render):** `render.yaml` service `blogs` → `npm start`
 - **Static (Netlify/Vercel):** `bash scripts/prepare-static-dist.sh` builds `dist/` (frontend only)
 
 ## Brand system

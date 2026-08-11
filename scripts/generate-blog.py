@@ -980,8 +980,8 @@ def inject_seo_after_footer(html_path: Path, prefix: str = "") -> None:
     ]
     blog = f"{prefix}blog.html"
     parts = ['<section class="footer-seo" aria-label="Blog and SEO links">', '<div class="footer-seo-inner">']
-    parts.append('<div class="footer-seo-head"><h2>Explore fitness guides</h2>')
-    parts.append(f'<p>Browse Fitness Gurukul blogs on strength training, group fitness, kids programs, and race prep. <a href="{blog}">View all blogs</a></p></div>')
+    parts.append('<div class="footer-seo-head"><h2>Blogs</h2>')
+    parts.append(f'<p>Guides for strength, group fitness, kids training &amp; race prep. <a href="{blog}">View all</a></p></div>')
     parts.append('<div class="footer-seo-cats">')
     for slug, name in cats:
         parts.append(f'<div class="footer-seo-col"><h3><a href="{blog}#{slug}">{html.escape(name)}</a></h3><ul>')
