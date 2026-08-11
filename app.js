@@ -1689,10 +1689,17 @@ function wireNavigationAids() {
       document.body.style.overflow = "";
     });
   });
-  const current = window.location.pathname.split("/").pop() || "index.html";
+  const path = window.location.pathname || "";
+  const current = path.split("/").pop() || "index.html";
+  const onBlog = current === "blog.html" || /\/blog\//.test(path) || path.endsWith("/blog");
   qsa(".desktop-nav a, .mobile-nav a").forEach((link) => {
     const href = link.getAttribute("href") || "";
-    link.classList.toggle("active", href === current || (current === "" && href === "index.html"));
+    const hrefBase = href.split("/").pop();
+    const isBlogLink = hrefBase === "blog.html";
+    const active = isBlogLink
+      ? onBlog
+      : href === current || hrefBase === current || (current === "" && hrefBase === "index.html");
+    link.classList.toggle("active", active);
   });
   qsa(".nav-dropdown").forEach((dd) => {
     const match = [...dd.querySelectorAll("a")].some((a) => a.getAttribute("href") === current);

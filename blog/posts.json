@@ -1,0 +1,362 @@
+[
+  {
+    "slug": "strength-training-for-weight-loss",
+    "title": "The Ultimate Guide to Strength Training for Weight Loss",
+    "description": "Why lifting weights burns more fat than cardio alone — and how to actually do it right",
+    "category": "strength-training",
+    "date": "2026-01-08",
+    "read_minutes": 3,
+    "url": "blog/strength-training-for-weight-loss.html"
+  },
+  {
+    "slug": "how-to-achieve-a-6-pack-safely",
+    "title": "How to Achieve a 6-Pack Safely",
+    "description": "Building a strong, defined core without crash dieting or wrecking your metabolism",
+    "category": "strength-training",
+    "date": "2026-01-11",
+    "read_minutes": 3,
+    "url": "blog/how-to-achieve-a-6-pack-safely.html"
+  },
+  {
+    "slug": "posture-correction-for-desk-workers",
+    "title": "Posture Correction 101: Functional Fitness for Desk Workers",
+    "description": "A practical guide for Hyderabad's IT professionals sitting through 9-hour workdays",
+    "category": "strength-training",
+    "date": "2026-01-14",
+    "read_minutes": 2,
+    "url": "blog/posture-correction-for-desk-workers.html"
+  },
+  {
+    "slug": "yoga-vs-strength-training-balance",
+    "title": "Yoga vs. Strength Training: Finding the Perfect Balance",
+    "description": "Why the best fitness plans don't pick one — they combine both",
+    "category": "strength-training",
+    "date": "2026-01-17",
+    "read_minutes": 2,
+    "url": "blog/yoga-vs-strength-training-balance.html"
+  },
+  {
+    "slug": "3-month-transformation-what-to-expect",
+    "title": "3-Month Transformation: What to Expect",
+    "description": "A realistic breakdown of the physical and mental changes over 12 weeks of consistent training",
+    "category": "strength-training",
+    "date": "2026-01-20",
+    "read_minutes": 3,
+    "url": "blog/3-month-transformation-what-to-expect.html"
+  },
+  {
+    "slug": "mental-wellness-through-movement",
+    "title": "Mental Wellness Through Movement: The Hidden Benefits of General Fitness",
+    "description": "The dopamine, serotonin, and stress-relief science behind why exercise makes you feel better",
+    "category": "strength-training",
+    "date": "2026-01-23",
+    "read_minutes": 2,
+    "url": "blog/mental-wellness-through-movement.html"
+  },
+  {
+    "slug": "personal-training-vs-3-day-split",
+    "title": "Why Personal Training Beats the 3-Day Split",
+    "description": "The real reason custom coaching gets faster results than generic online templates",
+    "category": "strength-training",
+    "date": "2026-01-26",
+    "read_minutes": 2,
+    "url": "blog/personal-training-vs-3-day-split.html"
+  },
+  {
+    "slug": "stretching-routines-for-recovery",
+    "title": "Stretching Routines for Better Recovery and a Strong Body",
+    "description": "Static vs. dynamic stretching, and how to use each to prevent injury",
+    "category": "strength-training",
+    "date": "2026-01-29",
+    "read_minutes": 2,
+    "url": "blog/stretching-routines-for-recovery.html"
+  },
+  {
+    "slug": "functional-fitness-for-daily-life",
+    "title": "Functional Fitness for Daily Life: Lifting, Bending, and Moving Better",
+    "description": "How functional workouts translate directly into everyday ease",
+    "category": "strength-training",
+    "date": "2026-02-01",
+    "read_minutes": 2,
+    "url": "blog/functional-fitness-for-daily-life.html"
+  },
+  {
+    "slug": "aarambh-starter-guide-first-gym-session",
+    "title": "The Aarambh Starter Guide to Navigating Your First Gym Session",
+    "description": "A beginner-friendly walkthrough for anyone starting their fitness journey — and a natural fit for our 1-Month Aarambh plan",
+    "category": "strength-training",
+    "date": "2026-02-04",
+    "read_minutes": 2,
+    "url": "blog/aarambh-starter-guide-first-gym-session.html"
+  },
+  {
+    "slug": "group-yoga-classes-surging-popularity",
+    "title": "Why Group Yoga Classes Are Surging in Popularity",
+    "description": "A local spotlight on the benefits of community breathwork and flexibility",
+    "category": "group-fitness",
+    "date": "2026-02-07",
+    "read_minutes": 3,
+    "url": "blog/group-yoga-classes-surging-popularity.html"
+  },
+  {
+    "slug": "virtual-wellness-webinars-staying-fit-beyond-gym",
+    "title": "Virtual Wellness Webinars: Staying Fit Beyond the Gym",
+    "description": "How the FG app bridges the gap when clients miss a physical class",
+    "category": "group-fitness",
+    "date": "2026-02-10",
+    "read_minutes": 2,
+    "url": "blog/virtual-wellness-webinars-staying-fit-beyond-gym.html"
+  },
+  {
+    "slug": "top-cycling-routes-around-hyderabad",
+    "title": "Top Cycling Routes Around Hyderabad for Weekend Warriors",
+    "description": "A locally relevant guide for cycling enthusiasts chasing their next weekend ride",
+    "category": "group-fitness",
+    "date": "2026-02-13",
+    "read_minutes": 2,
+    "url": "blog/top-cycling-routes-around-hyderabad.html"
+  },
+  {
+    "slug": "rise-of-group-zumba",
+    "title": "The Rise of Group Zumba: Cardio That Doesn't Feel Like Work",
+    "description": "Tapping into the fun, dance-fitness trend that's changing how people think about cardio",
+    "category": "group-fitness",
+    "date": "2026-02-16",
+    "read_minutes": 2,
+    "url": "blog/rise-of-group-zumba.html"
+  },
+  {
+    "slug": "elevating-group-performance-train-and-shine",
+    "title": "Elevating Your Group's Performance: The Train and Shine Approach",
+    "description": "How structured group training solutions support running clubs and community fitness groups",
+    "category": "group-fitness",
+    "date": "2026-02-19",
+    "read_minutes": 3,
+    "url": "blog/elevating-group-performance-train-and-shine.html"
+  },
+  {
+    "slug": "preparing-for-first-5k-manikonda",
+    "title": "Preparing for Your First 5K Run in Manikonda",
+    "description": "A beginner's guide to pacing, footwear, and running form",
+    "category": "group-fitness",
+    "date": "2026-02-22",
+    "read_minutes": 3,
+    "url": "blog/preparing-for-first-5k-manikonda.html"
+  },
+  {
+    "slug": "nutrition-masterclass-webinar-takeaways",
+    "title": "Nutrition Masterclass: Top Takeaways from Our Latest Wellness Webinar",
+    "description": "The key insights from our recent nutrition session, for anyone who missed it",
+    "category": "group-fitness",
+    "date": "2026-02-25",
+    "read_minutes": 3,
+    "url": "blog/nutrition-masterclass-webinar-takeaways.html"
+  },
+  {
+    "slug": "building-community-through-group-fitness",
+    "title": "Building Community Through Group Fitness Classes",
+    "description": "Exploring the psychological benefits of sweating together",
+    "category": "group-fitness",
+    "date": "2026-02-28",
+    "read_minutes": 2,
+    "url": "blog/building-community-through-group-fitness.html"
+  },
+  {
+    "slug": "indoor-vs-outdoor-events",
+    "title": "Indoor vs. Outdoor Events: Making the Most of Both Worlds",
+    "description": "How to balance treadmill work with outdoor running for a more complete training routine",
+    "category": "group-fitness",
+    "date": "2026-03-03",
+    "read_minutes": 2,
+    "url": "blog/indoor-vs-outdoor-events.html"
+  },
+  {
+    "slug": "stay-consistent-when-you-travel-virtual-fitness",
+    "title": "How to Stay Consistent When You Travel: Virtual Fitness Solutions",
+    "description": "Promoting the FG app's remote access features for training on the road",
+    "category": "group-fitness",
+    "date": "2026-03-06",
+    "read_minutes": 2,
+    "url": "blog/stay-consistent-when-you-travel-virtual-fitness.html"
+  },
+  {
+    "slug": "why-kids-need-structured-group-fitness",
+    "title": "Why Kids Need Structured Group Fitness Classes Early in Life",
+    "description": "Motor skills, teamwork, and physical literacy — the foundation years matter more than most parents realize",
+    "category": "kids-fitness",
+    "date": "2026-03-09",
+    "read_minutes": 2,
+    "url": "blog/why-kids-need-structured-group-fitness.html"
+  },
+  {
+    "slug": "1-1-training-young-athletes",
+    "title": "1:1 Training for Young Athletes: Is It Right for Your Child?",
+    "description": "Exploring customized programming for teens looking to excel in a specific sport",
+    "category": "kids-fitness",
+    "date": "2026-03-12",
+    "read_minutes": 3,
+    "url": "blog/1-1-training-young-athletes.html"
+  },
+  {
+    "slug": "summer-camp-guide-active-kids",
+    "title": "Fitness Gurukul's Ultimate Summer Camp Guide for Active Kids",
+    "description": "What makes a great fitness summer camp, and what your child can expect",
+    "category": "kids-fitness",
+    "date": "2026-03-15",
+    "read_minutes": 2,
+    "url": "blog/summer-camp-guide-active-kids.html"
+  },
+  {
+    "slug": "fun-functional-movements-teach-kids-at-home",
+    "title": "Fun Functional Movements to Teach Kids at Home",
+    "description": "Easy exercises parents can do with their children — no equipment required",
+    "category": "kids-fitness",
+    "date": "2026-03-18",
+    "read_minutes": 2,
+    "url": "blog/fun-functional-movements-teach-kids-at-home.html"
+  },
+  {
+    "slug": "youth-posture-screen-time-era",
+    "title": "The Importance of Youth Posture in the Screen-Time Era",
+    "description": "Addressing 'tech neck' in school-aged kids before it becomes a lasting problem",
+    "category": "kids-fitness",
+    "date": "2026-03-21",
+    "read_minutes": 2,
+    "url": "blog/youth-posture-screen-time-era.html"
+  },
+  {
+    "slug": "nutrition-for-growing-champions",
+    "title": "Nutrition for Growing Champions: Fueling Kids the Right Way",
+    "description": "Aligning basic nutrition guidance with our Fuel & Shine principles for active kids",
+    "category": "kids-fitness",
+    "date": "2026-03-24",
+    "read_minutes": 2,
+    "url": "blog/nutrition-for-growing-champions.html"
+  },
+  {
+    "slug": "making-fitness-fun-zumba-dance-events-children",
+    "title": "Making Fitness Fun: Zumba and Dance Events for Children",
+    "description": "Highlighting rhythm, coordination, and cardiovascular health through dance",
+    "category": "kids-fitness",
+    "date": "2026-03-27",
+    "read_minutes": 2,
+    "url": "blog/making-fitness-fun-zumba-dance-events-children.html"
+  },
+  {
+    "slug": "building-confidence-teens-strength-training",
+    "title": "Building Confidence in Teens Through Strength Training",
+    "description": "Dispelling common myths about weightlifting and stunted growth in older teenagers",
+    "category": "kids-fitness",
+    "date": "2026-03-30",
+    "read_minutes": 2,
+    "url": "blog/building-confidence-teens-strength-training.html"
+  },
+  {
+    "slug": "managing-academic-stress-through-physical-activity",
+    "title": "Managing Academic Stress Through Physical Activity",
+    "description": "How kids' fitness classes improve mental wellness and focus",
+    "category": "kids-fitness",
+    "date": "2026-04-02",
+    "read_minutes": 2,
+    "url": "blog/managing-academic-stress-through-physical-activity.html"
+  },
+  {
+    "slug": "how-to-pick-right-kids-fitness-event-hyderabad",
+    "title": "How to Pick the Right Kids Fitness Event in Hyderabad",
+    "description": "A parent's checklist for evaluating safety, coaching quality, and genuine fun",
+    "category": "kids-fitness",
+    "date": "2026-04-05",
+    "read_minutes": 3,
+    "url": "blog/how-to-pick-right-kids-fitness-event-hyderabad.html"
+  },
+  {
+    "slug": "bergman-bengaluru-triathlon-training-guide",
+    "title": "Prepping for the Bergman Bengaluru Triathlon (Sept 2026): A Training Guide",
+    "description": "Race weekend is set: the Bergman Swimathon BLR kicks things off on Saturday, September 5, 2026, followed by the Bergman 102 and Bergman Olympic Triathlon o",
+    "category": "race-endurance",
+    "date": "2026-04-08",
+    "read_minutes": 3,
+    "url": "blog/bergman-bengaluru-triathlon-training-guide.html"
+  },
+  {
+    "slug": "ladakh-marathon-2026-preview",
+    "title": "Tackling the World's Highest Race: The 2026 Ladakh Marathon Preview",
+    "description": "The 13th edition of the Ladakh Marathon — the world's highest AIMS-certified marathon — runs September 10–13, 2026 in and around Leh. It's not one race but",
+    "category": "race-endurance",
+    "date": "2026-04-11",
+    "read_minutes": 3,
+    "url": "blog/ladakh-marathon-2026-preview.html"
+  },
+  {
+    "slug": "tigerman-triathlon-pune-race-strategy",
+    "title": "Tigerman Triathlon Pune 2026: Race Day Strategies and Transitions",
+    "description": "A quick correction before we get into strategy: the Tigerman Triathlon & Duathlon Pune 2026 is confirmed for Sunday, August 30, 2026 at Balewadi, Pune — no",
+    "category": "race-endurance",
+    "date": "2026-04-14",
+    "read_minutes": 3,
+    "url": "blog/tigerman-triathlon-pune-race-strategy.html"
+  },
+  {
+    "slug": "pan-india-cycling-rallies-autumn",
+    "title": "Upcoming Pan-India Cycling Rallies: Where to Ride This Autumn",
+    "description": "Here's the honest picture: July through September is India's monsoon window, and organized cycling events genuinely thin out during these months — most cal",
+    "category": "race-endurance",
+    "date": "2026-04-17",
+    "read_minutes": 3,
+    "url": "blog/pan-india-cycling-rallies-autumn.html"
+  },
+  {
+    "slug": "silk-route-ultra-endurance-training",
+    "title": "Surviving the Silk Route Ultra: Extreme Endurance Training",
+    "description": "The Silk Route Ultra is the flagship distance of the Ladakh Marathon — 122 km, run point-to-point from Nubra Valley's Kyagar Village, over the Khardung La ",
+    "category": "race-endurance",
+    "date": "2026-04-20",
+    "read_minutes": 4,
+    "url": "blog/silk-route-ultra-endurance-training.html"
+  },
+  {
+    "slug": "bodybuilding-expos-india-2026",
+    "title": "The Boom of Bodybuilding Expos in India 2026: What to Expect",
+    "description": "India's fitness expo circuit has genuinely expanded in 2026, though — worth flagging upfront — none of the major bodybuilding-focused expos land specifical",
+    "category": "race-endurance",
+    "date": "2026-04-23",
+    "read_minutes": 3,
+    "url": "blog/bodybuilding-expos-india-2026.html"
+  },
+  {
+    "slug": "hyderabad-bengaluru-swimathon-travel",
+    "title": "Hyderabad to Bengaluru: Planning Your 2026 Swimathon Travel",
+    "description": "If you're a Hyderabad-based swimmer eyeing an out-of-state event, the Bergman Swimathon BLR is a strong target: it runs Saturday, September 5, 2026 at Nell",
+    "category": "race-endurance",
+    "date": "2026-04-26",
+    "read_minutes": 3,
+    "url": "blog/hyderabad-bengaluru-swimathon-travel.html"
+  },
+  {
+    "slug": "open-water-swimathon-anxiety-stroke",
+    "title": "Open Water Swimathons: Overcoming Anxiety and Perfecting Your Stroke",
+    "description": "With events like the Bergman Swimathon BLR (Sept 5, 2026, at Nelligudde Kere) and the swim leg of every triathlon on the calendar this season, plenty of po",
+    "category": "race-endurance",
+    "date": "2026-04-29",
+    "read_minutes": 4,
+    "url": "blog/open-water-swimathon-anxiety-stroke.html"
+  },
+  {
+    "slug": "zumba-masterclasses-india",
+    "title": "The Best Zumba Masterclasses Across India: What's On and How to Find Them",
+    "description": "Large-scale Zumba events have genuinely grown in India through 2026 — but a quick note before the roundup: I didn't find a confirmed large-scale masterclas",
+    "category": "race-endurance",
+    "date": "2026-05-02",
+    "read_minutes": 3,
+    "url": "blog/zumba-masterclasses-india.html"
+  },
+  {
+    "slug": "marathons-and-vacations-fitness-tourism",
+    "title": "Combining Marathons and Vacations: The Ultimate Fitness Tourism Guide",
+    "description": "With a genuinely packed pan-India event calendar this autumn — the Bergman Bengaluru Triathlon and Swimathon (Sept 5–6), the Ladakh Marathon (Sept 10–13), ",
+    "category": "race-endurance",
+    "date": "2026-05-05",
+    "read_minutes": 3,
+    "url": "blog/marathons-and-vacations-fitness-tourism.html"
+  }
+]
