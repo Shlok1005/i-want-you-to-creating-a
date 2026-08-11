@@ -16997,6 +16997,11 @@ line-clamp: 2;
   border-bottom: 1px solid var(--line);
 }
 
+body.has-latest-event-banner .blog-hero,
+body.has-latest-event-banner .blog-article-hero {
+  padding-top: clamp(8.5rem, 16vw, 11rem);
+}
+
 .blog-hero-inner {
   max-width: 920px;
   margin: 0 auto;
