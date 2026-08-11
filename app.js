@@ -2376,12 +2376,9 @@ function injectFooterSeoLinks() {
   var prefix = sitePathPrefix();
   loadBlogSeoGroups(function(groups) {
     if (!groups.length) return;
-    var existing = qs(".footer-seo");
     var html = buildFooterSeoHtml(groups, prefix);
-    if (existing) {
-      existing.outerHTML = html;
-      return;
-    }
+    var existing = qs(".footer-seo");
+    if (existing) existing.remove();
     var footer = qs(".site-footer");
     if (footer) {
       footer.insertAdjacentHTML("afterend", html);
