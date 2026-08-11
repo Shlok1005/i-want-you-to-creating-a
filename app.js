@@ -2315,13 +2315,100 @@ function initHomePage() {
   }, { passive: true });
 }
 
+function sitePathPrefix() {
+  var path = (window.location.pathname || "").replace(/\\/g, "/");
+  if (path.indexOf("/coaches/") !== -1 || path.indexOf("/blog/") !== -1) return "../";
+  return "";
+}
+
+var FG_BLOG_SEO_GROUPS = null;
+
+function loadBlogSeoGroups(done) {
+  if (FG_BLOG_SEO_GROUPS) {
+    done(FG_BLOG_SEO_GROUPS);
+    return;
+  }
+  var p = sitePathPrefix();
+  fetch(p + "blog/seo-groups.json")
+    .then(function(r) { return r.ok ? r.json() : []; })
+    .then(function(data) {
+      FG_BLOG_SEO_GROUPS = Array.isArray(data) ? data : [];
+      done(FG_BLOG_SEO_GROUPS);
+    })
+    .catch(function() {
+      FG_BLOG_SEO_GROUPS = [];
+      done(FG_BLOG_SEO_GROUPS);
+    });
+}
+
+function buildFooterSeoHtml(groups, prefix) {
+  var blog = prefix + "blog.html";
+  var html = '<section class="footer-seo" aria-label="Blog and SEO links">' +
+    '<div class="footer-seo-inner">' +
+      '<div class="footer-seo-head">' +
+        '<h2>Explore fitness guides</h2>' +
+        '<p>Browse Fitness Gurukul blogs on strength training, group fitness, kids programs, and race prep — built for Hyderabad and beyond. <a href="' + blog + '">View all blogs</a></p>' +
+      '</div>' +
+      '<div class="footer-seo-cats">';
+  (groups || []).forEach(function(g) {
+    html += '<div class="footer-seo-col"><h3><a href="' + blog + '#' + g.slug + '">' + safe(g.name) + '</a></h3><ul>';
+    (g.posts || []).forEach(function(post) {
+      html += '<li><a href="' + prefix + safe(post.url) + '">' + safe(post.title) + '</a></li>';
+    });
+    html += '</ul></div>';
+  });
+  html += '</div><div class="footer-seo-keywords"><h3>Popular searches</h3><nav class="footer-seo-pills">' +
+    '<a href="' + prefix + 'services.html">Personal training Hyderabad</a>' +
+    '<a href="' + blog + '#strength-training">Strength training for weight loss</a>' +
+    '<a href="' + blog + '#group-fitness">Group yoga &amp; Zumba Hyderabad</a>' +
+    '<a href="' + blog + '#kids-fitness">Kids fitness classes Hyderabad</a>' +
+    '<a href="' + blog + '#race-endurance">Marathon &amp; triathlon training</a>' +
+    '<a href="' + prefix + 'tools.html">BMI &amp; macro calculator</a>' +
+    '<a href="' + prefix + 'book-consultation.html">Book free fitness consultation</a>' +
+    '<a href="' + prefix + 'coaches.html">Fitness coaches in Hyderabad</a>' +
+    '<a href="' + prefix + 'events.html">Hyderabad fitness events</a>' +
+    '<a href="' + prefix + 'transformation-challenge.html">90-day transformation challenge</a>' +
+  '</nav></div></div></section>';
+  return html;
+}
+
+function injectFooterSeoLinks() {
+  var prefix = sitePathPrefix();
+  loadBlogSeoGroups(function(groups) {
+    if (!groups.length) return;
+    var existing = qs(".footer-seo");
+    var html = buildFooterSeoHtml(groups, prefix);
+    if (existing) {
+      existing.outerHTML = html;
+      return;
+    }
+    var footer = qs(".site-footer");
+    if (footer) {
+      footer.insertAdjacentHTML("afterend", html);
+    } else {
+      document.body.insertAdjacentHTML("beforeend", html);
+    }
+  });
+}
+
 function injectFooter() {
+  var prefix = sitePathPrefix();
   var existing = qs(".site-footer");
   if (existing) existing.remove();
   var f = document.createElement("footer");
   f.className = "site-footer footer-refresh";
-  f.innerHTML = `<div class="footer-topline"><a class="footer-logo" href="index.html"><img src="assets/fitness-gurukul-logo.png" alt="Fitness Gurukul" /><span class="footer-logo-text"><strong>Fitness</strong><span>Gurukul</span></span></a><p>Personal training, made personal.</p><a class="footer-cta" href="contact.html">Talk to a coach <span aria-hidden="true">&rarr;</span></a></div><div class="footer-refresh-grid"><div class="footer-intro"><p>Built for stronger, healthier lives in Hyderabad&mdash;at the studio, at home, and wherever you train.</p><a href="tel:+917207113310">+91 72071 13310</a></div><div class="footer-col"><h4>Discover</h4><nav class="footer-nav"><a href="about.html">About us</a><a href="coaches.html">Our coaches</a><a href="workouts.html">Workout programs</a></nav></div><div class="footer-col"><h4>Start here</h4><nav class="footer-nav"><a href="tools.html">Fitness tools</a><a href="events.html">Events</a><a href="testimonials.html">Success stories</a><a href="contact.html">Book a consultation</a></nav></div><div class="footer-col"><h4>Contact Us</h4><div class="footer-contact-col"><a href="tel:+917207113310"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>+91 72071 13310</a><a href="mailto:contact@fitnessgurukul.co.in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>contact@fitnessgurukul.co.in</a><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Manikonda, Hyderabad</span><a class="footer-contact-cta" href="contact.html">Get Directions &rarr;</a></div></div><div class="footer-col"><h4>Visit</h4><p class="footer-address">Manikonda, Hyderabad<br />Telangana, India</p><div class="footer-social"><a href="https://www.instagram.com/fitnessgurukulofficial/" target="_blank" rel="noopener" aria-label="Instagram">IG</a><a href="https://www.facebook.com/fitnessgurukul7/" target="_blank" rel="noopener" aria-label="Facebook">fb</a><a href="https://www.youtube.com/channel/UCLt2Qs1MeV_uf_xMJ7AaPlA" target="_blank" rel="noopener" aria-label="YouTube">YT</a></div></div></div><div class="footer-bottom"><p class="footer-copy">&copy; 2026 Fitness Gurukul. All rights reserved.</p><a href="contact.html">Contact Us</a></div>`;
+  f.innerHTML =
+    '<div class="footer-topline"><a class="footer-logo" href="' + prefix + 'index.html"><img src="' + prefix + 'assets/fitness-gurukul-logo.png" alt="Fitness Gurukul" /><span class="footer-logo-text"><strong>Fitness</strong><span>Gurukul</span></span></a><p>Personal training, made personal.</p><a class="footer-cta" href="' + prefix + 'contact.html">Talk to a coach <span aria-hidden="true">&rarr;</span></a></div>' +
+    '<div class="footer-refresh-grid">' +
+      '<div class="footer-intro"><p>Built for stronger, healthier lives in Hyderabad&mdash;at the studio, at home, and wherever you train.</p><a href="tel:+917207113310">+91 72071 13310</a></div>' +
+      '<div class="footer-col"><h4>Discover</h4><nav class="footer-nav"><a href="' + prefix + 'about.html">About us</a><a href="' + prefix + 'coaches.html">Our coaches</a><a href="' + prefix + 'blog.html">Blog</a><a href="' + prefix + 'testimonials.html">Success stories</a></nav></div>' +
+      '<div class="footer-col"><h4>Start here</h4><nav class="footer-nav"><a href="' + prefix + 'tools.html">Fitness tools</a><a href="' + prefix + 'events.html">Events</a><a href="' + prefix + 'services.html">Programs</a><a href="' + prefix + 'book-consultation.html">Book a consultation</a></nav></div>' +
+      '<div class="footer-col"><h4>Blog topics</h4><nav class="footer-nav"><a href="' + prefix + 'blog.html#strength-training">Strength &amp; Training</a><a href="' + prefix + 'blog.html#group-fitness">Group Fitness</a><a href="' + prefix + 'blog.html#kids-fitness">Kids Fitness</a><a href="' + prefix + 'blog.html#race-endurance">Race &amp; Endurance</a></nav></div>' +
+      '<div class="footer-col"><h4>Contact Us</h4><div class="footer-contact-col"><a href="tel:+917207113310">+91 72071 13310</a><a href="mailto:contact@fitnessgurukul.co.in">contact@fitnessgurukul.co.in</a><span>Manikonda, Hyderabad</span><a class="footer-contact-cta" href="' + prefix + 'contact.html">Get Directions &rarr;</a></div></div>' +
+    '</div>' +
+    '<div class="footer-bottom"><p class="footer-copy">&copy; 2026 Fitness Gurukul. All rights reserved.</p><a href="' + prefix + 'contact.html">Contact Us</a></div>';
   document.body.appendChild(f);
+  injectFooterSeoLinks();
 }
 
 function injectWhatsAppFloat() {

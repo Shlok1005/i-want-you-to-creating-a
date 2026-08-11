@@ -1,74 +1,77 @@
-# Fitness Gurukul Full-Stack Website
+# Fitness Gurukul Website
 
-Multi-page Fitness Gurukul website with a responsive frontend, Node/Python backends, and SQLite database.
+Multi-page Fitness Gurukul site with a responsive frontend, Node/Python backends, SQLite lead storage, and an SEO-focused blog.
 
-> **Full code documentation:** see [`DOCUMENTATION.md`](./DOCUMENTATION.md) for architecture, tech stack, APIs, lead flow, chatbot, deployment, and file-by-file details.
+> **Full code documentation:** see [`DOCUMENTATION.md`](./DOCUMENTATION.md) for architecture, APIs, lead flow, chatbot, deployment, and file-by-file details.
 
 ## What is included
 
-- Frontend: detailed pages in `public/`
-- Backend: dependency-free Python HTTP API in `server.py`
+- Frontend: multi-page HTML/CSS/JS site (`index.html`, `services.html`, `blog.html`, etc.)
+- Blog: 40 SEO articles from `topic 1`–`topic 4`, plus placeholder slots for future posts
+- Backend: `node server.js` (primary) or dependency-free `python server.py`
 - Database: SQLite file created automatically as `fitness_gurukul.sqlite3`
-- Dashboard: view user-entered leads, progress check-ins, and newsletter entries
-- Download: packaged project ZIP at `public/fitness-gurukul-fullstack.zip`
+- Admin: `/admin` and `/api/submissions` (Node); `owner-data.html` for owner-only viewing
 
 ## Pages
 
-- `index.html` - logo-led home, guide, featured services, story, events, testimonials
-- `programs.html` - detailed services, filters, comparison table, packages
-- `events.html` - corporate marathon, cycling, active day, and planning flow
-- `community.html` - community runs, cycling crews, wellness challenges, and transformation paths
-- `coaches.html` - coaches, specialties, standards, testimonials, updates
-- `tools.html` - BMI, goal recommendation, check-ins, storage mode status
-- `contact.html` - consultation form, contact cards, areas, FAQ, newsletter
-- `owner-data.html` - direct owner-only data viewer, not linked in the client navigation
+| Page | Purpose |
+|------|---------|
+| `index.html` | Home — hero, programs, app promo, blog teaser |
+| `services.html` | Training programs and plans |
+| `coaches.html` | Coach directory (+ `/coaches/*.html` profiles) |
+| `events.html` | Community events and registration |
+| `blog.html` | Blog explore hub (categories, search, placeholders) |
+| `blog/*.html` | Individual SEO blog articles |
+| `testimonials.html` | Member stories |
+| `tools.html` | BMI, BMR, body fat, macro calculators |
+| `transformation-challenge.html` | 90-day challenge |
+| `about.html` | Founder & story |
+| `contact.html` / `book-consultation.html` | Lead capture |
+| `owner-data.html` | Unlinked owner data viewer |
 
-## Brand system
+## Blog & SEO
 
-The UI uses the uploaded Fitness Gurukul logo colors only:
+Content sources (kept in repo for regeneration):
 
-- Black/dark background
-- Logo cyan and blue
-- Fitness red
-- White/ice text surfaces
+- `topic 1/` — Strength & Training (docx)
+- `topic 2/` — Group Fitness (docx)
+- `topic 3/` — Kids Fitness (docx)
+- `topic 4/` — Race & Endurance (markdown)
 
-The fonts are Montserrat for headings/buttons and Inter for body/UI text.
+Published output:
+
+- `blog.html` — Fitelo-style explore page with filters and “coming soon” placeholders
+- `blog/*.html` — articles with meta description, Open Graph, JSON-LD `BlogPosting` + breadcrumbs
+- Footer SEO directory — all blog links + popular search keywords **below the footer** on every public page (static HTML + runtime injector)
+- `sitemap.xml` / `robots.txt` — search discovery
+- `blog/posts.json` / `blog/seo-groups.json` — metadata for filters and footer links
+
+Regenerate articles after editing topic folders:
+
+```bash
+python3 scripts/generate-blog.py
+```
 
 ## Run locally
+
+Primary (Node, port 3000):
+
+```bash
+npm install
+npm start
+```
+
+Open `http://localhost:3000`
+
+Alternative (Python stdlib only, port 8000):
 
 ```bash
 python server.py
 ```
 
-Open:
+Open `http://127.0.0.1:8000`
 
-```text
-http://127.0.0.1:8000
-```
-
-To collect form data from another laptop on the same Wi-Fi, share your main laptop's network link:
-
-```text
-http://YOUR-LAPTOP-IP:8000/contact.html
-```
-
-Do not share `127.0.0.1` with another device. On another laptop, `127.0.0.1` points back to that other laptop.
-
-## Where user data appears
-
-Run the backend, submit a form, then open:
-
-```text
-http://127.0.0.1:8000/owner-data.html
-```
-
-The raw JSON is available at:
-
-```text
-http://127.0.0.1:8000/api/admin-data
-```
-
-Static hosting cannot run Python or SQLite, so static forms save demo records in the browser only.
+Do not run both servers together. For LAN testing use your machine IP, not `127.0.0.1`, on other devices.
 
 ## AI chatbot (free by default)
 
@@ -76,23 +79,16 @@ The chat widget works **without any paid API**.
 
 ### Option A — Free FAQ assistant (zero setup)
 
-Just run the server. The bot answers from Fitness Gurukul plan/coach facts.
-
 ```bash
 npm start
 # or: python server.py
 ```
 
-### Option B — Free real AI with Ollama (recommended)
+### Option B — Free real AI with Ollama
 
 1. Install [Ollama](https://ollama.com)
-2. Pull a small model:
-
-```bash
-ollama pull llama3.2
-```
-
-3. Restart the site server. It auto-detects Ollama at `http://127.0.0.1:11434`.
+2. `ollama pull llama3.2`
+3. Restart the site server (auto-detects `http://127.0.0.1:11434`)
 
 Optional `.env`:
 
@@ -103,15 +99,13 @@ OLLAMA_MODEL=llama3.2
 
 ### Option C — Paid OpenAI (opt-in only)
 
-OpenAI is **not** used by default, even if a key exists. To enable it:
-
 ```text
 CHAT_PROVIDER=openai
 OPENAI_API_KEY=sk-your-key
 OPENAI_MODEL=gpt-5.6
 ```
 
-Or keep `CHAT_PROVIDER=auto` and set `CHAT_ALLOW_OPENAI=true`.
+Or `CHAT_PROVIDER=auto` with `CHAT_ALLOW_OPENAI=true`.
 
 Priority with `CHAT_PROVIDER=auto`: **Ollama → local FAQ** (OpenAI only when opted in).
 
@@ -121,9 +115,23 @@ Priority with `CHAT_PROVIDER=auto`: **Ollama → local FAQ** (OpenAI only when o
 - `GET /api/content`
 - `GET /api/chat/status`
 - `POST /api/chat`
+- `POST /api/submit` (leads)
 - `POST /api/leads`
 - `GET /api/leads`
 - `POST /api/newsletter`
 - `POST /api/checkins`
 - `GET /api/stats`
-- `GET /api/admin-data`
+- `GET /api/admin-data` / `GET /api/submissions`
+
+Lead submit still succeeds offline (SQLite); Google Apps Script / FormSubmit forwarding fails gracefully when credentials/network are missing.
+
+## Deploy
+
+- **Node host (e.g. Render):** `npm start` via `render.yaml`
+- **Static (Netlify/Vercel):** `bash scripts/prepare-static-dist.sh` builds `dist/` (frontend only)
+
+## Brand system
+
+- Dark background with cyan/amber accents
+- Logo-led header; Public Sans UI type
+- Prefer existing site patterns when extending pages

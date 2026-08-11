@@ -967,6 +967,39 @@ def write_manifest(posts: list[dict]) -> None:
     (BLOG_DIR / "posts.json").write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
+
+def inject_seo_after_footer(html_path: Path, prefix: str = "") -> None:
+    """Ensure crawlable blog SEO link directory sits below the page footer."""
+    import json as _json
+    posts = _json.loads((BLOG_DIR / "posts.json").read_text(encoding="utf-8"))
+    cats = [
+        ("strength-training", "Strength & Training"),
+        ("group-fitness", "Group Fitness"),
+        ("kids-fitness", "Kids Fitness"),
+        ("race-endurance", "Race & Endurance"),
+    ]
+    blog = f"{prefix}blog.html"
+    parts = ['<section class="footer-seo" aria-label="Blog and SEO links">', '<div class="footer-seo-inner">']
+    parts.append('<div class="footer-seo-head"><h2>Explore fitness guides</h2>')
+    parts.append(f'<p>Browse Fitness Gurukul blogs on strength training, group fitness, kids programs, and race prep. <a href="{blog}">View all blogs</a></p></div>')
+    parts.append('<div class="footer-seo-cats">')
+    for slug, name in cats:
+        parts.append(f'<div class="footer-seo-col"><h3><a href="{blog}#{slug}">{html.escape(name)}</a></h3><ul>')
+        for post in posts:
+            if post["category"] != slug:
+                continue
+            parts.append(f'<li><a href="{prefix}{html.escape("blog/" + post["slug"] + ".html")}">{html.escape(post["title"])}</a></li>')
+        parts.append("</ul></div>")
+    parts.append("</div></div></section>")
+    block = "\n".join(parts)
+    text = html_path.read_text(encoding="utf-8")
+    text = re.sub(r'\n?<section class="footer-seo"[\s\S]*?</section>\n?', "\n", text)
+    idx = text.rfind("</footer>")
+    if idx < 0:
+        return
+    end = idx + len("</footer>")
+    html_path.write_text(text[:end] + "\n" + block + "\n" + text[end:], encoding="utf-8")
+
 def main() -> None:
     BLOG_DIR.mkdir(exist_ok=True)
     # clear old generated html posts but keep folder
@@ -988,7 +1021,26 @@ def main() -> None:
     write_manifest(posts)
     write_sitemap(posts)
     write_robots()
-    print("  wrote blog/posts.json, sitemap.xml, robots.txt")
+    # SEO footers on generated pages
+    inject_seo_after_footer(index, "")
+    for post in posts:
+        inject_seo_after_footer(BLOG_DIR / f"{post['slug']}.html", "../")
+    # write seo-groups.json for runtime footer injector
+    groups = [
+        {
+            "slug": slug,
+            "name": name,
+            "posts": [{"title": p["title"], "url": f"blog/{p['slug']}.html"} for p in posts if p["category"] == slug],
+        }
+        for slug, name in [
+            ("strength-training", "Strength & Training"),
+            ("group-fitness", "Group Fitness"),
+            ("kids-fitness", "Kids Fitness"),
+            ("race-endurance", "Race & Endurance"),
+        ]
+    ]
+    (BLOG_DIR / "seo-groups.json").write_text(json.dumps(groups, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    print("  wrote blog/posts.json, sitemap.xml, robots.txt, seo footers")
 
 
 if __name__ == "__main__":
