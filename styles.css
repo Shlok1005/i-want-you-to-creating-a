@@ -3844,7 +3844,7 @@ details p {
   gap: 8px;
 }
 
-@media (max-width: 1020px) {
+@media (max-width: 1180px) {
   h1 {
     font-size: 3rem;
   }
@@ -7759,6 +7759,9 @@ select.cal-input { cursor: pointer; }
   padding: 120px 24px 80px;
   overflow: hidden;
 }
+body.has-latest-event-banner .mg-hero {
+  padding-top: clamp(9.5rem, 14vw, 11rem);
+}
 .mg-hero-bg {
   position: absolute;
   inset: 0;
@@ -8108,10 +8111,16 @@ select.cal-input { cursor: pointer; }
 }
 .mg-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
   max-width: 1100px;
   margin: 0 auto;
+  justify-items: stretch;
+}
+.mg-grid > .mg-card:only-child {
+  max-width: 520px;
+  width: 100%;
+  justify-self: center;
 }
 .mg-grid-3 {
   grid-template-columns: repeat(3, 1fr);
